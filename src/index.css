@@ -2,11 +2,7 @@
 
 @theme {
   --color-navy: #0D1B2A;
-  --color-coral: #E85D4A;
   --color-teal: #0EA5C8;
-  --color-sage: #6BAE8A;
-  --color-amber: #F59E0B;
-  --color-purple: #8B6FBE;
   --font-sans: 'Inter', sans-serif;
   --animate-breathe: breathe 6s ease-in-out infinite;
   --animate-pulse-fade: pulse-fade 2s ease-in-out infinite;

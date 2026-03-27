@@ -204,7 +204,7 @@ export default function FeedbackExplorer() {
             </div>
             <input
               type="range"
-              min="1"
+              min="5"
               max="30"
               step="1"
               value={sfe}
@@ -212,7 +212,7 @@ export default function FeedbackExplorer() {
               className="w-full slider"
             />
             <div className="flex justify-between text-white/30 text-xs mt-1">
-              <span>1%</span>
+              <span>5%</span>
               <span>30%</span>
             </div>
           </div>
@@ -237,7 +237,6 @@ export default function FeedbackExplorer() {
         <p className="text-white/40 text-sm italic">
           Illustrative; quantitative results in Paper I (Teh et al., in prep.)
         </p>
-        {/* TODO: update to specific physics page once ReadTheDocs structure is confirmed */}
         <a
           href="https://trinitysf.readthedocs.io/"
           target="_blank"
