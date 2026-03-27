@@ -1,4 +1,7 @@
-import FeedbackExplorer from './FeedbackExplorer'
+import { lazy, Suspense } from 'react'
+import TeamGrid from './TeamGrid'
+
+const FeedbackExplorer = lazy(() => import('./FeedbackExplorer'))
 
 const featureCards = [
   {
@@ -133,7 +136,9 @@ export default function ContentSections() {
       {/* Explorer */}
       <Section id="explorer">
         <SectionTitle>Feedback Explorer</SectionTitle>
-        <FeedbackExplorer />
+        <Suspense fallback={<p className="text-white/40 text-sm">Loading explorer...</p>}>
+          <FeedbackExplorer />
+        </Suspense>
       </Section>
 
       {/* Papers */}
@@ -159,9 +164,7 @@ export default function ContentSections() {
       {/* Team */}
       <Section id="team">
         <SectionTitle>Team</SectionTitle>
-        <p className="text-white/50 italic text-base">
-          Meet the team — coming soon.
-        </p>
+        <TeamGrid />
       </Section>
     </div>
   )

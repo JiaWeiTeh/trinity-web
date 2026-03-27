@@ -2,6 +2,7 @@ import { useRef } from 'react'
 import HeroBubble from './components/HeroBubble'
 import Navbar from './components/Navbar'
 import ContentSections from './components/ContentSections'
+import Footer from './components/Footer'
 import useScrollProgress from './hooks/useScrollProgress'
 
 // Phase keyframes from TRINITY slice-zone ratios (fractions of total strip width W)
@@ -125,6 +126,7 @@ export default function App() {
         </div>
       </div>
       <ContentSections />
+      <Footer />
     </>
   )
 }
