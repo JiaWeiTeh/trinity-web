@@ -84,29 +84,21 @@ export default function App() {
   const titleOpacity = progress < 0.02 ? 1 : Math.max(0, 1 - (progress - 0.02) / 0.04)
   const chevronOpacity = progress < 0.03 ? 1 : Math.max(0, 1 - (progress - 0.03) / 0.04)
 
-  // Zone labels visible during energy hold and momentum hold
-  const energyLabelOpacity = getAnnotationOpacity(progress, 0.03, 0.06, 0.16, 0.20)
-  const momentumLabelOpacity = getAnnotationOpacity(progress, 0.62, 0.65, 0.74, 0.78)
-  const labelOpacity = Math.max(energyLabelOpacity, momentumLabelOpacity)
+  // Zone labels visible during energy hold only
+  const labelOpacity = getAnnotationOpacity(progress, 0.03, 0.06, 0.16, 0.20)
 
   // Dispersal: 0.78–1.0 maps to 0–1
   const dispersalProgress = progress > 0.78 ? Math.min(1, (progress - 0.78) / 0.22) : 0
 
-  // Smooth ease-in-out curve for crossfade
-  // Content begins appearing at 40% dispersal, fully visible at 90%
-  const rawContentT = dispersalProgress > 0.4 ? Math.min(1, (dispersalProgress - 0.4) / 0.5) : 0
-  // Cubic ease-in-out for a smooth, cinematic feel
-  const contentOpacity = rawContentT < 0.5
-    ? 4 * rawContentT * rawContentT * rawContentT
-    : 1 - Math.pow(-2 * rawContentT + 2, 3) / 2
+  // Crossfade: bubble fades 0→100% over dispersal 0.2–0.7, content fades in 0.4–0.9
+  // Using smoothstep (3t²−2t³) for a natural ease-in-out
+  function smoothstep(t) {
+    const c = Math.max(0, Math.min(1, t))
+    return c * c * (3 - 2 * c)
+  }
 
-  // Bubble fades out slightly ahead so there's a brief bright gap
-  const rawBubbleT = dispersalProgress > 0.3 ? Math.min(1, (dispersalProgress - 0.3) / 0.5) : 0
-  const bubbleFadeOut = rawBubbleT < 0.5
-    ? 4 * rawBubbleT * rawBubbleT * rawBubbleT
-    : 1 - Math.pow(-2 * rawBubbleT + 2, 3) / 2
-
-  // Content scales from 0.97 → 1.0 as it surfaces
+  const bubbleFadeOut = smoothstep((dispersalProgress - 0.2) / 0.5)
+  const contentOpacity = smoothstep((dispersalProgress - 0.4) / 0.5)
   const contentScale = 0.97 + 0.03 * contentOpacity
 
   return (
