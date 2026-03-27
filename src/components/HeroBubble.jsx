@@ -6,12 +6,13 @@ const defaultZoneWidths = {
   cloud: 0.2222,
 }
 
+// Labels with fixed vertical spread positions (evenly spaced on the right)
 const zoneLabels = [
-  { id: 'cloud', label: 'Cloud' },
-  { id: 'shell', label: 'Shell', subscript: 'neu' },
-  { id: 'hii', label: 'Shell', subscript: 'ion' },
-  { id: 'hotBubble', label: 'Bubble' },
-  { id: 'freeWind', label: 'Winds' },
+  { id: 'cloud',     label: 'Cloud',         labelY: 18 },
+  { id: 'shell',     label: 'Shell',  sub: 'neu', labelY: 30 },
+  { id: 'hii',       label: 'Shell',  sub: 'ion', labelY: 42 },
+  { id: 'hotBubble', label: 'Bubble',        labelY: 58 },
+  { id: 'freeWind',  label: 'Winds',         labelY: 72 },
 ]
 
 export default function HeroBubble({
@@ -24,32 +25,26 @@ export default function HeroBubble({
 }) {
   const w = { ...defaultZoneWidths, ...zoneWidths }
 
-  // Build cumulative radii (inside-out) as fractions of total radius (50 SVG units)
   const R = 50
   let cursor = 0
   cursor += w.freeWind
   const freeWindOuter = cursor
-
   cursor += w.hotBubble
   const hotBubbleOuter = cursor
-
   cursor += w.hii
   const hiiOuter = cursor
-
   cursor += w.shell
   const shellOuter = cursor
-
   cursor += w.cloud
   const cloudOuter = cursor
 
-  // Normalize so outermost edge = R
   const total = cloudOuter
   const scale = (frac) => (frac / total) * R
 
-  // Compute midpoint radii for label leader lines
-  const zoneMidpoints = {
+  // Midpoint radius for each zone (where the tick mark meets the zone)
+  const zoneMidR = {
     cloud: scale((shellOuter + cloudOuter) / 2),
-    shell: scale(((hiiOuter) + shellOuter) / 2),
+    shell: scale((hiiOuter + shellOuter) / 2),
     hii: scale((hotBubbleOuter + hiiOuter) / 2),
     hotBubble: scale((freeWindOuter + hotBubbleOuter) / 2),
     freeWind: scale(freeWindOuter / 2),
@@ -63,9 +58,8 @@ export default function HeroBubble({
     { id: 'freeWind', outer: scale(freeWindOuter), fill: '#2A3A4E' },
   ]
 
-  // Leader line endpoint X (right side of viewBox)
-  const leaderEndX = 95
-  const labelX = 96
+  const labelAreaX = 108
+  const tickLen = 1.2
 
   return (
     <section className="relative flex flex-col items-center justify-center h-screen w-screen bg-navy select-none overflow-hidden">
@@ -84,7 +78,7 @@ export default function HeroBubble({
         className="w-72 h-72 md:w-[22rem] md:h-[22rem] lg:w-[26rem] lg:h-[26rem] z-10 animate-breathe"
         style={{ animationPlayState: breathing ? 'running' : 'paused' }}
       >
-        <svg viewBox="-10 0 130 100" xmlns="http://www.w3.org/2000/svg">
+        <svg viewBox="-10 0 145 100" xmlns="http://www.w3.org/2000/svg">
           <defs>
             <radialGradient id="cloudGradient" cx="50%" cy="50%" r="50%">
               <stop offset="0%" stopColor="#C8C8D0" stopOpacity="0.5" />
@@ -103,58 +97,64 @@ export default function HeroBubble({
             />
           ))}
 
-          {/* Zone labels with leader lines */}
+          {/* Zone labels with angled leader lines */}
           <g style={{ opacity: labelOpacity, transition: 'opacity 0.3s ease-out' }}>
             {zoneLabels.map((zl) => {
-              const midR = zoneMidpoints[zl.id]
-              const pointX = 50 + midR
-              const pointY = 50
+              const midR = zoneMidR[zl.id]
+              // Point on the circle boundary at the label's angle
+              const labelY = zl.labelY
+              const dy = labelY - 50
+              const dx = Math.sqrt(Math.max(0, midR * midR - dy * dy))
+              const circleX = 50 + dx
+              const circleY = labelY
 
               return (
                 <g key={zl.id}>
-                  {/* Leader line */}
+                  {/* Tick mark at zone midpoint */}
                   <line
-                    x1={pointX}
-                    y1={pointY}
-                    x2={leaderEndX}
-                    y2={pointY}
-                    stroke="white"
-                    strokeWidth="0.3"
-                    strokeOpacity="0.5"
-                  />
-                  {/* Tick at zone boundary */}
-                  <line
-                    x1={pointX}
-                    y1={pointY - 1.5}
-                    x2={pointX}
-                    y2={pointY + 1.5}
+                    x1={circleX - tickLen}
+                    y1={circleY}
+                    x2={circleX + tickLen}
+                    y2={circleY}
                     stroke="white"
                     strokeWidth="0.4"
-                    strokeOpacity="0.6"
+                    strokeOpacity="0.7"
+                  />
+                  {/* Horizontal leader line from tick to label area */}
+                  <line
+                    x1={circleX + tickLen}
+                    y1={circleY}
+                    x2={labelAreaX - 1}
+                    y2={circleY}
+                    stroke="white"
+                    strokeWidth="0.25"
+                    strokeOpacity="0.4"
+                    strokeDasharray="1 0.8"
                   />
                   {/* Label text */}
                   <text
-                    x={labelX}
-                    y={zl.subscript ? pointY - 0.5 : pointY + 1}
+                    x={labelAreaX}
+                    y={zl.sub ? circleY - 0.3 : circleY + 1.2}
                     fill="white"
-                    fillOpacity="0.85"
-                    fontSize="3.2"
+                    fillOpacity="0.9"
+                    fontSize="3.5"
                     fontFamily="Inter, sans-serif"
                     fontWeight="500"
                   >
                     {zl.label}
                   </text>
-                  {zl.subscript && (
+                  {zl.sub && (
                     <text
-                      x={labelX}
-                      y={pointY + 3}
+                      x={labelAreaX}
+                      y={circleY + 3.5}
                       fill="white"
                       fillOpacity="0.5"
-                      fontSize="2.4"
+                      fontSize="2.6"
                       fontFamily="Inter, sans-serif"
                       fontWeight="400"
+                      fontStyle="italic"
                     >
-                      {zl.subscript}
+                      {zl.sub}
                     </text>
                   )}
                 </g>
