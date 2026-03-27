@@ -1,9 +1,19 @@
 @import "tailwindcss";
 
 @theme {
+  --color-paper: #F7F6F2;
+  --color-card: #EFEDE7;
   --color-navy: #0D1B2A;
+  --color-ink-primary: #1E2430;
+  --color-ink-secondary: #5E6776;
+  --color-ink-tertiary: #97948C;
+  --color-ink-line: #2A3442;
   --color-teal: #0EA5C8;
-  --font-sans: 'Inter', sans-serif;
+  --color-teal-wash: #E6F7FA;
+  --color-border-card: #D3D1C7;
+  --color-border-rule: #E5E3DC;
+  --font-display: 'Source Serif 4', Georgia, serif;
+  --font-ui: 'Inter', sans-serif;
   --animate-breathe: breathe 6s ease-in-out infinite;
   --animate-pulse-fade: pulse-fade 2s ease-in-out infinite;
 }
@@ -15,7 +25,11 @@ html {
 
 body {
   margin: 0;
-  background: #0D1B2A;
+  background: #F7F6F2;
+  color: #1E2430;
+  font-family: 'Source Serif 4', Georgia, serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 @keyframes breathe {
@@ -34,7 +48,7 @@ body {
   appearance: none;
   height: 4px;
   border-radius: 2px;
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(30, 36, 48, 0.1);
   outline: none;
   cursor: pointer;
 }
@@ -45,7 +59,7 @@ body {
   height: 16px;
   border-radius: 50%;
   background: #0EA5C8;
-  border: 2px solid #0D1B2A;
+  border: 2px solid #F7F6F2;
   cursor: pointer;
   transition: transform 0.15s ease;
 }
@@ -57,11 +71,11 @@ body {
   height: 16px;
   border-radius: 50%;
   background: #0EA5C8;
-  border: 2px solid #0D1B2A;
+  border: 2px solid #F7F6F2;
   cursor: pointer;
 }
 .slider::-moz-range-track {
   height: 4px;
   border-radius: 2px;
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(30, 36, 48, 0.1);
 }
