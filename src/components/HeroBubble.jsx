@@ -94,7 +94,8 @@ export default function HeroBubble({
 
       {/* Bubble SVG */}
       <div
-        className={`w-64 h-64 md:w-80 md:h-80 lg:w-96 lg:h-96 z-10${breathing ? ' animate-breathe' : ''}`}
+        className="w-64 h-64 md:w-80 md:h-80 lg:w-96 lg:h-96 z-10 animate-breathe"
+        style={{ animationPlayState: breathing ? 'running' : 'paused' }}
       >
         <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
           <defs>

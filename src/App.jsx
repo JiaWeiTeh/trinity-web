@@ -79,7 +79,7 @@ export default function App() {
         <div className="sticky top-0 h-screen">
           <HeroBubble
             zoneWidths={zoneWidths}
-            breathing={progress === 0}
+            breathing={progress < 0.005}
             chevronOpacity={chevronOpacity}
             titleOpacity={titleOpacity}
           >
