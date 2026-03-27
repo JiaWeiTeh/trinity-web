@@ -14,8 +14,6 @@
   --color-border-rule: #E5E3DC;
   --font-display: 'Source Serif 4', Georgia, serif;
   --font-ui: 'Inter', sans-serif;
-  --animate-breathe: breathe 6s ease-in-out infinite;
-  --animate-pulse-fade: pulse-fade 2s ease-in-out infinite;
 }
 
 html {
@@ -30,16 +28,6 @@ body {
   font-family: 'Source Serif 4', Georgia, serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-}
-
-@keyframes breathe {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.03); }
-}
-
-@keyframes pulse-fade {
-  0%, 100% { opacity: 0.3; transform: translateY(0); }
-  50% { opacity: 0.8; transform: translateY(4px); }
 }
 
 /* Slider styling */
