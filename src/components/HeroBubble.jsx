@@ -9,6 +9,8 @@ const defaultZoneWidths = {
 export default function HeroBubble({
   zoneWidths = defaultZoneWidths,
   breathing = true,
+  chevronOpacity = 1,
+  children,
 }) {
   const w = { ...defaultZoneWidths, ...zoneWidths }
 
@@ -118,8 +120,11 @@ export default function HeroBubble({
         </svg>
       </div>
 
+      {/* Annotations slot */}
+      {children}
+
       {/* Scroll indicator */}
-      <div className="absolute bottom-8 animate-pulse-fade z-10">
+      <div className="absolute bottom-8 animate-pulse-fade z-10" style={{ opacity: chevronOpacity }}>
         <svg
           width="24"
           height="24"
