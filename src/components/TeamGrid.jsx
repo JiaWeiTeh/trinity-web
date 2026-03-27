@@ -11,21 +11,21 @@ const team = [
     initials: 'RK',
     affiliation: 'ITA/ZAH, Universität Heidelberg',
     color: '#E85D4A',
-    link: 'https://www.ita.uni-heidelberg.de/~klessen/', // verify URL is current
+    link: 'https://www.ita.uni-heidelberg.de/~klessen/',
   },
   {
     name: 'Simon C. O. Glover',
     initials: 'SG',
     affiliation: 'ITA/ZAH, Universität Heidelberg',
     color: '#6BAE8A',
-    link: 'https://www.ita.uni-heidelberg.de/~glover/', // verify URL is current
+    link: 'https://www.ita.uni-heidelberg.de/~glover/',
   },
   {
     name: 'Kathryn Kreckel',
     initials: 'KK',
     affiliation: 'ARI/ZAH, Universität Heidelberg',
     color: '#F59E0B',
-    link: 'https://www.kreckel.org/', // verify URL is current
+    link: 'https://www.kreckel.org/',
   },
 ]
 
