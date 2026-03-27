@@ -7,13 +7,12 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-  Line,
-  ComposedChart,
 } from 'recharts'
 import gridData from '../data/feedbackGrid.json'
 
 const LOG_M_VALUES = [4, 4.5, 5, 5.5, 6, 6.5, 7]
 const SFE_VALUES = [5, 10, 15, 20, 25, 30]
+const DATA_KEYS = ['winds', 'sn', 'phii', 'prad', 'gravity']
 
 function findEntry(logM, sfe) {
   return gridData.grid.find(
@@ -21,16 +20,11 @@ function findEntry(logM, sfe) {
   )
 }
 
-function lerpArrays(a, b, t) {
-  return a.map((v, i) => v + (b - a[i]) * t)
-}
-
 function lerpArraysPair(a, b, t) {
   return a.map((v, i) => v + (b[i] - v) * t)
 }
 
 function interpolateData(logM, sfe) {
-  // Find bounding grid indices
   let li = 0
   for (let i = 0; i < LOG_M_VALUES.length - 1; i++) {
     if (logM >= LOG_M_VALUES[i]) li = i
@@ -55,11 +49,9 @@ function interpolateData(logM, sfe) {
 
   if (!e00 || !e10 || !e01 || !e11) return null
 
-  const keys = ['winds', 'phii', 'prad', 'gravity']
   const result = { time: e00.time }
 
-  for (const key of keys) {
-    // Bilinear interpolation
+  for (const key of DATA_KEYS) {
     const top = lerpArraysPair(e00[key], e10[key], tl)
     const bot = lerpArraysPair(e01[key], e11[key], tl)
     result[key] = lerpArraysPair(top, bot, ts)
@@ -68,25 +60,29 @@ function interpolateData(logM, sfe) {
   return result
 }
 
+const CHANNEL_META = {
+  gravity: { name: 'Gravity', color: '#3A3A4A' },
+  winds:   { name: 'Winds', color: '#5B8FC9' },
+  sn:      { name: 'Supernovae', color: '#F59E0B' },
+  phii:    { name: 'P\u2095\u1d62\u1d62', color: '#E85D4A' },
+  prad:    { name: 'P\u1d63\u2090\u1d48', color: '#0EA5C8' },
+}
+
+// Stack order (bottom to top): gravity, winds, sn, phii, prad
+const STACK_ORDER = ['gravity', 'winds', 'sn', 'phii', 'prad']
+
 function CustomTooltip({ active, payload, label }) {
   if (!active || !payload?.length) return null
   return (
     <div className="bg-navy/95 border border-white/10 rounded-lg px-3 py-2 text-xs">
-      <p className="text-white/60 mb-1">{label} Myr</p>
-      {payload
-        .filter((p) => p.dataKey !== 'gravity')
-        .map((p) => (
-          <p key={p.dataKey} style={{ color: p.color }} className="leading-relaxed">
-            {p.name}: {(p.value * 100).toFixed(1)}%
-          </p>
-        ))}
-      {payload
-        .filter((p) => p.dataKey === 'gravity')
-        .map((p) => (
-          <p key={p.dataKey} style={{ color: p.color }} className="leading-relaxed">
-            {p.name}: {(p.value * 100).toFixed(1)}%
-          </p>
-        ))}
+      <p className="text-white/60 mb-1">
+        <span className="italic">t</span> = {label} Myr
+      </p>
+      {[...payload].reverse().map((p) => (
+        <p key={p.dataKey} style={{ color: p.color }} className="leading-relaxed">
+          {CHANNEL_META[p.dataKey].name}: {(p.value * 100).toFixed(1)}%
+        </p>
+      ))}
     </div>
   )
 }
@@ -98,13 +94,11 @@ export default function FeedbackExplorer() {
   const chartData = useMemo(() => {
     const d = interpolateData(logM, sfe)
     if (!d) return []
-    return d.time.map((t, i) => ({
-      time: t,
-      winds: d.winds[i],
-      phii: d.phii[i],
-      prad: d.prad[i],
-      gravity: d.gravity[i],
-    }))
+    return d.time.map((t, i) => {
+      const row = { time: t }
+      for (const key of DATA_KEYS) row[key] = d[key][i]
+      return row
+    })
   }, [logM, sfe])
 
   return (
@@ -113,13 +107,13 @@ export default function FeedbackExplorer() {
         {/* Chart */}
         <div className="w-full md:w-[65%]">
           <ResponsiveContainer width="100%" height={340}>
-            <ComposedChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 5 }}>
+            <AreaChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 5 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
               <XAxis
                 dataKey="time"
                 stroke="rgba(255,255,255,0.4)"
                 tick={{ fill: 'rgba(255,255,255,0.6)', fontSize: 12 }}
-                label={{ value: 'Time (Myr)', position: 'insideBottom', offset: -2, fill: 'rgba(255,255,255,0.5)', fontSize: 12 }}
+                label={{ value: 't (Myr)', position: 'insideBottom', offset: -2, fill: 'rgba(255,255,255,0.5)', fontSize: 12, fontStyle: 'italic' }}
               />
               <YAxis
                 domain={[0, 1]}
@@ -128,43 +122,19 @@ export default function FeedbackExplorer() {
                 label={{ value: 'Force fraction', angle: -90, position: 'insideLeft', offset: 10, fill: 'rgba(255,255,255,0.5)', fontSize: 12 }}
               />
               <Tooltip content={<CustomTooltip />} />
-              <Area
-                type="monotone"
-                dataKey="winds"
-                name="Winds / SN"
-                stackId="1"
-                stroke="#E85D4A"
-                fill="#E85D4A"
-                fillOpacity={0.7}
-              />
-              <Area
-                type="monotone"
-                dataKey="phii"
-                name="P_HII"
-                stackId="1"
-                stroke="#0EA5C8"
-                fill="#0EA5C8"
-                fillOpacity={0.7}
-              />
-              <Area
-                type="monotone"
-                dataKey="prad"
-                name="P_rad"
-                stackId="1"
-                stroke="#F59E0B"
-                fill="#F59E0B"
-                fillOpacity={0.7}
-              />
-              <Line
-                type="monotone"
-                dataKey="gravity"
-                name="Gravity"
-                stroke="#8B6FBE"
-                strokeWidth={2}
-                strokeDasharray="6 3"
-                dot={false}
-              />
-            </ComposedChart>
+              {STACK_ORDER.map((key) => (
+                <Area
+                  key={key}
+                  type="monotone"
+                  dataKey={key}
+                  name={CHANNEL_META[key].name}
+                  stackId="1"
+                  stroke={CHANNEL_META[key].color}
+                  fill={CHANNEL_META[key].color}
+                  fillOpacity={0.75}
+                />
+              ))}
+            </AreaChart>
           </ResponsiveContainer>
         </div>
 
@@ -174,7 +144,8 @@ export default function FeedbackExplorer() {
             <div className="flex justify-between items-baseline mb-2">
               <label className="text-white/70 text-sm font-medium">Cloud mass</label>
               <span className="text-white text-sm font-mono">
-                10<sup>{logM.toFixed(1)}</sup> M<sub>&#9737;</sub>
+                10<sup>{logM.toFixed(1)}</sup>{' '}
+                <span className="italic">M</span><sub>&#9737;</sub>
               </span>
             </div>
             <input
@@ -194,7 +165,9 @@ export default function FeedbackExplorer() {
 
           <div>
             <div className="flex justify-between items-baseline mb-2">
-              <label className="text-white/70 text-sm font-medium">Star formation efficiency</label>
+              <label className="text-white/70 text-sm font-medium">
+                Star formation efficiency (<span className="italic">&epsilon;</span><sub>sf</sub>)
+              </label>
               <span className="text-white text-sm font-mono">{sfe}%</span>
             </div>
             <input
@@ -213,23 +186,16 @@ export default function FeedbackExplorer() {
           </div>
 
           {/* Legend */}
-          <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-white/60">
-            <span className="flex items-center gap-1.5">
-              <span className="w-3 h-3 rounded-sm" style={{ background: '#E85D4A' }} />
-              Winds / SN
-            </span>
-            <span className="flex items-center gap-1.5">
-              <span className="w-3 h-3 rounded-sm" style={{ background: '#0EA5C8' }} />
-              P<sub>HII</sub>
-            </span>
-            <span className="flex items-center gap-1.5">
-              <span className="w-3 h-3 rounded-sm" style={{ background: '#F59E0B' }} />
-              P<sub>rad</sub>
-            </span>
-            <span className="flex items-center gap-1.5">
-              <span className="w-4 border-t-2 border-dashed" style={{ borderColor: '#8B6FBE' }} />
-              Gravity
-            </span>
+          <div className="flex flex-wrap gap-x-4 gap-y-2 text-xs text-white/60">
+            {[...STACK_ORDER].reverse().map((key) => (
+              <span key={key} className="flex items-center gap-1.5">
+                <span
+                  className="w-3 h-3 rounded-sm"
+                  style={{ background: CHANNEL_META[key].color }}
+                />
+                {CHANNEL_META[key].name}
+              </span>
+            ))}
           </div>
         </div>
       </div>
