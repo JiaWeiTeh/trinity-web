@@ -4,11 +4,11 @@ import Navbar from './components/Navbar'
 import ContentSections from './components/ContentSections'
 import useScrollProgress from './hooks/useScrollProgress'
 
-// Phase keyframes: energy-driven → transition → momentum-driven
+// Phase keyframes: energy-driven (compact) → transition → momentum-driven (expanded)
 const phases = {
-  energy:     { freeWind: 0.08, hotBubble: 0.30, hii: 0.06, shell: 0.08, cloud: 0.20 },
+  energy:     { freeWind: 0.02, hotBubble: 0.03, hii: 0.06, shell: 0.08, cloud: 0.20 },
   transition: { freeWind: 0.05, hotBubble: 0.12, hii: 0.10, shell: 0.18, cloud: 0.20 },
-  momentum:   { freeWind: 0.02, hotBubble: 0.03, hii: 0.14, shell: 0.22, cloud: 0.20 },
+  momentum:   { freeWind: 0.08, hotBubble: 0.30, hii: 0.14, shell: 0.22, cloud: 0.20 },
 }
 
 const zoneKeys = ['freeWind', 'hotBubble', 'hii', 'shell', 'cloud']
