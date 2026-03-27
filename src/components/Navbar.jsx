@@ -35,19 +35,20 @@ export default function Navbar() {
   return (
     <>
       <nav
-        className="fixed top-0 left-0 right-0 z-50 bg-navy/80 backdrop-blur-md border-b border-white/5 transition-all duration-300"
+        className="fixed top-0 left-0 right-0 z-50 bg-paper/80 backdrop-blur-md border-b border-border-rule transition-all duration-300"
         style={{
           opacity: visible ? 1 : 0,
           pointerEvents: visible ? 'auto' : 'none',
           transform: visible ? 'translateY(0)' : 'translateY(-100%)',
         }}
       >
-        <div className="max-w-5xl mx-auto px-6 h-14 flex items-center justify-between">
+        <div className="max-w-5xl mx-auto px-6 h-12 flex items-center justify-between">
           <a
             href="#top"
             onClick={(e) => scrollTo(e, '#top')}
             aria-label="Scroll to top"
-            className="text-white font-bold tracking-widest text-sm hover:text-teal transition-colors"
+            className="text-ink-primary font-semibold tracking-widest text-sm hover:text-teal transition-colors"
+            style={{ fontFamily: "'Source Serif 4', Georgia, serif" }}
           >
             TRINITY
           </a>
@@ -60,7 +61,8 @@ export default function Navbar() {
                 href={link.href}
                 onClick={(e) => scrollTo(e, link.href)}
                 aria-label={`Navigate to ${link.label}`}
-                className="text-white/70 text-sm hover:text-white transition-colors"
+                className="text-ink-secondary text-sm hover:text-ink-primary transition-colors duration-150"
+                style={{ fontFamily: "'Inter', sans-serif" }}
               >
                 {link.label}
               </a>
@@ -82,7 +84,7 @@ export default function Navbar() {
 
           {/* Hamburger button (mobile) */}
           <button
-            className="sm:hidden text-white/70 hover:text-white transition-colors p-1"
+            className="sm:hidden text-ink-primary hover:text-ink-primary transition-colors p-1"
             onClick={() => setMenuOpen(!menuOpen)}
             aria-label={menuOpen ? 'Close menu' : 'Open menu'}
           >
@@ -106,14 +108,14 @@ export default function Navbar() {
 
       {/* Full-screen mobile overlay */}
       {menuOpen && (
-        <div className="fixed inset-0 z-40 bg-navy/95 backdrop-blur-lg flex flex-col items-center justify-center gap-8 sm:hidden">
+        <div className="fixed inset-0 z-40 bg-paper/95 backdrop-blur-lg flex flex-col items-center justify-center gap-8 sm:hidden">
           {navLinks.map((link) => (
             <a
               key={link.href}
               href={link.href}
               onClick={(e) => scrollTo(e, link.href)}
               aria-label={`Navigate to ${link.label}`}
-              className="text-white text-2xl font-medium hover:text-teal transition-colors"
+              className="text-ink-primary text-2xl font-medium hover:text-teal transition-colors"
             >
               {link.label}
             </a>
