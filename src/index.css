@@ -8,9 +8,21 @@
   --color-amber: #F59E0B;
   --color-purple: #8B6FBE;
   --font-sans: 'Inter', sans-serif;
+  --animate-breathe: breathe 6s ease-in-out infinite;
+  --animate-pulse-fade: pulse-fade 2s ease-in-out infinite;
 }
 
 body {
   margin: 0;
   background: #0D1B2A;
+}
+
+@keyframes breathe {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.03); }
+}
+
+@keyframes pulse-fade {
+  0%, 100% { opacity: 0.3; transform: translateY(0); }
+  50% { opacity: 0.8; transform: translateY(4px); }
 }
