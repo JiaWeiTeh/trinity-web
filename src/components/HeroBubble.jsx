@@ -6,13 +6,14 @@ const defaultZoneWidths = {
   cloud: 0.2222,
 }
 
-// Labels with fixed vertical spread positions (evenly spaced on the right)
+// Labels point to zone boundaries, spread vertically for readability
+// Each label points to the OUTER boundary of the named zone
 const zoneLabels = [
-  { id: 'cloud',     label: 'Cloud',         labelY: 18 },
-  { id: 'shell',     label: 'Shell',  sub: 'neu', labelY: 30 },
-  { id: 'hii',       label: 'Shell',  sub: 'ion', labelY: 42 },
-  { id: 'hotBubble', label: 'Bubble',        labelY: 58 },
-  { id: 'freeWind',  label: 'Winds',         labelY: 72 },
+  { id: 'cloud',     boundary: 'cloudOuter',     label: 'Cloud',  labelY: 15 },
+  { id: 'shell',     boundary: 'shellOuter',     label: 'Shell',  sub: 'neu', labelY: 29 },
+  { id: 'hii',       boundary: 'hiiOuter',       label: 'Shell',  sub: 'ion', labelY: 43 },
+  { id: 'hotBubble', boundary: 'hotBubbleOuter', label: 'Bubble', labelY: 60 },
+  { id: 'freeWind',  boundary: 'freeWindOuter',  label: 'Winds',  labelY: 74 },
 ]
 
 export default function HeroBubble({
@@ -21,6 +22,7 @@ export default function HeroBubble({
   chevronOpacity = 1,
   titleOpacity = 1,
   labelOpacity = 0,
+  dispersalProgress = 0,
   children,
 }) {
   const w = { ...defaultZoneWidths, ...zoneWidths }
@@ -41,13 +43,13 @@ export default function HeroBubble({
   const total = cloudOuter
   const scale = (frac) => (frac / total) * R
 
-  // Midpoint radius for each zone (where the tick mark meets the zone)
-  const zoneMidR = {
-    cloud: scale((shellOuter + cloudOuter) / 2),
-    shell: scale((hiiOuter + shellOuter) / 2),
-    hii: scale((hotBubbleOuter + hiiOuter) / 2),
-    hotBubble: scale((freeWindOuter + hotBubbleOuter) / 2),
-    freeWind: scale(freeWindOuter / 2),
+  // Boundary radii for label positioning
+  const boundaries = {
+    cloudOuter: scale(cloudOuter),
+    shellOuter: scale(shellOuter),
+    hiiOuter: scale(hiiOuter),
+    hotBubbleOuter: scale(hotBubbleOuter),
+    freeWindOuter: scale(freeWindOuter),
   }
 
   const zones = [
@@ -58,8 +60,12 @@ export default function HeroBubble({
     { id: 'freeWind', outer: scale(freeWindOuter), fill: '#2A3A4E' },
   ]
 
-  const labelAreaX = 108
-  const tickLen = 1.2
+  const labelAreaX = 110
+  const tickLen = 1.0
+
+  // Dispersal: scale up and fade out
+  const dispersalScale = 1 + dispersalProgress * 2.5
+  const dispersalOpacity = 1 - dispersalProgress
 
   return (
     <section className="relative flex flex-col items-center justify-center h-screen w-screen bg-navy select-none overflow-hidden">
@@ -76,7 +82,12 @@ export default function HeroBubble({
       {/* Bubble SVG */}
       <div
         className="w-72 h-72 md:w-[22rem] md:h-[22rem] lg:w-[26rem] lg:h-[26rem] z-10 animate-breathe"
-        style={{ animationPlayState: breathing ? 'running' : 'paused' }}
+        style={{
+          animationPlayState: breathing ? 'running' : 'paused',
+          transform: `scale(${dispersalScale})`,
+          opacity: dispersalOpacity,
+          transition: dispersalProgress > 0 ? 'none' : undefined,
+        }}
       >
         <svg viewBox="-10 0 145 100" xmlns="http://www.w3.org/2000/svg">
           <defs>
@@ -97,44 +108,63 @@ export default function HeroBubble({
             />
           ))}
 
-          {/* Zone labels with angled leader lines */}
+          {/* Star cluster at center */}
+          <g transform="translate(50,50)">
+            {/* Central stars — small 4-pointed sparkles */}
+            {[
+              { x: 0, y: 0, s: 1.8 },
+              { x: -2.5, y: -1.8, s: 1.2 },
+              { x: 2.2, y: -2.0, s: 1.0 },
+              { x: -1.0, y: 2.2, s: 1.1 },
+              { x: 2.8, y: 1.5, s: 0.8 },
+            ].map((star, i) => (
+              <g key={i} transform={`translate(${star.x},${star.y})`}>
+                <path
+                  d={`M0,${-star.s} L${star.s * 0.25},${-star.s * 0.25} L${star.s},0 L${star.s * 0.25},${star.s * 0.25} L0,${star.s} L${-star.s * 0.25},${star.s * 0.25} L${-star.s},0 L${-star.s * 0.25},${-star.s * 0.25}Z`}
+                  fill="#F5E6C8"
+                  fillOpacity="0.9"
+                />
+              </g>
+            ))}
+          </g>
+
+          {/* Zone labels with leader lines to actual boundaries */}
           <g style={{ opacity: labelOpacity, transition: 'opacity 0.3s ease-out' }}>
             {zoneLabels.map((zl) => {
-              const midR = zoneMidR[zl.id]
-              // Point on the circle boundary at the label's angle
+              const boundaryR = boundaries[zl.boundary]
               const labelY = zl.labelY
+              // Find intersection of boundary circle with the horizontal line at labelY
               const dy = labelY - 50
-              const dx = Math.sqrt(Math.max(0, midR * midR - dy * dy))
-              const circleX = 50 + dx
-              const circleY = labelY
+              const rSq = boundaryR * boundaryR
+              const dySq = dy * dy
+              // If the horizontal line intersects the circle
+              const intersects = rSq > dySq
+              const circleX = intersects ? 50 + Math.sqrt(rSq - dySq) : 50 + boundaryR * 0.3
 
               return (
                 <g key={zl.id}>
-                  {/* Tick mark at zone midpoint */}
-                  <line
-                    x1={circleX - tickLen}
-                    y1={circleY}
-                    x2={circleX + tickLen}
-                    y2={circleY}
-                    stroke="white"
-                    strokeWidth="0.4"
-                    strokeOpacity="0.7"
+                  {/* Small dot at boundary intersection */}
+                  <circle
+                    cx={circleX}
+                    cy={labelY}
+                    r="0.6"
+                    fill="white"
+                    fillOpacity="0.7"
                   />
-                  {/* Horizontal leader line from tick to label area */}
+                  {/* Leader line from boundary to label */}
                   <line
                     x1={circleX + tickLen}
-                    y1={circleY}
+                    y1={labelY}
                     x2={labelAreaX - 1}
-                    y2={circleY}
+                    y2={labelY}
                     stroke="white"
                     strokeWidth="0.25"
-                    strokeOpacity="0.4"
-                    strokeDasharray="1 0.8"
+                    strokeOpacity="0.35"
                   />
                   {/* Label text */}
                   <text
                     x={labelAreaX}
-                    y={zl.sub ? circleY - 0.3 : circleY + 1.2}
+                    y={zl.sub ? labelY - 0.3 : labelY + 1.2}
                     fill="white"
                     fillOpacity="0.9"
                     fontSize="3.5"
@@ -146,7 +176,7 @@ export default function HeroBubble({
                   {zl.sub && (
                     <text
                       x={labelAreaX}
-                      y={circleY + 3.5}
+                      y={labelY + 3.5}
                       fill="white"
                       fillOpacity="0.5"
                       fontSize="2.6"
@@ -166,6 +196,16 @@ export default function HeroBubble({
 
       {/* Annotations slot */}
       {children}
+
+      {/* Bright flash overlay during dispersal */}
+      {dispersalProgress > 0.6 && (
+        <div
+          className="absolute inset-0 z-30 pointer-events-none"
+          style={{
+            background: `radial-gradient(circle, rgba(255,255,255,${(dispersalProgress - 0.6) * 0.6}) 0%, transparent 70%)`,
+          }}
+        />
+      )}
 
       {/* Scroll indicator */}
       <div className="absolute bottom-8 animate-pulse-fade z-10" style={{ opacity: chevronOpacity }}>
