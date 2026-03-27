@@ -1,9 +1,9 @@
 const defaultZoneWidths = {
-  freeWind: 0.08,
-  hotBubble: 0.28,
-  hii: 0.06,
-  shell: 0.15,
-  cloud: 0.2,
+  freeWind: 0.1667,
+  hotBubble: 0.4444,
+  hii: 0.0556,
+  shell: 0.1111,
+  cloud: 0.2222,
 }
 
 export default function HeroBubble({
