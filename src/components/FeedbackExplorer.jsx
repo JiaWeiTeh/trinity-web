@@ -93,7 +93,7 @@ function XAxisLabel({ viewBox }) {
       x={x + width / 2}
       y={y + 18}
       textAnchor="middle"
-      fill="rgba(255,255,255,0.5)"
+      fill="#5E6776"
       fontSize={12}
     >
       <tspan fontStyle="italic">t</tspan>
@@ -105,8 +105,8 @@ function XAxisLabel({ viewBox }) {
 function CustomTooltip({ active, payload, label }) {
   if (!active || !payload?.length) return null
   return (
-    <div className="bg-navy/95 border border-white/10 rounded-lg px-3 py-2 text-xs">
-      <p className="text-white/60 mb-1">
+    <div className="bg-ink-primary/95 border border-ink-line/20 rounded-lg px-3 py-2 text-xs">
+      <p className="text-paper/60 mb-1">
         <span className="italic">t</span> = {label} Myr
       </p>
       {[...payload].reverse().map((p) => (
@@ -137,21 +137,22 @@ export default function FeedbackExplorer() {
       <div className="flex flex-col md:flex-row gap-8">
         {/* Chart */}
         <div className="w-full md:w-[65%]">
+          <div className="bg-card border border-border-card rounded-lg p-4">
           <ResponsiveContainer width="100%" height={340}>
             <AreaChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 20 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(30, 36, 48, 0.06)" />
               <XAxis
                 dataKey="time"
-                stroke="rgba(255,255,255,0.4)"
-                tick={{ fill: 'rgba(255,255,255,0.6)', fontSize: 12 }}
+                stroke="rgba(30, 36, 48, 0.3)"
+                tick={{ fill: '#5E6776', fontSize: 12 }}
               >
                 <Label content={<XAxisLabel />} position="bottom" />
               </XAxis>
               <YAxis
                 domain={[0, 1]}
-                stroke="rgba(255,255,255,0.4)"
-                tick={{ fill: 'rgba(255,255,255,0.6)', fontSize: 12 }}
-                label={{ value: 'Force fraction', angle: -90, position: 'insideLeft', offset: 10, fill: 'rgba(255,255,255,0.5)', fontSize: 12 }}
+                stroke="rgba(30, 36, 48, 0.3)"
+                tick={{ fill: '#5E6776', fontSize: 12 }}
+                label={{ value: 'Force fraction', angle: -90, position: 'insideLeft', offset: 10, fill: '#5E6776', fontSize: 12 }}
               />
               <Tooltip content={<CustomTooltip />} />
               {STACK_ORDER.map((key) => (
@@ -168,14 +169,15 @@ export default function FeedbackExplorer() {
               ))}
             </AreaChart>
           </ResponsiveContainer>
+          </div>
         </div>
 
         {/* Controls */}
         <div className="w-full md:w-[35%] flex flex-col justify-center gap-8">
           <div>
             <div className="flex justify-between items-baseline mb-2">
-              <label className="text-white/70 text-sm font-medium">Cloud mass</label>
-              <span className="text-white text-sm">
+              <label className="text-[13px] text-ink-secondary" style={{ fontFamily: 'var(--font-ui)' }}>Cloud mass</label>
+              <span className="text-ink-primary font-medium text-sm" style={{ fontFamily: 'var(--font-ui)' }}>
                 10<sup className="text-[0.7em] align-super">{logM.toFixed(1)}</sup>{' '}
                 <span className="italic">M</span><sub className="text-[0.7em]">☉</sub>
               </span>
@@ -189,7 +191,7 @@ export default function FeedbackExplorer() {
               onChange={(e) => setLogM(parseFloat(e.target.value))}
               className="w-full slider"
             />
-            <div className="flex justify-between text-white/30 text-xs mt-1">
+            <div className="flex justify-between text-[12px] text-ink-tertiary mt-1" style={{ fontFamily: 'var(--font-ui)' }}>
               <span>10<sup className="text-[0.7em] align-super">4</sup></span>
               <span>10<sup className="text-[0.7em] align-super">7</sup></span>
             </div>
@@ -197,10 +199,10 @@ export default function FeedbackExplorer() {
 
           <div>
             <div className="flex justify-between items-baseline mb-2">
-              <label className="text-white/70 text-sm font-medium">
+              <label className="text-[13px] text-ink-secondary" style={{ fontFamily: 'var(--font-ui)' }}>
                 Star formation efficiency (<span className="italic">ε</span><sub className="text-[0.7em]">sf</sub>)
               </label>
-              <span className="text-white text-sm">{sfe}%</span>
+              <span className="text-ink-primary font-medium text-sm" style={{ fontFamily: 'var(--font-ui)' }}>{sfe}%</span>
             </div>
             <input
               type="range"
@@ -211,14 +213,14 @@ export default function FeedbackExplorer() {
               onChange={(e) => setSfe(parseInt(e.target.value))}
               className="w-full slider"
             />
-            <div className="flex justify-between text-white/30 text-xs mt-1">
+            <div className="flex justify-between text-[12px] text-ink-tertiary mt-1" style={{ fontFamily: 'var(--font-ui)' }}>
               <span>5%</span>
               <span>30%</span>
             </div>
           </div>
 
           {/* Legend */}
-          <div className="flex flex-wrap gap-x-4 gap-y-2 text-xs text-white/60">
+          <div className="flex flex-wrap gap-x-4 gap-y-2 text-[13px] text-ink-secondary" style={{ fontFamily: 'var(--font-ui)' }}>
             {[...STACK_ORDER].reverse().map((key) => (
               <span key={key} className="flex items-center gap-1.5">
                 <span
@@ -234,14 +236,15 @@ export default function FeedbackExplorer() {
 
       {/* Footer notes */}
       <div className="mt-6 space-y-2">
-        <p className="text-white/40 text-sm italic">
+        <p className="text-[14px] italic text-ink-tertiary" style={{ fontFamily: 'var(--font-display)' }}>
           Illustrative; quantitative results in Paper I (Teh et al., in prep.)
         </p>
         <a
           href="https://trinitysf.readthedocs.io/"
           target="_blank"
           rel="noopener noreferrer"
-          className="text-teal/70 text-sm hover:text-teal transition-colors inline-flex items-center gap-1"
+          className="text-teal text-[13px] underline underline-offset-[3px] decoration-1 inline-flex items-center gap-1"
+          style={{ fontFamily: 'var(--font-ui)' }}
         >
           How does TRINITY compute this? →
         </a>
