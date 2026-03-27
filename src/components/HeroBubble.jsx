@@ -43,40 +43,35 @@ export default function HeroBubble({
   const scale = (frac) => (frac / total) * R
 
   const zones = [
-    // Ambient cloud (outermost, drawn first so it's behind)
+    // Ambient cloud (outermost) — light grey
     {
       id: 'cloud',
-      inner: scale(cloudInner),
       outer: scale(cloudOuter),
       fill: 'url(#cloudGradient)',
     },
-    // Swept-up shell
+    // Swept-up neutral shell — dark maroon
     {
       id: 'shell',
-      inner: scale(shellInner),
       outer: scale(shellOuter),
-      fill: '#6BAE8A',
+      fill: '#8B4D5C',
     },
-    // Photoionised HII layer
+    // Photoionised shell (HII) — muted rose/pink
     {
       id: 'hii',
-      inner: scale(hiiInner),
       outer: scale(hiiOuter),
-      fill: '#0EA5C8',
+      fill: '#C4929B',
     },
-    // Hot bubble
+    // Hot bubble — light blue
     {
       id: 'hotBubble',
-      inner: scale(hotBubbleInner),
       outer: scale(hotBubbleOuter),
-      fill: 'url(#hotBubbleGradient)',
+      fill: '#B4CEE8',
     },
-    // Free-wind zone (innermost)
+    // Free-wind zone (innermost) — dark navy
     {
       id: 'freeWind',
-      inner: scale(freeWindInner),
       outer: scale(freeWindOuter),
-      fill: '#E85D4A',
+      fill: '#2A3A4E',
     },
   ]
 
@@ -99,14 +94,9 @@ export default function HeroBubble({
       >
         <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
           <defs>
-            {/* Hot bubble radial gradient — coral fading outward */}
-            <radialGradient id="hotBubbleGradient" cx="50%" cy="50%" r="50%">
-              <stop offset="0%" stopColor="#E85D4A" stopOpacity="0.9" />
-              <stop offset="100%" stopColor="#E85D4A" stopOpacity="0.3" />
-            </radialGradient>
-            {/* Cloud gradient — navy fading into background */}
+            {/* Cloud gradient — light grey fading into navy background */}
             <radialGradient id="cloudGradient" cx="50%" cy="50%" r="50%">
-              <stop offset="0%" stopColor="#1B3A5C" stopOpacity="0.6" />
+              <stop offset="0%" stopColor="#C8C8D0" stopOpacity="0.5" />
               <stop offset="100%" stopColor="#0D1B2A" stopOpacity="0" />
             </radialGradient>
           </defs>
