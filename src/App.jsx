@@ -92,8 +92,22 @@ export default function App() {
   // Dispersal: 0.78–1.0 maps to 0–1
   const dispersalProgress = progress > 0.78 ? Math.min(1, (progress - 0.78) / 0.22) : 0
 
-  // Content fades in during the last part of dispersal
-  const contentOpacity = dispersalProgress > 0.5 ? Math.min(1, (dispersalProgress - 0.5) / 0.5) : 0
+  // Smooth ease-in-out curve for crossfade
+  // Content begins appearing at 40% dispersal, fully visible at 90%
+  const rawContentT = dispersalProgress > 0.4 ? Math.min(1, (dispersalProgress - 0.4) / 0.5) : 0
+  // Cubic ease-in-out for a smooth, cinematic feel
+  const contentOpacity = rawContentT < 0.5
+    ? 4 * rawContentT * rawContentT * rawContentT
+    : 1 - Math.pow(-2 * rawContentT + 2, 3) / 2
+
+  // Bubble fades out slightly ahead so there's a brief bright gap
+  const rawBubbleT = dispersalProgress > 0.3 ? Math.min(1, (dispersalProgress - 0.3) / 0.5) : 0
+  const bubbleFadeOut = rawBubbleT < 0.5
+    ? 4 * rawBubbleT * rawBubbleT * rawBubbleT
+    : 1 - Math.pow(-2 * rawBubbleT + 2, 3) / 2
+
+  // Content scales from 0.97 → 1.0 as it surfaces
+  const contentScale = 0.97 + 0.03 * contentOpacity
 
   return (
     <>
@@ -102,10 +116,11 @@ export default function App() {
         <div className="sticky top-0 h-screen overflow-hidden">
           {/* Bubble — fades out during dispersal */}
           <div
-            className="absolute inset-0 z-10"
+            className="absolute inset-0 z-10 will-change-[opacity]"
             style={{
-              opacity: 1 - contentOpacity,
-              pointerEvents: contentOpacity >= 1 ? 'none' : 'auto',
+              opacity: 1 - bubbleFadeOut,
+              pointerEvents: bubbleFadeOut >= 1 ? 'none' : 'auto',
+              transition: 'opacity 0.15s ease-out',
             }}
           >
             <HeroBubble
@@ -137,10 +152,12 @@ export default function App() {
 
           {/* Content surfaces in the same viewport as bubble fades */}
           <div
-            className="absolute inset-0 z-20 overflow-y-auto bg-navy"
+            className="absolute inset-0 z-20 overflow-y-auto bg-navy will-change-[opacity,transform]"
             style={{
               opacity: contentOpacity,
-              pointerEvents: contentOpacity > 0 ? 'auto' : 'none',
+              transform: `scale(${contentScale})`,
+              pointerEvents: contentOpacity > 0.05 ? 'auto' : 'none',
+              transition: 'opacity 0.15s ease-out, transform 0.15s ease-out',
             }}
           >
             <ContentSections />
