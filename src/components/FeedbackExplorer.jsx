@@ -61,6 +61,16 @@ function interpolateData(logM, sfe) {
     result[key] = lerpArraysPair(top, bot, ts)
   }
 
+  // Normalize: ensure all channels sum to exactly 1.0 at each time step
+  // (bilinear interpolation can introduce floating-point drift)
+  for (let i = 0; i < result.time.length; i++) {
+    let sum = 0
+    for (const key of DATA_KEYS) sum += result[key][i]
+    if (sum > 0) {
+      for (const key of DATA_KEYS) result[key][i] /= sum
+    }
+  }
+
   return result
 }
 
