@@ -33,7 +33,7 @@ function lerpZones(from, to, t) {
 // 0.20–0.40  energy → transition
 // 0.40–0.60  transition → momentum
 // 0.60–0.78  hold momentum-driven
-// 0.78–1.00  dispersal (cloud expands, fades, flash)
+// 0.78–1.00  dispersal (cloud expands, fades, flash → content surfaces)
 function getZoneWidths(progress) {
   if (progress <= 0.20) {
     return phases.energy
@@ -92,41 +92,62 @@ export default function App() {
   // Dispersal: 0.78–1.0 maps to 0–1
   const dispersalProgress = progress > 0.78 ? Math.min(1, (progress - 0.78) / 0.22) : 0
 
+  // Content fades in during the last part of dispersal
+  const contentOpacity = dispersalProgress > 0.5 ? Math.min(1, (dispersalProgress - 0.5) / 0.5) : 0
+
   return (
     <>
       <Navbar />
       <div ref={containerRef} style={{ height: '500vh' }}>
-        <div className="sticky top-0 h-screen">
-          <HeroBubble
-            zoneWidths={zoneWidths}
-            breathing={progress < 0.005}
-            chevronOpacity={chevronOpacity}
-            titleOpacity={titleOpacity}
-            labelOpacity={labelOpacity}
-            dispersalProgress={dispersalProgress}
+        <div className="sticky top-0 h-screen overflow-hidden">
+          {/* Bubble — fades out during dispersal */}
+          <div
+            className="absolute inset-0 z-10"
+            style={{
+              opacity: 1 - contentOpacity,
+              pointerEvents: contentOpacity >= 1 ? 'none' : 'auto',
+            }}
           >
-            {/* Annotations — positioned just above the bubble */}
-            <div className="absolute left-0 right-0 top-[22%] md:top-[25%] flex justify-center px-8 z-20 pointer-events-none">
-              <div className="relative flex items-center justify-center w-full max-w-xl" style={{ minHeight: '3rem' }}>
-                {annotations.map((a, i) => {
-                  const opacity = getAnnotationOpacity(progress, a.fadeIn, a.fullStart, a.fullEnd, a.fadeOut)
-                  return (
-                    <p
-                      key={i}
-                      className="absolute inset-0 flex items-center justify-center text-center text-sm md:text-base leading-relaxed text-white/80 font-medium italic"
-                      style={{ opacity, transition: 'opacity 0.1s ease-out' }}
-                    >
-                      {a.text}
-                    </p>
-                  )
-                })}
+            <HeroBubble
+              zoneWidths={zoneWidths}
+              breathing={progress < 0.005}
+              chevronOpacity={chevronOpacity}
+              titleOpacity={titleOpacity}
+              labelOpacity={labelOpacity}
+              dispersalProgress={dispersalProgress}
+            >
+              <div className="absolute left-0 right-0 top-[22%] md:top-[25%] flex justify-center px-8 z-20 pointer-events-none">
+                <div className="relative flex items-center justify-center w-full max-w-xl" style={{ minHeight: '3rem' }}>
+                  {annotations.map((a, i) => {
+                    const opacity = getAnnotationOpacity(progress, a.fadeIn, a.fullStart, a.fullEnd, a.fadeOut)
+                    return (
+                      <p
+                        key={i}
+                        className="absolute inset-0 flex items-center justify-center text-center text-sm md:text-base leading-relaxed text-white/80 font-medium italic"
+                        style={{ opacity, transition: 'opacity 0.1s ease-out' }}
+                      >
+                        {a.text}
+                      </p>
+                    )
+                  })}
+                </div>
               </div>
-            </div>
-          </HeroBubble>
+            </HeroBubble>
+          </div>
+
+          {/* Content surfaces in the same viewport as bubble fades */}
+          <div
+            className="absolute inset-0 z-20 overflow-y-auto bg-navy"
+            style={{
+              opacity: contentOpacity,
+              pointerEvents: contentOpacity > 0 ? 'auto' : 'none',
+            }}
+          >
+            <ContentSections />
+            <Footer />
+          </div>
         </div>
       </div>
-      <ContentSections />
-      <Footer />
     </>
   )
 }
