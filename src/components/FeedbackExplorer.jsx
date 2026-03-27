@@ -25,13 +25,17 @@ function lerpArraysPair(a, b, t) {
 }
 
 function interpolateData(logM, sfe) {
+  // Clamp to grid range to prevent extrapolation
+  const clampedLogM = Math.max(LOG_M_VALUES[0], Math.min(LOG_M_VALUES[LOG_M_VALUES.length - 1], logM))
+  const clampedSfe = Math.max(SFE_VALUES[0], Math.min(SFE_VALUES[SFE_VALUES.length - 1], sfe))
+
   let li = 0
   for (let i = 0; i < LOG_M_VALUES.length - 1; i++) {
-    if (logM >= LOG_M_VALUES[i]) li = i
+    if (clampedLogM >= LOG_M_VALUES[i]) li = i
   }
   let si = 0
   for (let i = 0; i < SFE_VALUES.length - 1; i++) {
-    if (sfe >= SFE_VALUES[i]) si = i
+    if (clampedSfe >= SFE_VALUES[i]) si = i
   }
 
   const l0 = LOG_M_VALUES[li]
@@ -39,8 +43,8 @@ function interpolateData(logM, sfe) {
   const s0 = SFE_VALUES[si]
   const s1 = SFE_VALUES[Math.min(si + 1, SFE_VALUES.length - 1)]
 
-  const tl = l1 !== l0 ? (logM - l0) / (l1 - l0) : 0
-  const ts = s1 !== s0 ? (sfe - s0) / (s1 - s0) : 0
+  const tl = l1 !== l0 ? (clampedLogM - l0) / (l1 - l0) : 0
+  const ts = s1 !== s0 ? (clampedSfe - s0) / (s1 - s0) : 0
 
   const e00 = findEntry(l0, s0)
   const e10 = findEntry(l1, s0)

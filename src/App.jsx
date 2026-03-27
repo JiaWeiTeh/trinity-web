@@ -27,20 +27,22 @@ function lerpZones(from, to, t) {
   return result
 }
 
+// Progress layout:
+// 0.00–0.20  hold energy-driven
+// 0.20–0.40  energy → transition
+// 0.40–0.60  transition → momentum
+// 0.60–0.78  hold momentum-driven
+// 0.78–1.00  dispersal (cloud expands, fades, flash)
 function getZoneWidths(progress) {
-  if (progress <= 0.30) {
-    // Hold at energy-driven
+  if (progress <= 0.20) {
     return phases.energy
-  } else if (progress <= 0.55) {
-    // Energy → transition
-    const t = (progress - 0.30) / 0.25
+  } else if (progress <= 0.40) {
+    const t = (progress - 0.20) / 0.20
     return lerpZones(phases.energy, phases.transition, t)
-  } else if (progress <= 0.80) {
-    // Transition → momentum
-    const t = (progress - 0.55) / 0.25
+  } else if (progress <= 0.60) {
+    const t = (progress - 0.40) / 0.20
     return lerpZones(phases.transition, phases.momentum, t)
   } else {
-    // Hold at momentum-driven
     return phases.momentum
   }
 }
@@ -56,15 +58,19 @@ function getAnnotationOpacity(progress, fadeIn, fullStart, fullEnd, fadeOut) {
 const annotations = [
   {
     text: 'Energy-driven: hot bubble pressure inflates the shell.',
-    fadeIn: 0.05, fullStart: 0.10, fullEnd: 0.25, fadeOut: 0.30,
+    fadeIn: 0.03, fullStart: 0.06, fullEnd: 0.16, fadeOut: 0.20,
   },
   {
     text: 'Transition: thermal energy radiates away.',
-    fadeIn: 0.30, fullStart: 0.35, fullEnd: 0.55, fadeOut: 0.60,
+    fadeIn: 0.20, fullStart: 0.25, fullEnd: 0.38, fadeOut: 0.42,
   },
   {
     text: 'Momentum-driven: photoionised gas pressure and ram pressure sustain expansion.',
-    fadeIn: 0.60, fullStart: 0.65, fullEnd: 0.90, fadeOut: 0.95,
+    fadeIn: 0.45, fullStart: 0.50, fullEnd: 0.58, fadeOut: 0.62,
+  },
+  {
+    text: 'Cloud dispersal.',
+    fadeIn: 0.80, fullStart: 0.84, fullEnd: 0.90, fadeOut: 0.95,
   },
 ]
 
@@ -74,18 +80,21 @@ export default function App() {
   const zoneWidths = getZoneWidths(progress)
 
   // Title and chevron fade out as scroll begins
-  const titleOpacity = progress < 0.02 ? 1 : Math.max(0, 1 - (progress - 0.02) / 0.05)
-  const chevronOpacity = progress < 0.05 ? 1 : Math.max(0, 1 - (progress - 0.05) / 0.05)
+  const titleOpacity = progress < 0.02 ? 1 : Math.max(0, 1 - (progress - 0.02) / 0.04)
+  const chevronOpacity = progress < 0.03 ? 1 : Math.max(0, 1 - (progress - 0.03) / 0.04)
 
   // Zone labels visible during energy hold and momentum hold
-  const energyLabelOpacity = getAnnotationOpacity(progress, 0.05, 0.10, 0.22, 0.30)
-  const momentumLabelOpacity = getAnnotationOpacity(progress, 0.82, 0.87, 0.95, 1.0)
+  const energyLabelOpacity = getAnnotationOpacity(progress, 0.03, 0.06, 0.16, 0.20)
+  const momentumLabelOpacity = getAnnotationOpacity(progress, 0.62, 0.65, 0.74, 0.78)
   const labelOpacity = Math.max(energyLabelOpacity, momentumLabelOpacity)
+
+  // Dispersal: 0.78–1.0 maps to 0–1
+  const dispersalProgress = progress > 0.78 ? Math.min(1, (progress - 0.78) / 0.22) : 0
 
   return (
     <>
       <Navbar />
-      <div ref={containerRef} style={{ height: '400vh' }}>
+      <div ref={containerRef} style={{ height: '500vh' }}>
         <div className="sticky top-0 h-screen">
           <HeroBubble
             zoneWidths={zoneWidths}
@@ -93,6 +102,7 @@ export default function App() {
             chevronOpacity={chevronOpacity}
             titleOpacity={titleOpacity}
             labelOpacity={labelOpacity}
+            dispersalProgress={dispersalProgress}
           >
             {/* Annotations — positioned just above the bubble */}
             <div className="absolute left-0 right-0 top-[22%] md:top-[25%] flex justify-center px-8 z-20 pointer-events-none">
