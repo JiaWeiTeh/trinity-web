@@ -12,6 +12,10 @@
   --animate-pulse-fade: pulse-fade 2s ease-in-out infinite;
 }
 
+html {
+  overscroll-behavior: none;
+}
+
 body {
   margin: 0;
   background: #0D1B2A;

@@ -69,7 +69,8 @@ export default function App() {
   const progress = useScrollProgress(containerRef)
   const zoneWidths = getZoneWidths(progress)
 
-  // Chevron fades out as scroll begins
+  // Title and chevron fade out as scroll begins
+  const titleOpacity = progress < 0.02 ? 1 : Math.max(0, 1 - (progress - 0.02) / 0.05)
   const chevronOpacity = progress < 0.05 ? 1 : Math.max(0, 1 - (progress - 0.05) / 0.05)
 
   return (
@@ -78,18 +79,19 @@ export default function App() {
         <div className="sticky top-0 h-screen">
           <HeroBubble
             zoneWidths={zoneWidths}
-            breathing={progress === 0}
+            breathing={progress < 0.005}
             chevronOpacity={chevronOpacity}
+            titleOpacity={titleOpacity}
           >
-            {/* Annotations overlay */}
-            <div className="absolute left-0 right-0 flex justify-center" style={{ top: '18%' }}>
-              <div className="relative h-8 flex items-center justify-center">
+            {/* Annotations — appear in the title area after it fades out */}
+            <div className="absolute left-0 right-0 top-[12%] flex justify-center px-4 z-20 pointer-events-none">
+              <div className="relative h-12 flex items-center justify-center max-w-2xl">
                 {annotations.map((a, i) => {
                   const opacity = getAnnotationOpacity(progress, a.fadeIn, a.fullStart, a.fullEnd, a.fadeOut)
                   return (
                     <span
                       key={i}
-                      className="absolute whitespace-nowrap text-xs md:text-sm text-white/80 font-medium italic"
+                      className="absolute text-center text-sm md:text-base text-white/80 font-medium italic"
                       style={{ opacity, transition: 'opacity 0.1s ease-out' }}
                     >
                       {a.text}

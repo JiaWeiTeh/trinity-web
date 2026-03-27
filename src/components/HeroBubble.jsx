@@ -10,6 +10,7 @@ export default function HeroBubble({
   zoneWidths = defaultZoneWidths,
   breathing = true,
   chevronOpacity = 1,
+  titleOpacity = 1,
   children,
 }) {
   const w = { ...defaultZoneWidths, ...zoneWidths }
@@ -82,16 +83,19 @@ export default function HeroBubble({
   return (
     <section className="relative flex flex-col items-center justify-center h-screen w-screen bg-navy select-none overflow-hidden">
       {/* Title */}
-      <h1 className="text-5xl md:text-7xl font-bold text-white tracking-widest mb-2 z-10">
-        TRINITY
-      </h1>
-      <p className="text-sm md:text-base text-white/60 font-medium tracking-wide mb-8 z-10">
-        Feedback-driven bubble evolution in molecular clouds
-      </p>
+      <div className="z-10" style={{ opacity: titleOpacity, transition: 'opacity 0.15s ease-out' }}>
+        <h1 className="text-5xl md:text-7xl font-bold text-white tracking-widest mb-2 text-center">
+          TRINITY
+        </h1>
+        <p className="text-sm md:text-base text-white/60 font-medium tracking-wide mb-8 text-center">
+          Feedback-driven bubble evolution in molecular clouds
+        </p>
+      </div>
 
       {/* Bubble SVG */}
       <div
-        className={`w-64 h-64 md:w-80 md:h-80 lg:w-96 lg:h-96 z-10${breathing ? ' animate-breathe' : ''}`}
+        className="w-64 h-64 md:w-80 md:h-80 lg:w-96 lg:h-96 z-10 animate-breathe"
+        style={{ animationPlayState: breathing ? 'running' : 'paused' }}
       >
         <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
           <defs>
