@@ -1,5 +1,7 @@
 import { useRef } from 'react'
 import HeroBubble from './components/HeroBubble'
+import Navbar from './components/Navbar'
+import ContentSections from './components/ContentSections'
 import useScrollProgress from './hooks/useScrollProgress'
 
 // Phase keyframes: energy-driven → transition → momentum-driven
@@ -75,6 +77,7 @@ export default function App() {
 
   return (
     <>
+      <Navbar />
       <div ref={containerRef} style={{ height: '400vh' }}>
         <div className="sticky top-0 h-screen">
           <HeroBubble
@@ -84,18 +87,18 @@ export default function App() {
             titleOpacity={titleOpacity}
           >
             {/* Annotations — appear in the title area after it fades out */}
-            <div className="absolute left-0 right-0 top-[12%] flex justify-center px-4 z-20 pointer-events-none">
-              <div className="relative h-12 flex items-center justify-center max-w-2xl">
+            <div className="absolute left-0 right-0 top-[10%] flex justify-center px-8 z-20 pointer-events-none">
+              <div className="relative flex items-center justify-center w-full max-w-xl" style={{ minHeight: '3rem' }}>
                 {annotations.map((a, i) => {
                   const opacity = getAnnotationOpacity(progress, a.fadeIn, a.fullStart, a.fullEnd, a.fadeOut)
                   return (
-                    <span
+                    <p
                       key={i}
-                      className="absolute text-center text-sm md:text-base text-white/80 font-medium italic"
+                      className="absolute inset-0 flex items-center justify-center text-center text-sm md:text-base leading-relaxed text-white/80 font-medium italic"
                       style={{ opacity, transition: 'opacity 0.1s ease-out' }}
                     >
                       {a.text}
-                    </span>
+                    </p>
                   )
                 })}
               </div>
@@ -103,8 +106,7 @@ export default function App() {
           </HeroBubble>
         </div>
       </div>
-      {/* Extra space so unsticking is visible */}
-      <div style={{ height: '20vh' }} />
+      <ContentSections />
     </>
   )
 }
