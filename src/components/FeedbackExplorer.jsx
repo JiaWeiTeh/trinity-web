@@ -7,6 +7,7 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
+  Label,
 } from 'recharts'
 import gridData from '../data/feedbackGrid.json'
 
@@ -25,7 +26,6 @@ function lerpArraysPair(a, b, t) {
 }
 
 function interpolateData(logM, sfe) {
-  // Clamp to grid range to prevent extrapolation
   const clampedLogM = Math.max(LOG_M_VALUES[0], Math.min(LOG_M_VALUES[LOG_M_VALUES.length - 1], logM))
   const clampedSfe = Math.max(SFE_VALUES[0], Math.min(SFE_VALUES[SFE_VALUES.length - 1], sfe))
 
@@ -68,12 +68,29 @@ const CHANNEL_META = {
   gravity: { name: 'Gravity', color: '#3A3A4A' },
   winds:   { name: 'Winds', color: '#5B8FC9' },
   sn:      { name: 'Supernovae', color: '#F59E0B' },
-  phii:    { name: 'P\u2095\u1d62\u1d62', color: '#E85D4A' },
-  prad:    { name: 'P\u1d63\u2090\u1d48', color: '#0EA5C8' },
+  phii:    { name: 'Photoionised gas pressure', color: '#E85D4A' },
+  prad:    { name: 'Radiation pressure', color: '#0EA5C8' },
 }
 
 // Stack order (bottom to top): gravity, winds, sn, phii, prad
 const STACK_ORDER = ['gravity', 'winds', 'sn', 'phii', 'prad']
+
+// Custom X-axis label: italic t, upright Myr
+function XAxisLabel({ viewBox }) {
+  const { x, y, width } = viewBox
+  return (
+    <text
+      x={x + width / 2}
+      y={y + 18}
+      textAnchor="middle"
+      fill="rgba(255,255,255,0.5)"
+      fontSize={12}
+    >
+      <tspan fontStyle="italic">t</tspan>
+      <tspan>{' '}(Myr)</tspan>
+    </text>
+  )
+}
 
 function CustomTooltip({ active, payload, label }) {
   if (!active || !payload?.length) return null
@@ -111,14 +128,15 @@ export default function FeedbackExplorer() {
         {/* Chart */}
         <div className="w-full md:w-[65%]">
           <ResponsiveContainer width="100%" height={340}>
-            <AreaChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 5 }}>
+            <AreaChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 20 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
               <XAxis
                 dataKey="time"
                 stroke="rgba(255,255,255,0.4)"
                 tick={{ fill: 'rgba(255,255,255,0.6)', fontSize: 12 }}
-                label={{ value: 't (Myr)', position: 'insideBottom', offset: -2, fill: 'rgba(255,255,255,0.5)', fontSize: 12, fontStyle: 'italic' }}
-              />
+              >
+                <Label content={<XAxisLabel />} position="bottom" />
+              </XAxis>
               <YAxis
                 domain={[0, 1]}
                 stroke="rgba(255,255,255,0.4)"
@@ -147,9 +165,9 @@ export default function FeedbackExplorer() {
           <div>
             <div className="flex justify-between items-baseline mb-2">
               <label className="text-white/70 text-sm font-medium">Cloud mass</label>
-              <span className="text-white text-sm font-mono">
-                10<sup>{logM.toFixed(1)}</sup>{' '}
-                <span className="italic">M</span><sub>&#9737;</sub>
+              <span className="text-white text-sm">
+                10<sup className="text-[0.7em] align-super">{logM.toFixed(1)}</sup>{' '}
+                <span className="italic">M</span><sub className="text-[0.7em]">☉</sub>
               </span>
             </div>
             <input
@@ -162,17 +180,17 @@ export default function FeedbackExplorer() {
               className="w-full slider"
             />
             <div className="flex justify-between text-white/30 text-xs mt-1">
-              <span>10&#8308;</span>
-              <span>10&#8311;</span>
+              <span>10<sup className="text-[0.7em] align-super">4</sup></span>
+              <span>10<sup className="text-[0.7em] align-super">7</sup></span>
             </div>
           </div>
 
           <div>
             <div className="flex justify-between items-baseline mb-2">
               <label className="text-white/70 text-sm font-medium">
-                Star formation efficiency (<span className="italic">&epsilon;</span><sub>sf</sub>)
+                Star formation efficiency (<span className="italic">ε</span><sub className="text-[0.7em]">sf</sub>)
               </label>
-              <span className="text-white text-sm font-mono">{sfe}%</span>
+              <span className="text-white text-sm">{sfe}%</span>
             </div>
             <input
               type="range"
@@ -216,7 +234,7 @@ export default function FeedbackExplorer() {
           rel="noopener noreferrer"
           className="text-teal/70 text-sm hover:text-teal transition-colors inline-flex items-center gap-1"
         >
-          How does TRINITY compute this? &rarr;
+          How does TRINITY compute this? →
         </a>
       </div>
     </div>
