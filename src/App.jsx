@@ -4,11 +4,13 @@ import Navbar from './components/Navbar'
 import ContentSections from './components/ContentSections'
 import useScrollProgress from './hooks/useScrollProgress'
 
-// Phase keyframes: energy-driven (compact) → transition → momentum-driven (expanded)
+// Phase keyframes from TRINITY slice-zone ratios (fractions of total strip width W)
+// Energy-driven: hot bubble dominates interior, R₁ ≪ R₂ ≈ R_IF
+// Momentum-driven: free wind expanded, hot bubble collapsed to sliver, R₁ ≈ R₂
 const phases = {
-  energy:     { freeWind: 0.02, hotBubble: 0.03, hii: 0.06, shell: 0.08, cloud: 0.20 },
-  transition: { freeWind: 0.05, hotBubble: 0.12, hii: 0.10, shell: 0.18, cloud: 0.20 },
-  momentum:   { freeWind: 0.08, hotBubble: 0.30, hii: 0.14, shell: 0.22, cloud: 0.20 },
+  energy:     { freeWind: 0.1667, hotBubble: 0.4444, hii: 0.0556, shell: 0.1111, cloud: 0.2222 },
+  transition: { freeWind: 0.4352, hotBubble: 0.2278, hii: 0.0694, shell: 0.1111, cloud: 0.1565 },
+  momentum:   { freeWind: 0.7037, hotBubble: 0.0111, hii: 0.0833, shell: 0.1111, cloud: 0.0907 },
 }
 
 const zoneKeys = ['freeWind', 'hotBubble', 'hii', 'shell', 'cloud']
@@ -75,6 +77,11 @@ export default function App() {
   const titleOpacity = progress < 0.02 ? 1 : Math.max(0, 1 - (progress - 0.02) / 0.05)
   const chevronOpacity = progress < 0.05 ? 1 : Math.max(0, 1 - (progress - 0.05) / 0.05)
 
+  // Zone labels visible during energy hold and momentum hold
+  const energyLabelOpacity = getAnnotationOpacity(progress, 0.05, 0.10, 0.22, 0.30)
+  const momentumLabelOpacity = getAnnotationOpacity(progress, 0.82, 0.87, 0.95, 1.0)
+  const labelOpacity = Math.max(energyLabelOpacity, momentumLabelOpacity)
+
   return (
     <>
       <Navbar />
@@ -85,9 +92,10 @@ export default function App() {
             breathing={progress < 0.005}
             chevronOpacity={chevronOpacity}
             titleOpacity={titleOpacity}
+            labelOpacity={labelOpacity}
           >
-            {/* Annotations — appear in the title area after it fades out */}
-            <div className="absolute left-0 right-0 top-[10%] flex justify-center px-8 z-20 pointer-events-none">
+            {/* Annotations — positioned just above the bubble */}
+            <div className="absolute left-0 right-0 top-[22%] md:top-[25%] flex justify-center px-8 z-20 pointer-events-none">
               <div className="relative flex items-center justify-center w-full max-w-xl" style={{ minHeight: '3rem' }}>
                 {annotations.map((a, i) => {
                   const opacity = getAnnotationOpacity(progress, a.fadeIn, a.fullStart, a.fullEnd, a.fadeOut)
