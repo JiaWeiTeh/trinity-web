@@ -6,14 +6,13 @@ const defaultZoneWidths = {
   cloud: 0.2222,
 }
 
-// Labels point to zone boundaries, spread vertically for readability
-// Each label points to the OUTER boundary of the named zone
+// Labels point to the midpoint radius of each zone, spread vertically
 const zoneLabels = [
-  { id: 'cloud',     boundary: 'cloudOuter',     label: 'Cloud',  labelY: 15 },
-  { id: 'shell',     boundary: 'shellOuter',     label: 'Shell',  sub: 'neu', labelY: 29 },
-  { id: 'hii',       boundary: 'hiiOuter',       label: 'Shell',  sub: 'ion', labelY: 43 },
-  { id: 'hotBubble', boundary: 'hotBubbleOuter', label: 'Bubble', labelY: 60 },
-  { id: 'freeWind',  boundary: 'freeWindOuter',  label: 'Winds',  labelY: 74 },
+  { id: 'cloud',     label: 'CLOUD',  labelY: 15 },
+  { id: 'shell',     label: 'SHELL',  sub: 'neu', labelY: 29 },
+  { id: 'hii',       label: 'SHELL',  sub: 'ion', labelY: 43 },
+  { id: 'hotBubble', label: 'BUBBLE', labelY: 60 },
+  { id: 'freeWind',  label: 'WINDS',  labelY: 74 },
 ]
 
 export default function HeroBubble({
@@ -43,21 +42,21 @@ export default function HeroBubble({
   const total = cloudOuter
   const scale = (frac) => (frac / total) * R
 
-  // Boundary radii for label positioning
-  const boundaries = {
-    cloudOuter: scale(cloudOuter),
-    shellOuter: scale(shellOuter),
-    hiiOuter: scale(hiiOuter),
-    hotBubbleOuter: scale(hotBubbleOuter),
-    freeWindOuter: scale(freeWindOuter),
+  // Midpoint radii for label positioning (point to middle of each zone)
+  const zoneMidR = {
+    cloud: scale((shellOuter + cloudOuter) / 2),
+    shell: scale((hiiOuter + shellOuter) / 2),
+    hii: scale((hotBubbleOuter + hiiOuter) / 2),
+    hotBubble: scale((freeWindOuter + hotBubbleOuter) / 2),
+    freeWind: scale(freeWindOuter / 2),
   }
 
   const zones = [
     { id: 'cloud', outer: scale(cloudOuter), fill: 'url(#cloudGradient)' },
-    { id: 'shell', outer: scale(shellOuter), fill: '#8B4D5C' },
-    { id: 'hii', outer: scale(hiiOuter), fill: '#C4929B' },
-    { id: 'hotBubble', outer: scale(hotBubbleOuter), fill: '#B4CEE8' },
-    { id: 'freeWind', outer: scale(freeWindOuter), fill: '#2A3A4E' },
+    { id: 'shell', outer: scale(shellOuter), fill: '#2A3A4E' },
+    { id: 'hii', outer: scale(hiiOuter), fill: '#8B4D5C' },
+    { id: 'hotBubble', outer: scale(hotBubbleOuter), fill: '#C4929B' },
+    { id: 'freeWind', outer: scale(freeWindOuter), fill: '#B4CEE8' },
   ]
 
   const labelAreaX = 110
@@ -90,7 +89,7 @@ export default function HeroBubble({
           transition: dispersalProgress > 0 ? 'none' : undefined,
         }}
       >
-        <svg viewBox="-10 0 145 100" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Cross-section of a stellar feedback bubble showing concentric zones: free wind, hot bubble, ionised shell, neutral shell, and ambient cloud">
+        <svg viewBox="-10 0 145 100" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Cross-section of a stellar feedback bubble showing concentric zones: winds, bubble, ionised shell, neutral shell, and ambient cloud">
           <defs>
             <radialGradient id="cloudGradient" cx="50%" cy="50%" r="50%">
               <stop offset="0%" stopColor="#C8C8D0" stopOpacity="0.5" />
@@ -132,15 +131,14 @@ export default function HeroBubble({
           {/* Zone labels with leader lines to actual boundaries */}
           <g style={{ opacity: labelOpacity, transition: 'opacity 0.3s ease-out' }}>
             {zoneLabels.map((zl) => {
-              const boundaryR = boundaries[zl.boundary]
+              const midR = zoneMidR[zl.id]
               const labelY = zl.labelY
-              // Find intersection of boundary circle with the horizontal line at labelY
+              // Find intersection of midpoint circle with the horizontal line at labelY
               const dy = labelY - 50
-              const rSq = boundaryR * boundaryR
+              const rSq = midR * midR
               const dySq = dy * dy
-              // If the horizontal line intersects the circle
               const intersects = rSq > dySq
-              const circleX = intersects ? 50 + Math.sqrt(rSq - dySq) : 50 + boundaryR * 0.3
+              const circleX = intersects ? 50 + Math.sqrt(rSq - dySq) : 50 + midR * 0.3
 
               return (
                 <g key={zl.id}>
