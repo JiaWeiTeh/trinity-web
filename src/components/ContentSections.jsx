@@ -89,7 +89,7 @@ function SectionTitle({ children }) {
 
 export default function ContentSections() {
   return (
-    <div className="bg-navy">
+    <div className="bg-paper">
       {/* Physics */}
       <Section id="physics">
         <SectionTitle>What is TRINITY?</SectionTitle>

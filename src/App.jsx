@@ -144,7 +144,7 @@ export default function App() {
 
           {/* Content surfaces in the same viewport as bubble fades */}
           <div
-            className="absolute inset-0 z-20 overflow-y-auto bg-navy will-change-[opacity,transform]"
+            className="absolute inset-0 z-20 overflow-y-auto bg-paper will-change-[opacity,transform]"
             style={{
               opacity: contentOpacity,
               transform: `scale(${contentScale})`,
