@@ -86,10 +86,11 @@ export default function HeroBubble({
           animationPlayState: breathing ? 'running' : 'paused',
           transform: `scale(${dispersalScale})`,
           opacity: dispersalOpacity,
+          willChange: 'transform, opacity',
           transition: dispersalProgress > 0 ? 'none' : undefined,
         }}
       >
-        <svg viewBox="-10 0 145 100" xmlns="http://www.w3.org/2000/svg">
+        <svg viewBox="-10 0 145 100" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Cross-section of a stellar feedback bubble showing concentric zones: free wind, hot bubble, ionised shell, neutral shell, and ambient cloud">
           <defs>
             <radialGradient id="cloudGradient" cx="50%" cy="50%" r="50%">
               <stop offset="0%" stopColor="#C8C8D0" stopOpacity="0.5" />
