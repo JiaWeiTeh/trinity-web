@@ -1,3 +1,5 @@
+import FeedbackExplorer from './FeedbackExplorer'
+
 const featureCards = [
   {
     title: 'Phase-aware driving',
@@ -131,9 +133,7 @@ export default function ContentSections() {
       {/* Explorer */}
       <Section id="explorer">
         <SectionTitle>Feedback Explorer</SectionTitle>
-        <p className="text-white/50 italic text-base">
-          Interactive feedback decomposition — coming in the next update.
-        </p>
+        <FeedbackExplorer />
       </Section>
 
       {/* Papers */}
