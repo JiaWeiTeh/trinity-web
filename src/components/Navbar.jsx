@@ -1,0 +1,78 @@
+import { useState, useEffect } from 'react'
+
+const navLinks = [
+  { label: 'Physics', href: '#physics' },
+  { label: "What's New", href: '#features' },
+  { label: 'Explorer', href: '#explorer' },
+  { label: 'Papers', href: '#papers' },
+  { label: 'Team', href: '#team' },
+]
+
+export default function Navbar() {
+  const [visible, setVisible] = useState(false)
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setVisible(window.scrollY > window.innerHeight * 0.3)
+    }
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    handleScroll()
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
+  const scrollTo = (e, href) => {
+    e.preventDefault()
+    if (href === '#top') {
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+      return
+    }
+    const el = document.querySelector(href)
+    if (el) el.scrollIntoView({ behavior: 'smooth' })
+  }
+
+  return (
+    <nav
+      className="fixed top-0 left-0 right-0 z-50 bg-navy/80 backdrop-blur-md border-b border-white/5 transition-all duration-300"
+      style={{
+        opacity: visible ? 1 : 0,
+        pointerEvents: visible ? 'auto' : 'none',
+        transform: visible ? 'translateY(0)' : 'translateY(-100%)',
+      }}
+    >
+      <div className="max-w-5xl mx-auto px-6 h-14 flex items-center justify-between">
+        <a
+          href="#top"
+          onClick={(e) => scrollTo(e, '#top')}
+          className="text-white font-bold tracking-widest text-sm hover:text-teal transition-colors"
+        >
+          TRINITY
+        </a>
+
+        <div className="flex items-center gap-6">
+          {navLinks.map((link) => (
+            <a
+              key={link.href}
+              href={link.href}
+              onClick={(e) => scrollTo(e, link.href)}
+              className="text-white/70 text-sm hover:text-white transition-colors"
+            >
+              {link.label}
+            </a>
+          ))}
+          <a
+            href="https://trinitysf.readthedocs.io/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-teal text-sm hover:text-teal/80 transition-colors flex items-center gap-1"
+          >
+            Docs
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M4 1h7v7" />
+              <path d="M11 1L1 11" />
+            </svg>
+          </a>
+        </div>
+      </div>
+    </nav>
+  )
+}
