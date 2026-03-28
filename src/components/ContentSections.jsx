@@ -1,5 +1,6 @@
 import { lazy, Suspense } from 'react'
 import TeamGrid from './TeamGrid'
+import ComparisonSlider from './ComparisonSlider'
 
 const FeedbackExplorer = lazy(() => import('./FeedbackExplorer'))
 
@@ -83,6 +84,32 @@ export default function ContentSections() {
               </a>
             </p>
           </div>
+        </div>
+      </section>
+
+      <Rule />
+
+      {/* Observation vs. model comparison */}
+      <section className="py-12 px-6 md:px-10">
+        <div className="max-w-[640px] mx-auto">
+          <SectionMarker>§ Observation vs. model</SectionMarker>
+          <h2
+            className="text-[26px] font-semibold text-ink-primary mb-3 leading-tight"
+            style={{ fontFamily: 'var(--font-display)' }}
+          >
+            From nebula to schematic
+          </h2>
+          <p
+            className="text-[15px] text-ink-secondary mb-6"
+            style={{ fontFamily: 'var(--font-display)', lineHeight: 1.6 }}
+          >
+            Drag the slider to compare the Rosette Nebula — a wind-blown bubble
+            around NGC 2244 — with the idealised zones that TRINITY models.
+          </p>
+          <ComparisonSlider />
+          <p className="text-[11px] text-ink-tertiary mt-3" style={{ fontFamily: 'var(--font-ui)' }}>
+            Image: NGC 2244 / Rosette Nebula. DECam, Blanco 4m, CTIO/NOIRLab/DOE/NSF/AURA.
+          </p>
         </div>
       </section>
 
