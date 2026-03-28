@@ -151,6 +151,7 @@ export default function FeedbackExplorer() {
               <YAxis
                 domain={[0, 1]}
                 stroke="rgba(30, 36, 48, 0.3)"
+                tickFormatter={(v) => v.toFixed(1)}
                 tick={{ fill: '#5E6776', fontSize: 12 }}
                 label={{ value: 'Force fraction', angle: -90, position: 'insideLeft', offset: 10, fill: '#5E6776', fontSize: 12 }}
               />

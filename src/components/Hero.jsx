@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import BubbleDiagram from './BubbleDiagram'
-import PhaseToggle from './PhaseToggle'
+import TimeScrubber from './TimeScrubber'
+import PressureBar from './PressureBar'
+import Sparkline from './Sparkline'
 
 const captions = {
   energy: 'Energy-driven: hot bubble pressure inflates the shell.',
@@ -9,7 +11,8 @@ const captions = {
 }
 
 export default function Hero() {
-  const [phase, setPhase] = useState('energy')
+  const [time, setTime] = useState(1.0)
+  const phase = time < 2 ? 'energy' : time < 4 ? 'transition' : 'momentum'
 
   return (
     <section className="max-w-[900px] mx-auto px-6 md:px-10 pt-24 md:pt-32 pb-12">
@@ -48,22 +51,30 @@ export default function Hero() {
           </div>
         </div>
 
-        {/* Right column: bubble */}
-        <div className="flex-shrink-0 w-[260px]">
-          <BubbleDiagram phase={phase} />
+        {/* Right column: bubble + sparkline + pressure bar */}
+        <div className="flex-shrink-0 w-[280px]">
+          <BubbleDiagram time={time} />
+          <div style={{ marginTop: 8 }}>
+            <Sparkline time={time} />
+          </div>
+          <div style={{ marginTop: 8 }}>
+            <PressureBar time={time} />
+          </div>
         </div>
       </div>
 
-      {/* Phase caption */}
-      <p
-        className="text-ink-secondary text-center mt-6 mb-4 min-h-[48px] flex items-center justify-center italic"
-        style={{ fontFamily: 'var(--font-display)', fontSize: 15, transition: 'opacity 200ms ease' }}
-      >
-        {captions[phase]}
-      </p>
-
-      {/* Phase toggle */}
-      <PhaseToggle phase={phase} onPhaseChange={setPhase} />
+      {/* Phase caption + time scrubber */}
+      <div style={{ marginTop: 24, textAlign: 'center' }}>
+        <p
+          className="text-ink-secondary min-h-[48px] flex items-center justify-center italic"
+          style={{ fontFamily: 'var(--font-display)', fontSize: 15, transition: 'opacity 200ms ease' }}
+        >
+          {captions[phase]}
+        </p>
+        <div style={{ marginTop: 8 }}>
+          <TimeScrubber time={time} onTimeChange={setTime} />
+        </div>
+      </div>
     </section>
   )
 }
