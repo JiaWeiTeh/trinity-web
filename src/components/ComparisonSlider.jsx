@@ -1,15 +1,16 @@
 import { useState, useRef, useCallback } from 'react'
 
 function ComparisonSchematic() {
-  const S = 500
-  const CX = S / 2
-  const CY = S / 2
+  const W = 620
+  const H = 500
+  const CX = 210
+  const CY = H / 2
 
-  const R_cloud = 210
-  const R_sh = 175
-  const R_if = 155
-  const R_b = 120
-  const R_w = 40
+  const R_cloud = 190
+  const R_sh = 158
+  const R_if = 140
+  const R_b = 108
+  const R_w = 36
 
   const STROKE = '#2A3442'
 
@@ -18,13 +19,13 @@ function ComparisonSchematic() {
     { label: 'SHELL', sub: 'neutral', y: CY - R_sh + 15, r: R_sh },
     { label: 'SHELL', sub: 'ionised', y: CY - R_if + 15, r: R_if },
     { label: 'BUBBLE', sub: null, y: CY, r: R_b },
-    { label: 'WINDS', sub: null, y: CY + R_w + 30, r: R_w },
+    { label: 'WINDS', sub: null, y: CY, r: R_w },
   ]
 
   const labelX = CX + R_cloud + 24
 
   return (
-    <svg viewBox={`0 0 ${S} ${S}`} width="100%" height="100%"
+    <svg viewBox={`0 0 ${W} ${H}`} width="100%" height="100%"
       style={{ position: 'absolute', inset: 0 }}>
 
       {/* Cloud boundary */}

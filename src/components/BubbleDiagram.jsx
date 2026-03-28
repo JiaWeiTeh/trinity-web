@@ -141,7 +141,7 @@ function Labels({ radii, bubbleOpacity }) {
     ...(showHII
       ? [{ key: 'hii', text: 'H\u2009II', sub: null, dotY: 120, labelY: 120, r: (radii.R_if + radii.R_w) / 2 }]
       : []),
-    { key: 'winds', text: 'WINDS', sub: null, dotY: 180, labelY: 180, r: radii.R_w },
+    { key: 'winds', text: 'WINDS', sub: null, dotY: CY, labelY: 180, r: radii.R_w },
   ]
 
   return (
