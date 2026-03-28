@@ -1,56 +1,34 @@
 const team = [
-  {
-    name: 'Jia Wei Teh',
-    initials: 'JT',
-    affiliation: 'ITA/ZAH, Universität Heidelberg',
-    color: '#0EA5C8',
-    link: 'https://jiaweiteh.github.io/',
-  },
-  {
-    name: 'Ralf S. Klessen',
-    initials: 'RK',
-    affiliation: 'ITA/ZAH, Universität Heidelberg',
-    color: '#E85D4A',
-    link: 'https://www.ita.uni-heidelberg.de/~klessen/',
-  },
-  {
-    name: 'Simon C. O. Glover',
-    initials: 'SG',
-    affiliation: 'ITA/ZAH, Universität Heidelberg',
-    color: '#6BAE8A',
-    link: 'https://www.ita.uni-heidelberg.de/~glover/',
-  },
-  {
-    name: 'Kathryn Kreckel',
-    initials: 'KK',
-    affiliation: 'ARI/ZAH, Universität Heidelberg',
-    color: '#F59E0B',
-    link: 'https://www.kreckel.org/',
-  },
+  { name: 'Jia Wei Teh', aff: 'ITA/ZAH, Heidelberg', colour: '#0EA5C8', link: 'https://jiaweiteh.github.io' },
+  { name: 'Ralf S. Klessen', aff: 'ITA/ZAH, Heidelberg', colour: '#E85D4A', link: 'https://ita.uni-heidelberg.de/~klessen/' },
+  { name: 'Simon C. O. Glover', aff: 'ITA/ZAH, Heidelberg', colour: '#6BAE8A', link: 'https://ita.uni-heidelberg.de/~glover/' },
+  { name: 'Kathryn Kreckel', aff: 'ARI/ZAH, Heidelberg', colour: '#F59E0B', link: 'https://kreckel.org' },
 ]
 
 export default function TeamGrid() {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-      {team.map((member) => (
+    <div className="flex flex-wrap gap-x-7 gap-y-4">
+      {team.map((m) => (
         <a
-          key={member.name}
-          href={member.link}
+          key={m.name}
+          href={m.link}
           target="_blank"
           rel="noopener noreferrer"
-          aria-label={`${member.name}'s page`}
-          className="flex flex-col items-center text-center p-5 rounded-lg border border-white/5 hover:bg-white/[0.03] transition-colors group"
+          aria-label={`${m.name}'s page`}
+          className="flex items-center gap-2.5 group"
         >
           <div
-            className="w-[60px] h-[60px] rounded-full flex items-center justify-center mb-3 group-hover:scale-105 transition-transform"
-            style={{ background: member.color }}
-          >
-            <span className="text-white font-bold text-lg">{member.initials}</span>
+            className="w-2 h-2 rounded-full shrink-0"
+            style={{ backgroundColor: m.colour }}
+          />
+          <div>
+            <div className="text-[14px] text-ink-primary group-hover:text-teal transition-colors duration-150" style={{ fontFamily: 'var(--font-display)' }}>
+              {m.name}
+            </div>
+            <div className="text-[11px] text-ink-tertiary" style={{ fontFamily: 'var(--font-ui)' }}>
+              {m.aff}
+            </div>
           </div>
-          <h3 className="text-white font-semibold text-sm mb-1 group-hover:text-teal transition-colors">
-            {member.name}
-          </h3>
-          <p className="text-white/40 text-xs">{member.affiliation}</p>
         </a>
       ))}
     </div>
