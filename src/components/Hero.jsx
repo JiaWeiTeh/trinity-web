@@ -52,7 +52,7 @@ export default function Hero() {
         </div>
 
         {/* Right column: bubble + sparkline + pressure bar */}
-        <div className="flex-shrink-0 w-[280px]">
+        <div className="flex-shrink-0 w-[340px]">
           <BubbleDiagram time={time} />
           <div style={{ marginTop: 8 }}>
             <Sparkline time={time} />

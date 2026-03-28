@@ -8,6 +8,7 @@ import {
   Tooltip,
   ResponsiveContainer,
   Label,
+  ReferenceLine,
 } from 'recharts'
 import gridData from '../data/feedbackGrid.json'
 
@@ -150,11 +151,13 @@ export default function FeedbackExplorer() {
               </XAxis>
               <YAxis
                 domain={[0, 1]}
+                ticks={[0, 0.2, 0.4, 0.6, 0.8, 1.0]}
                 stroke="rgba(30, 36, 48, 0.3)"
                 tickFormatter={(v) => v.toFixed(1)}
                 tick={{ fill: '#5E6776', fontSize: 12 }}
                 label={{ value: 'Force fraction', angle: -90, position: 'insideLeft', offset: 10, fill: '#5E6776', fontSize: 12 }}
               />
+              <ReferenceLine y={0.5} stroke="#2A3442" strokeOpacity={0.15} strokeDasharray="4 3" strokeWidth={0.8} />
               <Tooltip content={<CustomTooltip />} />
               {STACK_ORDER.map((key) => (
                 <Area
