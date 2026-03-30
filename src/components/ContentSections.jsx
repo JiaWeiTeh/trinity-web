@@ -19,11 +19,11 @@ function SectionHeading({ number, title }) {
   return (
     <h2 className="mb-4 flex items-baseline gap-2">
       <span style={{ fontFamily: 'var(--font-display)' }}
-            className="text-[26px] font-semibold text-ink-tertiary">
+            className="text-[26px] font-semibold text-ink-tertiary leading-none">
         {number}.
       </span>
       <span style={{ fontFamily: 'var(--font-display)' }}
-            className="text-[26px] font-semibold text-ink-primary">
+            className="text-[26px] font-semibold text-ink-primary leading-none">
         {title}
       </span>
     </h2>
@@ -142,7 +142,7 @@ function Section2Model({ time, setTime }) {
         </div>
 
         <p style={{ fontFamily: 'var(--font-ui)' }}
-           className="text-[12px] text-ink-tertiary mt-4 leading-relaxed max-w-[800px] mx-auto px-6 md:px-0">
+           className="text-[12px] text-ink-tertiary mt-3 leading-relaxed max-w-[800px] mx-auto px-6 md:px-0">
           Interactive Fig. 2 — Idealised 1D shell structure in the energy-driven, transition, and momentum-driven regimes. Drag the time slider to evolve the bubble; hover zones to reveal governing equations. The pressure bar shows the instantaneous force-fraction decomposition.
         </p>
       </div>
@@ -181,7 +181,7 @@ function Section3Diagnostics() {
         </Suspense>
 
         <p style={{ fontFamily: 'var(--font-ui)' }}
-           className="text-[12px] text-ink-tertiary mt-4 leading-relaxed max-w-[800px] mx-auto px-6 md:px-0">
+           className="text-[12px] text-ink-tertiary mt-3 leading-relaxed max-w-[800px] mx-auto px-6 md:px-0">
           Interactive Fig. 3 — Illustrative force-fraction histories for selected cloud mass and star formation efficiency. Quantitative results in Paper I (Teh et al., in prep.). Use the sliders to explore how the dominant feedback mechanism shifts across parameter space.
         </p>
 
@@ -216,7 +216,7 @@ function Section4Contributions() {
           {items.map((item, i) => (
             <div key={i} className="py-3.5 border-b border-border-rule flex gap-4 items-baseline last:border-b-0">
               <span style={{ fontFamily: 'var(--font-ui)' }}
-                    className="text-[13px] text-ink-tertiary w-5 shrink-0">
+                    className="text-[13px] text-ink-tertiary w-5 shrink-0 text-right">
                 {i + 1}
               </span>
               <div>

@@ -48,7 +48,7 @@ export default function Navbar() {
             onClick={(e) => scrollTo(e, '#top')}
             aria-label="Scroll to top"
             className="text-ink-primary font-semibold tracking-widest text-sm hover:text-teal transition-colors"
-            style={{ fontFamily: "'Source Serif 4', Georgia, serif" }}
+            style={{ fontFamily: 'var(--font-display)' }}
           >
             TRINITY
           </a>
@@ -62,7 +62,7 @@ export default function Navbar() {
                 onClick={(e) => scrollTo(e, link.href)}
                 aria-label={`Navigate to ${link.label}`}
                 className="text-ink-secondary text-sm hover:text-ink-primary transition-colors duration-150"
-                style={{ fontFamily: "'Inter', sans-serif" }}
+                style={{ fontFamily: 'var(--font-ui)' }}
               >
                 {link.label}
               </a>
@@ -73,6 +73,7 @@ export default function Navbar() {
               rel="noopener noreferrer"
               aria-label="TRINITY documentation (opens in new tab)"
               className="text-teal text-sm hover:text-teal/80 transition-colors flex items-center gap-1"
+              style={{ fontFamily: 'var(--font-ui)' }}
             >
               Docs
               <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">

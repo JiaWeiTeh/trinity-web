@@ -67,3 +67,15 @@ body {
   border-radius: 2px;
   background: rgba(30, 36, 48, 0.1);
 }
+
+/* Superscript fix for author line */
+sup {
+  font-size: 0.7em;
+  vertical-align: super;
+  line-height: 0;
+}
+
+/* Ensure smooth scroll targets account for fixed navbar */
+[id] {
+  scroll-margin-top: 64px;
+}
