@@ -1,4 +1,6 @@
-import { useState, lazy, Suspense } from 'react'
+import { useState, useRef, useEffect, lazy, Suspense } from 'react'
+import katex from 'katex'
+import 'katex/dist/katex.min.css'
 import ComparisonSlider from './ComparisonSlider'
 import BubbleDiagram from './BubbleDiagram'
 import TimeScrubber from './TimeScrubber'
@@ -6,6 +8,53 @@ import Sparkline from './Sparkline'
 import PressureBar from './PressureBar'
 
 const FeedbackExplorer = lazy(() => import('./FeedbackExplorer'))
+
+/* ── Reference data ─────────────────────────────────────────── */
+
+const REFS = {
+  weaver77: {
+    authors: 'Weaver, R., McCray, R., Castor, J., Shapiro, P., Moore, R.',
+    year: '1977',
+    title: 'Interstellar Bubbles. II. Structure and Evolution',
+    journal: 'ApJ',
+    volume: '218',
+    page: '377',
+  },
+  rahner17: {
+    authors: 'Rahner, D., Pellegrini, E. W., Glover, S. C. O., Klessen, R. S.',
+    year: '2017',
+    title: 'Winds and radiation in unison',
+    journal: 'MNRAS',
+    volume: '470',
+    page: '4453',
+  },
+  rahner19: {
+    authors: 'Rahner, D., Pellegrini, E. W., Glover, S. C. O., Klessen, R. S.',
+    year: '2019',
+    title: 'WARPFIELD 2.0',
+    journal: 'MNRAS',
+    volume: '483',
+    page: '2547',
+  },
+  lancaster21: {
+    authors: 'Lancaster, L., Ostriker, E. C., Kim, J.-G., Kim, C.-G.',
+    year: '2021',
+    title: 'Efficiently Cooled Stellar Wind Bubbles in Turbulent Clouds. I.',
+    journal: 'ApJ',
+    volume: '914',
+    page: '89',
+  },
+  lancaster25: {
+    authors: 'Lancaster, L., Ostriker, E. C., Kim, J.-G., Kim, C.-G.',
+    year: '2025',
+    title: 'Coevolution of Stellar Wind-Blown Bubbles and Photoionized Gas. I.',
+    journal: 'ApJ',
+    volume: '989',
+    page: '42',
+  },
+}
+
+/* ── Helpers ─────────────────────────────────────────────────── */
 
 function SectionRule({ wide = false }) {
   return (
@@ -30,6 +79,139 @@ function SectionHeading({ number, title }) {
   )
 }
 
+function Equation({ latex, number, id }) {
+  const html = katex.renderToString(latex, {
+    throwOnError: false,
+    displayMode: true,
+  })
+
+  return (
+    <div id={id} className="my-6 flex items-start justify-center gap-4 max-w-[680px] mx-auto relative">
+      <div
+        className="flex-1 text-center overflow-x-auto"
+        dangerouslySetInnerHTML={{ __html: html }}
+      />
+      <span style={{ fontFamily: 'var(--font-display)' }}
+            className="text-[15px] text-ink-tertiary shrink-0 pt-0.5">
+        ({number})
+      </span>
+    </div>
+  )
+}
+
+function Sidenote({ children }) {
+  return <span className="sidenote">{children}</span>
+}
+
+function Ref({ target, children }) {
+  const handleClick = (e) => {
+    e.preventDefault()
+    const el = document.getElementById(target)
+    if (el) el.scrollIntoView({ behavior: 'smooth' })
+  }
+  return (
+    <a href={`#${target}`}
+       onClick={handleClick}
+       style={{ fontFamily: 'var(--font-ui)' }}
+       className="text-teal text-[inherit] no-underline hover:underline cursor-pointer">
+      {children}
+    </a>
+  )
+}
+
+function Cite({ authors, year, title, journal, volume, page }) {
+  const [showTooltip, setShowTooltip] = useState(false)
+  const [above, setAbove] = useState(true)
+  const spanRef = useRef(null)
+
+  const surname = authors.split(',')[0].split('.').pop().trim()
+  const label = `${surname} et al. ${year}`
+  const full = `${authors}, ${year}, ${title}, ${journal}, ${volume}, ${page}`
+
+  useEffect(() => {
+    if (showTooltip && spanRef.current) {
+      const rect = spanRef.current.getBoundingClientRect()
+      setAbove(rect.top > 120)
+    }
+  }, [showTooltip])
+
+  return (
+    <span
+      ref={spanRef}
+      className="relative inline-block"
+      onMouseEnter={() => setShowTooltip(true)}
+      onMouseLeave={() => setShowTooltip(false)}
+    >
+      <span style={{ fontFamily: 'var(--font-display)' }}
+            className="text-teal cursor-help">
+        ({label})
+      </span>
+      {showTooltip && (
+        <span
+          style={{ fontFamily: 'var(--font-ui)' }}
+          className={`absolute left-1/2 -translate-x-1/2
+                     bg-white border border-border-card rounded-lg shadow-sm
+                     px-3 py-2 text-[11px] text-ink-secondary leading-relaxed
+                     whitespace-nowrap z-20 pointer-events-none
+                     ${above ? 'bottom-full mb-2' : 'top-full mt-2'}`}
+        >
+          {full}
+        </span>
+      )}
+    </span>
+  )
+}
+
+function CiteGroup({ refs }) {
+  const [show, setShow] = useState(false)
+  const [above, setAbove] = useState(true)
+  const spanRef = useRef(null)
+
+  const labels = refs.map(r => {
+    const surname = r.authors.split(',')[0].split('.').pop().trim()
+    return `${surname} et al. ${r.year}`
+  }).join('; ')
+
+  const fulls = refs.map(r =>
+    `${r.authors}, ${r.year}, ${r.journal}, ${r.volume}, ${r.page}`
+  )
+
+  useEffect(() => {
+    if (show && spanRef.current) {
+      const rect = spanRef.current.getBoundingClientRect()
+      setAbove(rect.top > 120)
+    }
+  }, [show])
+
+  return (
+    <span
+      ref={spanRef}
+      className="relative inline-block"
+      onMouseEnter={() => setShow(true)}
+      onMouseLeave={() => setShow(false)}
+    >
+      <span style={{ fontFamily: 'var(--font-display)' }}
+            className="text-teal cursor-help">
+        ({labels})
+      </span>
+      {show && (
+        <span
+          style={{ fontFamily: 'var(--font-ui)' }}
+          className={`absolute left-1/2 -translate-x-1/2
+                     bg-white border border-border-card rounded-lg shadow-sm
+                     px-3 py-2 text-[11px] text-ink-secondary leading-relaxed
+                     z-20 pointer-events-none whitespace-pre-line
+                     ${above ? 'bottom-full mb-2' : 'top-full mt-2'}`}
+        >
+          {fulls.join('\n')}
+        </span>
+      )}
+    </span>
+  )
+}
+
+/* ── Sections ────────────────────────────────────────────────── */
+
 function Abstract() {
   return (
     <section id="abstract" className="py-10 px-6 md:px-10">
@@ -37,7 +219,21 @@ function Abstract() {
         <div className="border-l-4 border-border-card pl-5 py-1">
           <p style={{ fontFamily: 'var(--font-display)' }}
              className="text-[15px] text-ink-secondary leading-[1.7]">
-            TRINITY is a 1D spherical thin-shell code that self-consistently evolves stellar wind bubbles, photoionised regions, and swept-up shells in giant molecular clouds. The code couples stellar winds, supernovae, radiation pressure, photoionised-gas thermal pressure, and gravity across energy-driven, transition, and momentum-driven phases. It succeeds WARPFIELD (Rahner et al. 2017, 2019) with a phase-aware treatment of the energy-to-momentum transition, flexible density profiles, and ionisation-front tracking within the shell. This site presents the code, its physical model, and interactive diagnostics exploring feedback dominance across parameter space.
+            TRINITY is a 1D spherical thin-shell code that self-consistently evolves stellar wind bubbles, photoionised regions, and swept-up shells in giant molecular clouds. The code couples stellar winds, supernovae, radiation pressure, photoionised-gas thermal pressure, and gravity across energy-driven, transition, and momentum-driven phases. It succeeds WARPFIELD {' '}
+            <CiteGroup refs={[REFS.rahner17, REFS.rahner19]} /> with a phase-aware treatment of the energy-to-momentum transition, flexible density profiles, and ionisation-front tracking within the shell. This site presents the code, its physical model, and interactive diagnostics exploring feedback dominance across parameter space.
+          </p>
+
+          {/* Keywords */}
+          <p style={{ fontFamily: 'var(--font-ui)' }}
+             className="text-[12px] text-ink-tertiary mt-4">
+            <span className="font-medium" style={{ fontStyle: 'italic' }}>Key words. </span>
+            ISM: bubbles — H{'\u2009'}II regions — stars: winds, outflows — methods: numerical — stars: formation
+          </p>
+
+          {/* Status line */}
+          <p style={{ fontFamily: 'var(--font-ui)' }}
+             className="text-[11px] text-ink-tertiary mt-2 italic">
+            Paper I in preparation · Code version 1.0
           </p>
         </div>
       </div>
@@ -47,7 +243,7 @@ function Abstract() {
 
 function Figure1() {
   return (
-    <section className="py-10 px-6 md:px-10">
+    <section id="fig1" className="py-10 px-6 md:px-10">
       <div className="max-w-[960px] mx-auto">
         <p style={{ fontFamily: 'var(--font-ui)' }}
            className="text-[12px] font-medium text-teal mb-1">
@@ -77,13 +273,33 @@ function Section1Overview() {
         <div style={{ fontFamily: 'var(--font-display)' }}
              className="text-[17px] text-ink-secondary leading-[1.65] space-y-4">
           <p>
-            Massive stars reshape their natal molecular clouds through stellar winds, supernovae, radiation pressure, and the thermal pressure of photoionised gas. The relative importance of these mechanisms — and how dominance shifts over time — controls cloud dispersal timescales, triggered star formation, and the momentum budget available to drive galactic outflows.
+            Massive stars reshape their natal molecular clouds through stellar winds, supernovae, radiation pressure, and the thermal pressure of photoionised gas.
+            <Sidenote>
+              In the energy-driven phase, the hot shocked wind at T ~ 10⁶–10⁷ K provides the dominant pressure. This is the classical <span className="whitespace-nowrap">Weaver et al. (1977)</span> regime.
+            </Sidenote>
+            {' '}The relative importance of these mechanisms — and how dominance shifts over time — controls cloud dispersal timescales, triggered star formation, and the momentum budget available to drive galactic outflows.
           </p>
           <p>
             Existing models typically treat these feedback channels in isolation or make simplifying assumptions about the transition from energy-driven to momentum-driven expansion. TRINITY evolves all five mechanisms self-consistently within a 1D spherical thin-shell framework, tracking the full dynamical sequence from initial wind-blown bubble through shell formation, radiative cooling, and late-time momentum-driven expansion.
+            <Sidenote>
+              WARPFIELD (Rahner et al. 2017, 2019) is the predecessor 1D feedback code. TRINITY adds phase-aware driving, smooth transitions, and ionisation-front tracking.
+            </Sidenote>
           </p>
           <p>
-            The Rosette Nebula (Fig. 1) illustrates the multi-zone structure that TRINITY captures: a central cluster driving a wind cavity, surrounded by a hot bubble, an ionised shell, a neutral swept-up shell, and the ambient molecular cloud.
+            The dynamics of the swept-up shell are governed by a single equation of motion balancing the driving pressure against gravity:
+          </p>
+        </div>
+
+        <Equation
+          id="eq1"
+          number={1}
+          latex={String.raw`\frac{d}{dt}\!\left(M_{\rm sh}\,\dot{R}\right) = 4\pi R^2\,P_{\rm drive} - \frac{G\,M_{\rm sh}\,M_{\rm enc}}{R^2}`}
+        />
+
+        <div style={{ fontFamily: 'var(--font-display)' }}
+             className="text-[17px] text-ink-secondary leading-[1.65] space-y-4">
+          <p>
+            The Rosette Nebula (<Ref target="fig1">Fig. 1</Ref>) illustrates the multi-zone structure that TRINITY captures: a central cluster driving a wind cavity, surrounded by a hot bubble, an ionised shell, a neutral swept-up shell, and the ambient molecular cloud.
           </p>
         </div>
       </div>
@@ -101,12 +317,45 @@ function Section2Model({ time, setTime }) {
         <div style={{ fontFamily: 'var(--font-display)' }}
              className="text-[17px] text-ink-secondary leading-[1.65] space-y-4">
           <p>
-            TRINITY divides the feedback-driven expansion into three dynamical phases. In the energy-driven phase, the hot shocked wind inflates a high-pressure bubble that drives a swept-up shell into the surrounding cloud. As radiative cooling drains thermal energy from the bubble interior, the system transitions to a momentum-driven regime where photoionised-gas pressure and wind ram pressure sustain the expansion. The transition between these regimes is handled smoothly rather than as a discrete switch.
+            TRINITY divides the feedback-driven expansion into three dynamical phases. In the energy-driven phase, the hot shocked wind inflates a high-pressure bubble that drives a swept-up shell into the surrounding cloud (<Ref target="eq1">Eq. 1</Ref>).
+            <Sidenote>
+              P<sub>H II</sub> is the thermal pressure of photoionised gas at T<sub>i</sub> ≈ 10⁴ K, computed from a cavity-aware Strömgren integral.
+            </Sidenote>
+            {' '}In the classical solution <Cite {...REFS.weaver77} />, the bubble radius evolves as:
+          </p>
+        </div>
+
+        <Equation
+          id="eq2"
+          number={2}
+          latex={String.raw`R(t) = \left(\frac{125}{154\pi}\right)^{\!1/5} L_{\rm w}^{1/5}\,\bar{\rho}^{-1/5}\,t^{3/5}`}
+        />
+
+        <div style={{ fontFamily: 'var(--font-display)' }}
+             className="text-[17px] text-ink-secondary leading-[1.65] space-y-4">
+          <p>
+            As radiative cooling drains thermal energy from the bubble interior, the system transitions to a momentum-driven regime where photoionised-gas pressure and wind ram pressure sustain the expansion. TRINITY switches the driving pressure formulation between phases:
+          </p>
+        </div>
+
+        <Equation
+          id="eq3"
+          number={3}
+          latex={String.raw`P_{\rm drive} = \begin{cases} \max\!\left(P_{\rm b},\; P_{\rm H\,\scriptscriptstyle II}\right) & \text{energy-driven} \\[6pt] P_{\rm H\,\scriptscriptstyle II} + P_{\rm ram} & \text{momentum-driven} \end{cases}`}
+        />
+
+        <div style={{ fontFamily: 'var(--font-display)' }}
+             className="text-[17px] text-ink-secondary leading-[1.65] space-y-4">
+          <p>
+            This phase-aware treatment (<Ref target="eq3">Eq. 3</Ref>) is one of the key differences from WARPFIELD, which does not include photoionised-gas pressure as a driving term (see <Ref target="fig2">Interactive Fig. 2</Ref> for the effect on shell structure).
+            <Sidenote>
+              The max(P<sub>b</sub>, P<sub>H II</sub>) formulation prevents double-counting when the bubble pressure already exceeds the H{'\u2009'}II pressure.
+            </Sidenote>
           </p>
         </div>
       </div>
 
-      <div className="max-w-[960px] mx-auto">
+      <div id="fig2" className="max-w-[960px] mx-auto">
         <p style={{ fontFamily: 'var(--font-ui)' }}
            className="text-[12px] font-medium text-teal mb-1 px-6 md:px-0">
           Interactive Fig. 2
@@ -157,11 +406,15 @@ function Section3Diagnostics() {
         <SectionHeading number={3} title="Interactive diagnostics" />
         <p style={{ fontFamily: 'var(--font-display)' }}
            className="text-[17px] text-ink-secondary leading-[1.65]">
-          TRINITY computes the full force-fraction history for any combination of cloud mass and star-formation efficiency. The explorer below interpolates across a precomputed grid to show how the dominant feedback mechanism shifts across parameter space.
+          TRINITY computes the full force-fraction history for any combination of cloud mass and star-formation efficiency.
+          <Sidenote>
+            The grid spans M<sub>cl</sub> = 10⁴–10⁷ M<sub>☉</sub> and ε<sub>sf</sub> = 5–30%. Force fractions are normalised to sum to unity.
+          </Sidenote>
+          {' '}The explorer below interpolates across a precomputed grid to show how the dominant feedback mechanism shifts across parameter space.
         </p>
       </div>
 
-      <div className="max-w-[960px] mx-auto">
+      <div id="fig3" className="max-w-[960px] mx-auto">
         <p style={{ fontFamily: 'var(--font-ui)' }}
            className="text-[12px] font-medium text-teal mb-1 px-6 md:px-0">
           Interactive Fig. 3
@@ -186,7 +439,7 @@ function Section3Diagnostics() {
         </p>
 
         <p className="mt-2 px-6 md:px-0">
-          <a href="https://trinitysf.readthedocs.io"
+          <a href="https://trinitysf.readthedocs.io/"
              target="_blank" rel="noopener noreferrer"
              style={{ fontFamily: 'var(--font-ui)' }}
              className="text-[13px] text-teal underline underline-offset-[3px] decoration-1">
@@ -290,14 +543,14 @@ function Section6Code() {
         <p style={{ fontFamily: 'var(--font-display)' }}
            className="text-[17px] text-ink-secondary leading-[1.65]">
           Full documentation, installation guide, and API reference are available at{' '}
-          <a href="https://trinitysf.readthedocs.io"
+          <a href="https://trinitysf.readthedocs.io/"
              target="_blank" rel="noopener noreferrer"
              style={{ fontFamily: 'var(--font-ui)' }}
              className="text-teal underline underline-offset-[3px] decoration-1">
             trinitysf.readthedocs.io
           </a>.
           {' '}The source code is hosted on{' '}
-          <a href="https://github.com/jiaweiteh/trinity"
+          <a href="https://github.com/JiaWeiTeh/trinity"
              target="_blank" rel="noopener noreferrer"
              style={{ fontFamily: 'var(--font-ui)' }}
              className="text-teal underline underline-offset-[3px] decoration-1">
@@ -308,6 +561,28 @@ function Section6Code() {
     </section>
   )
 }
+
+function Acknowledgements() {
+  return (
+    <section className="py-10 px-6 md:px-10">
+      <div className="max-w-[680px] mx-auto">
+        <p style={{ fontFamily: 'var(--font-ui)' }}
+           className="text-[12px] text-ink-tertiary leading-relaxed">
+          <span className="font-medium italic">Acknowledgements. </span>
+          JWT acknowledges support from the International Max Planck Research School
+          for Astronomy and Cosmic Physics at the University of Heidelberg (IMPRS-HD).
+          RSK acknowledges financial support from the European Research Council via
+          the ERC Synergy Grant ECOGAL (grant 855130) and the German Excellence
+          Strategy via the Heidelberg Cluster of Excellence STRUCTURES (EXC 2181 - 390900948).
+          The Rosette Nebula image was obtained with DECam on the Blanco 4m telescope
+          at CTIO/NOIRLab/DOE/NSF/AURA.
+        </p>
+      </div>
+    </section>
+  )
+}
+
+/* ── Composition ─────────────────────────────────────────────── */
 
 export default function ContentSections() {
   const [time, setTime] = useState(1.0)
@@ -329,6 +604,8 @@ export default function ContentSections() {
       <Section5Papers />
       <SectionRule />
       <Section6Code />
+      <SectionRule />
+      <Acknowledgements />
     </div>
   )
 }

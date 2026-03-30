@@ -35,7 +35,7 @@ export default function TitleBlock() {
 
         {/* Links */}
         <div className="flex justify-center gap-5">
-          <a href="https://trinitysf.readthedocs.io"
+          <a href="https://trinitysf.readthedocs.io/"
              target="_blank" rel="noopener noreferrer"
              style={{ fontFamily: 'var(--font-ui)' }}
              className="text-[13px] text-teal underline underline-offset-[3px] decoration-1">
