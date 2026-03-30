@@ -1,28 +1,20 @@
 import { useState, useRef, useCallback } from 'react'
 
 function ComparisonSchematic() {
-  const W = 620
+  const W = 500
   const H = 500
-  const CX = 210
+  const CX = W / 2
   const CY = H / 2
 
-  const R_cloud = 190
-  const R_sh = 158
-  const R_if = 140
-  const R_b = 108
-  const R_w = 36
+  const R_cloud = 210
+  const R_sh = 175
+  const R_if = 155
+  const R_b = 120
+  const R_w = 40
 
   const STROKE = '#2A3442'
-
-  const labelDefs = [
-    { label: 'CLOUD', sub: null, y: CY - R_cloud + 20, r: R_cloud },
-    { label: 'SHELL', sub: 'neutral', y: CY - R_sh + 15, r: R_sh },
-    { label: 'SHELL', sub: 'ionised', y: CY - R_if + 15, r: R_if },
-    { label: 'BUBBLE', sub: null, y: CY, r: R_b },
-    { label: 'WINDS', sub: null, y: CY, r: R_w },
-  ]
-
-  const labelX = CX + R_cloud + 24
+  const LABEL_FILL = '#5E6776'
+  const LABEL_SUB = '#97948C'
 
   return (
     <svg viewBox={`0 0 ${W} ${H}`} width="100%" height="100%"
@@ -37,13 +29,13 @@ function ComparisonSchematic() {
         fill="none" stroke={STROKE} strokeWidth={1.5} />
 
       {/* Shell hatching */}
-      {[...Array(10)].map((_, i) => {
-        const angle = (i / 10) * Math.PI * 2
+      {[...Array(12)].map((_, i) => {
+        const angle = (i / 12) * Math.PI * 2
         const midR = (R_sh + R_if) / 2
-        const x1 = CX + Math.cos(angle) * (midR - 6)
-        const y1 = CY + Math.sin(angle) * (midR - 6)
-        const x2 = CX + Math.cos(angle) * (midR + 6)
-        const y2 = CY + Math.sin(angle) * (midR + 6)
+        const x1 = CX + Math.cos(angle) * (midR - 7)
+        const y1 = CY + Math.sin(angle) * (midR - 7)
+        const x2 = CX + Math.cos(angle) * (midR + 7)
+        const y2 = CY + Math.sin(angle) * (midR + 7)
         return (
           <line key={i} x1={x1} y1={y1} x2={x2} y2={y2}
             stroke={STROKE} strokeWidth={0.4} opacity={0.12} />
@@ -70,31 +62,46 @@ function ComparisonSchematic() {
       <circle cx={CX + 4} cy={CY - 3} r={1.2} fill={STROKE} opacity={0.4} />
       <circle cx={CX + 2} cy={CY + 5} r={1} fill={STROKE} opacity={0.3} />
 
-      {/* Labels */}
-      {labelDefs.map((item, i) => {
-        const dy = item.y - CY
-        const rSq = item.r * item.r
-        const dotX = rSq > dy * dy ? CX + Math.sqrt(rSq - dy * dy) : CX + item.r * 0.3
-        return (
-          <g key={i}>
-            <circle cx={dotX} cy={item.y} r={2} fill="#97948C" />
-            <line x1={dotX} y1={item.y} x2={labelX - 6} y2={item.y}
-              stroke="#97948C" strokeWidth={0.5} />
-            <text x={labelX} y={item.y}
-              fontFamily="var(--font-ui)" fontSize={11} fontWeight={500}
-              fill="#5E6776" dominantBaseline="central">
-              {item.label}
-            </text>
-            {item.sub && (
-              <text x={labelX} y={item.y + 13}
-                fontFamily="var(--font-ui)" fontSize={9} fontStyle="italic"
-                fill="#97948C" dominantBaseline="central">
-                {item.sub}
-              </text>
-            )}
-          </g>
-        )
-      })}
+      {/* Zone labels — placed inside each ring */}
+      {/* CLOUD — top of cloud zone */}
+      <text x={CX} y={CY - R_cloud + 18}
+        fontFamily="var(--font-ui)" fontSize={10} fontWeight={500}
+        fill={LABEL_FILL} textAnchor="middle" dominantBaseline="central" opacity={0.7}>
+        CLOUD
+      </text>
+
+      {/* SHELL (neutral) — in the shell band at top */}
+      <text x={CX} y={CY - R_sh + 12}
+        fontFamily="var(--font-ui)" fontSize={9} fontWeight={500}
+        fill={LABEL_FILL} textAnchor="middle" dominantBaseline="central">
+        SHELL
+      </text>
+      <text x={CX} y={CY - R_sh + 23}
+        fontFamily="var(--font-ui)" fontSize={8} fontStyle="italic"
+        fill={LABEL_SUB} textAnchor="middle" dominantBaseline="central">
+        neutral
+      </text>
+
+      {/* H II — in the ionised zone */}
+      <text x={CX} y={CY - R_if + 18}
+        fontFamily="var(--font-ui)" fontSize={9} fontWeight={500}
+        fill={LABEL_FILL} textAnchor="middle" dominantBaseline="central">
+        H{'\u2009'}II
+      </text>
+
+      {/* BUBBLE — upper part of bubble zone */}
+      <text x={CX} y={CY - R_b / 2}
+        fontFamily="var(--font-ui)" fontSize={10} fontWeight={500}
+        fill={LABEL_FILL} textAnchor="middle" dominantBaseline="central" opacity={0.6}>
+        BUBBLE
+      </text>
+
+      {/* WINDS — near center */}
+      <text x={CX} y={CY + R_w + 14}
+        fontFamily="var(--font-ui)" fontSize={8} fontWeight={500}
+        fill={LABEL_SUB} textAnchor="middle" dominantBaseline="central">
+        WINDS
+      </text>
     </svg>
   )
 }
