@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react'
 
 const navLinks = [
-  { label: 'Physics', href: '#physics' },
-  { label: "What's New", href: '#features' },
-  { label: 'Explorer', href: '#explorer' },
-  { label: 'Papers', href: '#papers' },
-  { label: 'Team', href: '#team' },
+  { label: 'Abstract', href: '#abstract' },
+  { label: '1. Overview', href: '#overview' },
+  { label: '2. Model', href: '#model' },
+  { label: '3. Diagnostics', href: '#diagnostics' },
+  { label: '4. Papers', href: '#papers' },
 ]
 
 export default function Navbar() {

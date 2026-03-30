@@ -1,5 +1,5 @@
 import Navbar from './components/Navbar'
-import Hero from './components/Hero'
+import TitleBlock from './components/TitleBlock'
 import ContentSections from './components/ContentSections'
 import Footer from './components/Footer'
 
@@ -7,7 +7,7 @@ export default function App() {
   return (
     <>
       <Navbar />
-      <Hero />
+      <TitleBlock />
       <ContentSections />
       <Footer />
     </>
