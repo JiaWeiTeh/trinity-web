@@ -79,3 +79,36 @@ sup {
 [id] {
   scroll-margin-top: 64px;
 }
+
+/* Sidenotes */
+.sidenote {
+  font-family: var(--font-ui);
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--color-ink-tertiary);
+}
+
+/* Wide screens: float to right margin */
+@media (min-width: 1280px) {
+  .sidenote {
+    float: right;
+    clear: right;
+    margin-right: -200px;
+    width: 170px;
+    margin-top: 0;
+    margin-bottom: 12px;
+    padding-left: 12px;
+    border-left: 1px solid var(--color-border-rule);
+  }
+}
+
+/* Narrow screens: inline, indented block */
+@media (max-width: 1279px) {
+  .sidenote {
+    display: block;
+    margin: 8px 0 8px 20px;
+    padding-left: 12px;
+    border-left: 2px solid var(--color-border-rule);
+    font-size: 12px;
+  }
+}
