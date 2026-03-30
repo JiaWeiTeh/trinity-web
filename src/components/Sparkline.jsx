@@ -46,7 +46,7 @@ export default function Sparkline({ time }) {
   const labelAnchor = labelRight ? 'end' : 'start'
 
   return (
-    <svg width={W} height={H} viewBox={`0 0 ${W} ${H}`}>
+    <svg width="100%" viewBox={`0 0 ${W} ${H}`}>
       {/* Phase boundary dashes */}
       <line x1={x2} y1={PAD_Y} x2={x2} y2={H - PAD_Y}
         stroke="#D3D1C7" strokeWidth={0.5} strokeDasharray="2 2" />

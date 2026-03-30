@@ -238,21 +238,6 @@ export default function FeedbackExplorer() {
         </div>
       </div>
 
-      {/* Footer notes */}
-      <div className="mt-6 space-y-2">
-        <p className="text-[14px] italic text-ink-tertiary" style={{ fontFamily: 'var(--font-display)' }}>
-          Illustrative; quantitative results in Paper I (Teh et al., in prep.)
-        </p>
-        <a
-          href="https://trinitysf.readthedocs.io/"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-teal text-[13px] underline underline-offset-[3px] decoration-1 inline-flex items-center gap-1"
-          style={{ fontFamily: 'var(--font-ui)' }}
-        >
-          How does TRINITY compute this? →
-        </a>
-      </div>
     </div>
   )
 }

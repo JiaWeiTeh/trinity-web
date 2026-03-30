@@ -12,8 +12,6 @@ const T_MOM = 4.0
 const LABEL_X = 260
 const LEADER_END = 254
 
-function lerp(a, b, t) { return a + (b - a) * t }
-
 const ENERGY_FRACS = {
   freeWind: 0.1667, hotBubble: 0.4444, hii: 0.0556, shell: 0.1111, cloud: 0.2222
 }
@@ -255,11 +253,7 @@ export default function BubbleDiagram({ time = 1.0 }) {
   const transition = 'all 300ms ease'
 
   const handleZone = (zoneOrFn) => {
-    if (typeof zoneOrFn === 'function') {
-      setHoveredZone(zoneOrFn)
-    } else {
-      setHoveredZone(zoneOrFn)
-    }
+    setHoveredZone(zoneOrFn)
   }
 
   return (

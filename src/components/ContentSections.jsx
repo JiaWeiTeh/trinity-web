@@ -186,7 +186,7 @@ function Section3Diagnostics() {
         </p>
 
         <p className="mt-2 px-6 md:px-0">
-          <a href="https://trinitysf.readthedocs.io"
+          <a href="https://trinitysf.readthedocs.io/"
              target="_blank" rel="noopener noreferrer"
              style={{ fontFamily: 'var(--font-ui)' }}
              className="text-[13px] text-teal underline underline-offset-[3px] decoration-1">
@@ -290,14 +290,14 @@ function Section6Code() {
         <p style={{ fontFamily: 'var(--font-display)' }}
            className="text-[17px] text-ink-secondary leading-[1.65]">
           Full documentation, installation guide, and API reference are available at{' '}
-          <a href="https://trinitysf.readthedocs.io"
+          <a href="https://trinitysf.readthedocs.io/"
              target="_blank" rel="noopener noreferrer"
              style={{ fontFamily: 'var(--font-ui)' }}
              className="text-teal underline underline-offset-[3px] decoration-1">
             trinitysf.readthedocs.io
           </a>.
           {' '}The source code is hosted on{' '}
-          <a href="https://github.com/jiaweiteh/trinity"
+          <a href="https://github.com/JiaWeiTeh/trinity"
              target="_blank" rel="noopener noreferrer"
              style={{ fontFamily: 'var(--font-ui)' }}
              className="text-teal underline underline-offset-[3px] decoration-1">
