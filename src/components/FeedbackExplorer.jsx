@@ -135,109 +135,104 @@ export default function FeedbackExplorer() {
 
   return (
     <div>
-      <div className="flex flex-col md:flex-row gap-8">
-        {/* Chart */}
-        <div className="w-full md:w-[65%]">
-          <div className="bg-card border border-border-card rounded-lg p-4">
-          <ResponsiveContainer width="100%" height={340}>
-            <AreaChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 20 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(30, 36, 48, 0.06)" />
-              <XAxis
-                dataKey="time"
-                stroke="rgba(30, 36, 48, 0.3)"
-                tick={{ fill: '#5E6776', fontSize: 12 }}
-              >
-                <Label content={<XAxisLabel />} position="bottom" />
-              </XAxis>
-              <YAxis
-                domain={[0, 1]}
-                ticks={[0, 0.2, 0.4, 0.6, 0.8, 1.0]}
-                stroke="rgba(30, 36, 48, 0.3)"
-                tickFormatter={(v) => v.toFixed(1)}
-                tick={{ fill: '#5E6776', fontSize: 12 }}
-                label={{ value: 'Force fraction', angle: -90, position: 'insideLeft', offset: 10, fill: '#5E6776', fontSize: 12 }}
+      {/* Chart */}
+      <div className="bg-card border border-border-card rounded-lg p-4">
+        <ResponsiveContainer width="100%" height={300}>
+          <AreaChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 20 }}>
+            <CartesianGrid strokeDasharray="3 3" stroke="rgba(30, 36, 48, 0.06)" />
+            <XAxis
+              dataKey="time"
+              stroke="rgba(30, 36, 48, 0.3)"
+              tick={{ fill: '#5E6776', fontSize: 12 }}
+            >
+              <Label content={<XAxisLabel />} position="bottom" />
+            </XAxis>
+            <YAxis
+              domain={[0, 1]}
+              ticks={[0, 0.2, 0.4, 0.6, 0.8, 1.0]}
+              stroke="rgba(30, 36, 48, 0.3)"
+              tickFormatter={(v) => v.toFixed(1)}
+              tick={{ fill: '#5E6776', fontSize: 12 }}
+              label={{ value: 'Force fraction', angle: -90, position: 'insideLeft', offset: 10, fill: '#5E6776', fontSize: 12 }}
+            />
+            <ReferenceLine y={0.5} stroke="#2A3442" strokeOpacity={0.15} strokeDasharray="4 3" strokeWidth={0.8} />
+            <Tooltip content={<CustomTooltip />} />
+            {STACK_ORDER.map((key) => (
+              <Area
+                key={key}
+                type="monotone"
+                dataKey={key}
+                name={CHANNEL_META[key].name}
+                stackId="1"
+                stroke={CHANNEL_META[key].color}
+                fill={CHANNEL_META[key].color}
+                fillOpacity={0.75}
               />
-              <ReferenceLine y={0.5} stroke="#2A3442" strokeOpacity={0.15} strokeDasharray="4 3" strokeWidth={0.8} />
-              <Tooltip content={<CustomTooltip />} />
-              {STACK_ORDER.map((key) => (
-                <Area
-                  key={key}
-                  type="monotone"
-                  dataKey={key}
-                  name={CHANNEL_META[key].name}
-                  stackId="1"
-                  stroke={CHANNEL_META[key].color}
-                  fill={CHANNEL_META[key].color}
-                  fillOpacity={0.75}
-                />
-              ))}
-            </AreaChart>
-          </ResponsiveContainer>
+            ))}
+          </AreaChart>
+        </ResponsiveContainer>
+      </div>
+
+      {/* Legend */}
+      <div className="flex flex-wrap gap-x-4 gap-y-2 text-[13px] text-ink-secondary mt-4" style={{ fontFamily: 'var(--font-ui)' }}>
+        {[...STACK_ORDER].reverse().map((key) => (
+          <span key={key} className="flex items-center gap-1.5">
+            <span
+              className="w-3 h-3 rounded-sm"
+              style={{ background: CHANNEL_META[key].color }}
+            />
+            {CHANNEL_META[key].name}
+          </span>
+        ))}
+      </div>
+
+      {/* Controls */}
+      <div className="mt-6 flex flex-col sm:flex-row gap-6">
+        <div className="flex-1">
+          <div className="flex justify-between items-baseline mb-2">
+            <label className="text-[13px] text-ink-secondary" style={{ fontFamily: 'var(--font-ui)' }}>Cloud mass</label>
+            <span className="text-ink-primary font-medium text-sm" style={{ fontFamily: 'var(--font-ui)' }}>
+              10<sup className="text-[0.7em] align-super">{logM.toFixed(1)}</sup>{' '}
+              <span className="italic">M</span><sub className="text-[0.7em]">☉</sub>
+            </span>
+          </div>
+          <input
+            type="range"
+            min="4"
+            max="7"
+            step="0.5"
+            value={logM}
+            onChange={(e) => setLogM(parseFloat(e.target.value))}
+            className="w-full slider"
+          />
+          <div className="flex justify-between text-[12px] text-ink-tertiary mt-1" style={{ fontFamily: 'var(--font-ui)' }}>
+            <span>10<sup className="text-[0.7em] align-super">4</sup></span>
+            <span>10<sup className="text-[0.7em] align-super">7</sup></span>
           </div>
         </div>
 
-        {/* Controls */}
-        <div className="w-full md:w-[35%] flex flex-col justify-center gap-8">
-          <div>
-            <div className="flex justify-between items-baseline mb-2">
-              <label className="text-[13px] text-ink-secondary" style={{ fontFamily: 'var(--font-ui)' }}>Cloud mass</label>
-              <span className="text-ink-primary font-medium text-sm" style={{ fontFamily: 'var(--font-ui)' }}>
-                10<sup className="text-[0.7em] align-super">{logM.toFixed(1)}</sup>{' '}
-                <span className="italic">M</span><sub className="text-[0.7em]">☉</sub>
-              </span>
-            </div>
-            <input
-              type="range"
-              min="4"
-              max="7"
-              step="0.5"
-              value={logM}
-              onChange={(e) => setLogM(parseFloat(e.target.value))}
-              className="w-full slider"
-            />
-            <div className="flex justify-between text-[12px] text-ink-tertiary mt-1" style={{ fontFamily: 'var(--font-ui)' }}>
-              <span>10<sup className="text-[0.7em] align-super">4</sup></span>
-              <span>10<sup className="text-[0.7em] align-super">7</sup></span>
-            </div>
+        <div className="flex-1">
+          <div className="flex justify-between items-baseline mb-2">
+            <label className="text-[13px] text-ink-secondary" style={{ fontFamily: 'var(--font-ui)' }}>
+              Star formation efficiency (<span className="italic">ε</span><sub className="text-[0.7em]">sf</sub>)
+            </label>
+            <span className="text-ink-primary font-medium text-sm" style={{ fontFamily: 'var(--font-ui)' }}>{sfe}%</span>
           </div>
-
-          <div>
-            <div className="flex justify-between items-baseline mb-2">
-              <label className="text-[13px] text-ink-secondary" style={{ fontFamily: 'var(--font-ui)' }}>
-                Star formation efficiency (<span className="italic">ε</span><sub className="text-[0.7em]">sf</sub>)
-              </label>
-              <span className="text-ink-primary font-medium text-sm" style={{ fontFamily: 'var(--font-ui)' }}>{sfe}%</span>
-            </div>
-            <input
-              type="range"
-              min="5"
-              max="30"
-              step="1"
-              value={sfe}
-              onChange={(e) => setSfe(parseInt(e.target.value))}
-              className="w-full slider"
-            />
-            <div className="flex justify-between text-[12px] text-ink-tertiary mt-1" style={{ fontFamily: 'var(--font-ui)' }}>
-              <span>5%</span>
-              <span>30%</span>
-            </div>
-          </div>
-
-          {/* Legend */}
-          <div className="flex flex-wrap gap-x-4 gap-y-2 text-[13px] text-ink-secondary" style={{ fontFamily: 'var(--font-ui)' }}>
-            {[...STACK_ORDER].reverse().map((key) => (
-              <span key={key} className="flex items-center gap-1.5">
-                <span
-                  className="w-3 h-3 rounded-sm"
-                  style={{ background: CHANNEL_META[key].color }}
-                />
-                {CHANNEL_META[key].name}
-              </span>
-            ))}
+          <input
+            type="range"
+            min="5"
+            max="30"
+            step="1"
+            value={sfe}
+            onChange={(e) => setSfe(parseInt(e.target.value))}
+            className="w-full slider"
+          />
+          <div className="flex justify-between text-[12px] text-ink-tertiary mt-1" style={{ fontFamily: 'var(--font-ui)' }}>
+            <span>5%</span>
+            <span>30%</span>
           </div>
         </div>
       </div>
-
     </div>
   )
 }
