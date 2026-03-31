@@ -106,6 +106,7 @@ function Sidenote({ children }) {
 function Ref({ target, children }) {
   const handleClick = (e) => {
     e.preventDefault()
+    history.pushState(null, '', `#${target}`)
     const el = document.getElementById(target)
     if (el) el.scrollIntoView({ behavior: 'smooth' })
   }

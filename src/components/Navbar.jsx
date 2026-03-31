@@ -25,12 +25,28 @@ export default function Navbar() {
     e.preventDefault()
     setMenuOpen(false)
     if (href === '#top') {
+      history.pushState(null, '', window.location.pathname)
       window.scrollTo({ top: 0, behavior: 'smooth' })
       return
     }
+    history.pushState(null, '', href)
     const el = document.querySelector(href)
     if (el) el.scrollIntoView({ behavior: 'smooth' })
   }
+
+  useEffect(() => {
+    const onPopState = () => {
+      const hash = window.location.hash
+      if (!hash) {
+        window.scrollTo({ top: 0, behavior: 'smooth' })
+        return
+      }
+      const el = document.querySelector(hash)
+      if (el) el.scrollIntoView({ behavior: 'smooth' })
+    }
+    window.addEventListener('popstate', onPopState)
+    return () => window.removeEventListener('popstate', onPopState)
+  }, [])
 
   return (
     <>
