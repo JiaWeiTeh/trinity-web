@@ -4,8 +4,6 @@ import 'katex/dist/katex.min.css'
 import ComparisonSlider from './ComparisonSlider'
 import BubbleDiagram from './BubbleDiagram'
 import TimeScrubber from './TimeScrubber'
-import Sparkline from './Sparkline'
-import PressureBar from './PressureBar'
 
 const FeedbackExplorer = lazy(() => import('./FeedbackExplorer'))
 
@@ -108,7 +106,11 @@ function Ref({ target, children }) {
     e.preventDefault()
     history.pushState(null, '', `#${target}`)
     const el = document.getElementById(target)
-    if (el) el.scrollIntoView({ behavior: 'smooth' })
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      el.classList.add('figure-pulse')
+      window.setTimeout(() => el.classList.remove('figure-pulse'), 1100)
+    }
   }
   return (
     <a href={`#${target}`}
@@ -117,6 +119,15 @@ function Ref({ target, children }) {
        className="text-teal text-[inherit] no-underline hover:underline cursor-pointer">
       {children}
     </a>
+  )
+}
+
+function NotationTerm({ label, definition }) {
+  return (
+    <span className="notation-term group">
+      {label}
+      <span className="notation-note">{definition}</span>
+    </span>
   )
 }
 
@@ -322,7 +333,10 @@ function Section2Model({ time, setTime }) {
           <p>
             TRINITY divides the feedback-driven expansion into three dynamical phases. In the energy-driven phase, the hot shocked wind inflates a high-pressure bubble that drives a swept-up shell into the surrounding cloud (<Ref target="eq1">Eq. 1</Ref>).
             <Sidenote>
-              P<sub>H II</sub> is the thermal pressure of photoionised gas at T<sub>i</sub> ≈ 10⁴ K, computed from a cavity-aware Strömgren integral.
+              <NotationTerm
+                label={<>P<sub>H II</sub></>}
+                definition="Thermal pressure of photoionised gas in the H II region."
+              /> is computed at T<sub>i</sub> ≈ 10⁴ K from a cavity-aware Strömgren integral.
             </Sidenote>
             {' '}In the classical solution <Cite {...REFS.weaver77} />, the bubble radius evolves as:
           </p>
@@ -352,7 +366,11 @@ function Section2Model({ time, setTime }) {
           <p>
             This phase-aware treatment (<Ref target="eq3">Eq. 3</Ref>) is one of the key differences from WARPFIELD, which does not include photoionised-gas pressure as a driving term (see <Ref target="fig2">Interactive Fig. 2</Ref> for the effect on shell structure).
             <Sidenote>
-              The max(P<sub>b</sub>, P<sub>H II</sub>) formulation prevents double-counting when the bubble pressure already exceeds the H{'\u2009'}II pressure.
+              The max(
+              <NotationTerm label={<>P<sub>b</sub></>} definition="Thermal pressure inside the hot shocked wind bubble." />
+              , {' '}
+              <NotationTerm label={<>P<sub>H II</sub></>} definition="Thermal pressure in ionised gas at approximately 10⁴ K." />
+              ) formulation prevents double-counting when the bubble pressure already exceeds the H{'\u2009'}II pressure.
             </Sidenote>
           </p>
         </div>
@@ -373,14 +391,6 @@ function Section2Model({ time, setTime }) {
             <BubbleDiagram time={time} />
           </div>
 
-          <div className="w-full max-w-[320px]">
-            <Sparkline time={time} />
-          </div>
-
-          <div className="w-full max-w-[320px]">
-            <PressureBar time={time} />
-          </div>
-
           <p style={{ fontFamily: 'var(--font-display)' }}
              className="text-[15px] italic text-ink-secondary text-center min-h-[48px] max-w-[520px]">
             {phase === 'energy' && 'Energy-driven: hot bubble pressure inflates the shell.'}
@@ -395,7 +405,7 @@ function Section2Model({ time, setTime }) {
 
         <p style={{ fontFamily: 'var(--font-ui)' }}
            className="text-[12px] text-ink-tertiary mt-3 leading-relaxed max-w-[680px] mx-auto">
-          Interactive Fig. 2 — Idealised 1D shell structure in the energy-driven, transition, and momentum-driven regimes. Drag the time slider to evolve the bubble; hover zones to reveal governing equations. The pressure bar shows the instantaneous force-fraction decomposition.
+          Interactive Fig. 2 — Idealised 1D shell structure in the energy-driven, transition, and momentum-driven regimes. Drag the time slider to evolve the bubble and hover layer labels to isolate each zone.
         </p>
       </div>
     </section>
@@ -406,7 +416,7 @@ function Section3Diagnostics() {
   return (
     <section id="diagnostics" className="py-12">
       <div className="max-w-[680px] mx-auto mb-8">
-        <SectionHeading number={3} title="Interactive diagnostics" />
+        <SectionHeading number={3} title="Diagnostic atlas" />
         <p style={{ fontFamily: 'var(--font-display)' }}
            className="text-[17px] text-ink-secondary leading-[1.65]">
           TRINITY computes the full force-fraction history for any combination of cloud mass and star-formation efficiency.
@@ -454,45 +464,6 @@ function Section3Diagnostics() {
   )
 }
 
-function Section4Contributions() {
-  const items = [
-    { title: 'Phase-aware driving pressure', desc: 'Switches between thermal and ram pressure at each evolutionary phase.' },
-    { title: 'Smooth energy → momentum transition', desc: 'Blends driving pressure across the cooling transition instead of a hard switch.' },
-    { title: 'Flexible density profiles', desc: 'Supports power-law (α = 0, −1, −2) and Bonnor-Ebert sphere profiles.' },
-    { title: 'Radiation pressure + dust', desc: 'Direct and IR-reprocessed radiation pressure on dusty shells.' },
-    { title: 'Ionisation-front tracking', desc: 'Strömgren-radius calculation within the swept-up shell.' },
-    { title: 'Terminal momentum diagnostics', desc: 'Tracks total injected momentum and bubble size for population synthesis.' },
-  ]
-
-  return (
-    <section id="contributions" className="py-12">
-      <div className="max-w-[680px] mx-auto">
-        <SectionHeading number={4} title="Contributions" />
-        <div>
-          {items.map((item, i) => (
-            <div key={i} className="py-3.5 border-b border-border-rule flex gap-4 items-baseline last:border-b-0">
-              <span style={{ fontFamily: 'var(--font-ui)' }}
-                    className="text-[13px] text-ink-tertiary w-5 shrink-0 text-right">
-                {i + 1}
-              </span>
-              <div>
-                <div style={{ fontFamily: 'var(--font-display)' }}
-                     className="text-[15px] font-semibold text-ink-primary">
-                  {item.title}
-                </div>
-                <div style={{ fontFamily: 'var(--font-display)' }}
-                     className="text-[14px] text-ink-secondary mt-0.5">
-                  {item.desc}
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  )
-}
-
 function Section5Papers() {
   const papers = [
     { num: 'Paper I', title: 'Code & Methods', status: 'Teh et al. (in prep.)' },
@@ -505,7 +476,7 @@ function Section5Papers() {
   return (
     <section id="papers" className="py-12">
       <div className="max-w-[680px] mx-auto">
-        <SectionHeading number={5} title="Papers" />
+        <SectionHeading number={4} title="Papers" />
         <p style={{ fontFamily: 'var(--font-display)' }}
            className="text-[17px] text-ink-secondary leading-[1.65] mb-6">
           TRINITY is developed across a series of methods and science papers.
@@ -542,7 +513,7 @@ function Section6Code() {
   return (
     <section id="code" className="py-12">
       <div className="max-w-[680px] mx-auto">
-        <SectionHeading number={6} title="Code and documentation" />
+        <SectionHeading number={5} title="Code and documentation" />
         <p style={{ fontFamily: 'var(--font-display)' }}
            className="text-[17px] text-ink-secondary leading-[1.65]">
           Full documentation, installation guide, and API reference are available at{' '}
@@ -560,6 +531,34 @@ function Section6Code() {
             GitHub
           </a>.
         </p>
+      </div>
+    </section>
+  )
+}
+
+function Appendices() {
+  return (
+    <section id="appendices" className="py-12">
+      <div className="max-w-[680px] mx-auto">
+        <SectionHeading number="A" title="Appendices" />
+        <div className="space-y-3">
+          <details className="appendix-card">
+            <summary>Appendix A. Notation</summary>
+            <p>TBD.</p>
+          </details>
+          <details className="appendix-card">
+            <summary>Appendix B. Explorer assumptions</summary>
+            <p>TBD.</p>
+          </details>
+          <details className="appendix-card">
+            <summary>Appendix C. Image credits</summary>
+            <p>TBD.</p>
+          </details>
+          <details className="appendix-card">
+            <summary>Appendix D. Code availability</summary>
+            <p>TBD.</p>
+          </details>
+        </div>
       </div>
     </section>
   )
@@ -610,11 +609,11 @@ export default function ContentSections() {
       <SectionRule />
       <Section3Diagnostics />
       <SectionRule />
-      <Section4Contributions />
-      <SectionRule />
       <Section5Papers />
       <SectionRule />
       <Section6Code />
+      <SectionRule />
+      <Appendices />
       <SectionRule />
       <Acknowledgements />
     </div>
