@@ -108,7 +108,11 @@ function Ref({ target, children }) {
     e.preventDefault()
     history.pushState(null, '', `#${target}`)
     const el = document.getElementById(target)
-    if (el) el.scrollIntoView({ behavior: 'smooth' })
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      el.classList.add('figure-pulse')
+      window.setTimeout(() => el.classList.remove('figure-pulse'), 1100)
+    }
   }
   return (
     <a href={`#${target}`}
@@ -117,6 +121,15 @@ function Ref({ target, children }) {
        className="text-teal text-[inherit] no-underline hover:underline cursor-pointer">
       {children}
     </a>
+  )
+}
+
+function NotationTerm({ label, definition }) {
+  return (
+    <span className="notation-term group">
+      {label}
+      <span className="notation-note">{definition}</span>
+    </span>
   )
 }
 
@@ -322,7 +335,10 @@ function Section2Model({ time, setTime }) {
           <p>
             TRINITY divides the feedback-driven expansion into three dynamical phases. In the energy-driven phase, the hot shocked wind inflates a high-pressure bubble that drives a swept-up shell into the surrounding cloud (<Ref target="eq1">Eq. 1</Ref>).
             <Sidenote>
-              P<sub>H II</sub> is the thermal pressure of photoionised gas at T<sub>i</sub> ≈ 10⁴ K, computed from a cavity-aware Strömgren integral.
+              <NotationTerm
+                label={<>P<sub>H II</sub></>}
+                definition="Thermal pressure of photoionised gas in the H II region."
+              /> is computed at T<sub>i</sub> ≈ 10⁴ K from a cavity-aware Strömgren integral.
             </Sidenote>
             {' '}In the classical solution <Cite {...REFS.weaver77} />, the bubble radius evolves as:
           </p>
@@ -352,7 +368,11 @@ function Section2Model({ time, setTime }) {
           <p>
             This phase-aware treatment (<Ref target="eq3">Eq. 3</Ref>) is one of the key differences from WARPFIELD, which does not include photoionised-gas pressure as a driving term (see <Ref target="fig2">Interactive Fig. 2</Ref> for the effect on shell structure).
             <Sidenote>
-              The max(P<sub>b</sub>, P<sub>H II</sub>) formulation prevents double-counting when the bubble pressure already exceeds the H{'\u2009'}II pressure.
+              The max(
+              <NotationTerm label={<>P<sub>b</sub></>} definition="Thermal pressure inside the hot shocked wind bubble." />
+              , {' '}
+              <NotationTerm label={<>P<sub>H II</sub></>} definition="Thermal pressure in ionised gas at approximately 10⁴ K." />
+              ) formulation prevents double-counting when the bubble pressure already exceeds the H{'\u2009'}II pressure.
             </Sidenote>
           </p>
         </div>
@@ -395,7 +415,7 @@ function Section2Model({ time, setTime }) {
 
         <p style={{ fontFamily: 'var(--font-ui)' }}
            className="text-[12px] text-ink-tertiary mt-3 leading-relaxed max-w-[680px] mx-auto">
-          Interactive Fig. 2 — Idealised 1D shell structure in the energy-driven, transition, and momentum-driven regimes. Drag the time slider to evolve the bubble; hover zones to reveal governing equations. The pressure bar shows the instantaneous force-fraction decomposition.
+          Interactive Fig. 2 — Idealised 1D shell structure in the energy-driven, transition, and momentum-driven regimes. Drag the time slider to evolve the bubble and hover layer labels to isolate each zone. The pressure bar shows the instantaneous force-fraction decomposition.
         </p>
       </div>
     </section>
@@ -565,6 +585,34 @@ function Section6Code() {
   )
 }
 
+function Appendices() {
+  return (
+    <section id="appendices" className="py-12">
+      <div className="max-w-[680px] mx-auto">
+        <SectionHeading number="A" title="Appendices" />
+        <div className="space-y-3">
+          <details className="appendix-card">
+            <summary>Appendix A. Notation</summary>
+            <p>R<sub>sh</sub>: shell outer radius; R<sub>b</sub>: bubble radius; R<sub>IF</sub>: ionisation-front radius; P<sub>H II</sub>: ionised-gas thermal pressure; P<sub>rad</sub>: radiation pressure.</p>
+          </details>
+          <details className="appendix-card">
+            <summary>Appendix B. Explorer assumptions</summary>
+            <p>The explorer shows interpolated force fractions from a precomputed grid (log M<sub>cl</sub>=4–7 and ε<sub>sf</sub>=5–30%) with channels normalised to sum to unity at every timestep.</p>
+          </details>
+          <details className="appendix-card">
+            <summary>Appendix C. Image credits</summary>
+            <p>Rosette Nebula image: DECam, CTIO/NOIRLab/DOE/NSF/AURA. Schematic figures and derived visual diagnostics are generated for TRINITY website presentation.</p>
+          </details>
+          <details className="appendix-card">
+            <summary>Appendix D. Code availability</summary>
+            <p>TRINITY source code and documentation are maintained publicly via the project GitHub repository and Read the Docs documentation site.</p>
+          </details>
+        </div>
+      </div>
+    </section>
+  )
+}
+
 function Acknowledgements() {
   const messages = [
     'JWT thanks the mass-to-light ratio for keeping things interesting, and coffee for keeping things moving.',
@@ -615,6 +663,8 @@ export default function ContentSections() {
       <Section5Papers />
       <SectionRule />
       <Section6Code />
+      <SectionRule />
+      <Appendices />
       <SectionRule />
       <Acknowledgements />
     </div>
