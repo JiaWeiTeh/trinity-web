@@ -563,23 +563,31 @@ function Section6Code() {
 }
 
 function Acknowledgements() {
+  const messages = [
+    'JWT thanks the mass-to-light ratio for keeping things interesting, and coffee for keeping things moving.',
+    'JWT acknowledges the Sun for powering the H\u2009II regions, and espresso for powering the code.',
+    'JWT is grateful to the Rosette Nebula for looking exactly like a textbook figure, and to RSK for pointing out when the code does not.',
+    'JWT thanks the ODE solver for converging most of the time.',
+    'JWT acknowledges gravity for providing the only restoring force in this problem, and in the chair.',
+    'JWT thanks the interstellar medium for being compressible, and deadlines for being incompressible.',
+    'JWT is grateful to Starburst99 for the stellar models, and to Heidelberg\'s bakeries for the fuel.',
+    'JWT thanks the anonymous mass-loading parameter for absorbing all remaining uncertainties.',
+    'JWT acknowledges the shell for not dissolving before the paper was written.',
+  ];
+
+  const [msg] = useState(() => messages[Math.floor(Math.random() * messages.length)]);
+
   return (
     <section className="py-10">
       <div className="max-w-[680px] mx-auto">
         <p style={{ fontFamily: 'var(--font-ui)' }}
            className="text-[12px] text-ink-tertiary leading-relaxed">
           <span className="font-medium italic">Acknowledgements. </span>
-          JWT acknowledges support from the International Max Planck Research School
-          for Astronomy and Cosmic Physics at the University of Heidelberg (IMPRS-HD).
-          RSK acknowledges financial support from the European Research Council via
-          the ERC Synergy Grant ECOGAL (grant 855130) and the German Excellence
-          Strategy via the Heidelberg Cluster of Excellence STRUCTURES (EXC 2181 - 390900948).
-          The Rosette Nebula image was obtained with DECam on the Blanco 4m telescope
-          at CTIO/NOIRLab/DOE/NSF/AURA.
+          {msg}
         </p>
       </div>
     </section>
-  )
+  );
 }
 
 /* ── Composition ─────────────────────────────────────────────── */
