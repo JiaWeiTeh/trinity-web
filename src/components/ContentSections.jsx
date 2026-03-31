@@ -641,6 +641,20 @@ function Acknowledgements() {
   );
 }
 
+function Contact() {
+  return (
+    <section className="py-10">
+      <div className="max-w-[680px] mx-auto">
+        <p style={{ fontFamily: 'var(--font-ui)' }}
+           className="text-[12px] text-ink-tertiary leading-relaxed">
+          <span className="font-medium italic">Contact. </span>
+          Jia Wei Teh · PhD student, International Max Planck Research School for Astronomy and Cosmic Physics at the University of Heidelberg (IMPRS-HD) · Institut für Theoretische Astrophysik (ITA), Zentrum für Astronomie der Universität Heidelberg, Albert-Ueberle-Str. 2, 69120 Heidelberg, Germany
+        </p>
+      </div>
+    </section>
+  );
+}
+
 /* ── Composition ─────────────────────────────────────────────── */
 
 export default function ContentSections() {
@@ -667,6 +681,8 @@ export default function ContentSections() {
       <Appendices />
       <SectionRule />
       <Acknowledgements />
+      <SectionRule />
+      <Contact />
     </div>
   )
 }
