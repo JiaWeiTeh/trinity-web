@@ -56,9 +56,9 @@ const REFS = {
 
 /* ── Helpers ─────────────────────────────────────────────────── */
 
-function SectionRule({ wide = false }) {
+function SectionRule() {
   return (
-    <div className={`${wide ? 'max-w-[960px]' : 'max-w-[680px]'} mx-auto`}>
+    <div className="max-w-[680px] mx-auto">
       <hr className="border-t border-border-rule" />
     </div>
   )
@@ -358,7 +358,7 @@ function Section2Model({ time, setTime }) {
         </div>
       </div>
 
-      <div id="fig2" className="max-w-[960px] mx-auto">
+      <div id="fig2" className="max-w-[680px] mx-auto">
         <p style={{ fontFamily: 'var(--font-ui)' }}
            className="text-[12px] font-medium text-teal mb-1">
           Interactive Fig. 2
@@ -417,7 +417,7 @@ function Section3Diagnostics() {
         </p>
       </div>
 
-      <div id="fig3" className="max-w-[960px] mx-auto">
+      <div id="fig3" className="max-w-[680px] mx-auto">
         <p style={{ fontFamily: 'var(--font-ui)' }}
            className="text-[12px] font-medium text-teal mb-1">
           Interactive Fig. 3
@@ -603,13 +603,13 @@ export default function ContentSections() {
       <Abstract />
       <SectionRule />
       <Figure1 />
-      <SectionRule wide />
+      <SectionRule />
       <Section1Overview />
       <SectionRule />
       <Section2Model time={time} setTime={setTime} />
-      <SectionRule wide />
+      <SectionRule />
       <Section3Diagnostics />
-      <SectionRule wide />
+      <SectionRule />
       <Section4Contributions />
       <SectionRule />
       <Section5Papers />
