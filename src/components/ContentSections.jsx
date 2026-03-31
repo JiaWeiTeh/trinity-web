@@ -106,6 +106,7 @@ function Sidenote({ children }) {
 function Ref({ target, children }) {
   const handleClick = (e) => {
     e.preventDefault()
+    history.pushState(null, '', `#${target}`)
     const el = document.getElementById(target)
     if (el) el.scrollIntoView({ behavior: 'smooth' })
   }
@@ -244,7 +245,7 @@ function Abstract() {
 function Figure1() {
   return (
     <section id="fig1" className="py-10">
-      <div className="max-w-[960px] mx-auto">
+      <div className="max-w-[680px] mx-auto">
         <p style={{ fontFamily: 'var(--font-ui)' }}
            className="text-[12px] font-medium text-teal mb-1">
           Interactive Fig. 1
@@ -254,10 +255,12 @@ function Figure1() {
           From nebula to schematic
         </p>
 
-        <ComparisonSlider />
+        <div className="max-w-[340px] mx-auto">
+          <ComparisonSlider />
+        </div>
 
         <p style={{ fontFamily: 'var(--font-ui)' }}
-           className="text-[12px] text-ink-tertiary mt-3 leading-relaxed max-w-[800px]">
+           className="text-[12px] text-ink-tertiary mt-3 leading-relaxed max-w-[680px]">
           Fig. 1 — Comparison between NGC 2244 (Rosette Nebula; DECam, CTIO/NOIRLab/DOE/NSF/AURA) and the idealised spherical zones evolved by TRINITY. Drag the divider to compare observed morphology with model structure.
         </p>
       </div>
@@ -391,7 +394,7 @@ function Section2Model({ time, setTime }) {
         </div>
 
         <p style={{ fontFamily: 'var(--font-ui)' }}
-           className="text-[12px] text-ink-tertiary mt-3 leading-relaxed max-w-[800px] mx-auto">
+           className="text-[12px] text-ink-tertiary mt-3 leading-relaxed max-w-[680px] mx-auto">
           Interactive Fig. 2 — Idealised 1D shell structure in the energy-driven, transition, and momentum-driven regimes. Drag the time slider to evolve the bubble; hover zones to reveal governing equations. The pressure bar shows the instantaneous force-fraction decomposition.
         </p>
       </div>
@@ -434,7 +437,7 @@ function Section3Diagnostics() {
         </Suspense>
 
         <p style={{ fontFamily: 'var(--font-ui)' }}
-           className="text-[12px] text-ink-tertiary mt-3 leading-relaxed max-w-[800px] mx-auto">
+           className="text-[12px] text-ink-tertiary mt-3 leading-relaxed max-w-[680px] mx-auto">
           Interactive Fig. 3 — Illustrative force-fraction histories for selected cloud mass and star formation efficiency. Quantitative results in Paper I (Teh et al., in prep.). Use the sliders to explore how the dominant feedback mechanism shifts across parameter space.
         </p>
 

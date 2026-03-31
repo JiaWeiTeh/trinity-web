@@ -89,29 +89,12 @@ sup {
   color: var(--color-ink-tertiary);
 }
 
-/* Wide screens: float to right margin */
-@media (min-width: 1280px) {
-  .sidenote {
-    float: right;
-    clear: right;
-    margin-right: -200px;
-    width: 170px;
-    margin-top: 0;
-    margin-bottom: 12px;
-    padding-left: 12px;
-    border-left: 1px solid var(--color-border-rule);
-  }
-}
-
-/* Narrow screens: inline, indented block */
-@media (max-width: 1279px) {
-  .sidenote {
-    display: block;
-    margin: 8px 0 8px 20px;
-    padding-left: 12px;
-    border-left: 2px solid var(--color-border-rule);
-    font-size: 12px;
-  }
+/* Sidenotes: always inline indented block (stays within paper) */
+.sidenote {
+  display: block;
+  margin: 8px 0 8px 20px;
+  padding-left: 12px;
+  border-left: 2px solid var(--color-border-rule);
 }
 
 /* Paper container — article page resting on desk */
@@ -129,6 +112,7 @@ sup {
   border: 0.5px solid #D3D1C7;
   border-radius: 2px;
   position: relative;
+  overflow: hidden;
 }
 
 @media (min-width: 1140px) {
