@@ -1,7 +1,7 @@
 export default function Footer() {
   return (
-    <footer className="border-t border-border-rule py-8 px-6 md:px-10">
-      <div className="max-w-[960px] mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+    <footer className="py-8">
+      <div className="max-w-[1060px] mx-auto px-6 md:px-10 flex flex-col md:flex-row items-center justify-between gap-4">
         <div style={{ fontFamily: 'var(--font-ui)' }}
              className="text-[12px] text-ink-tertiary">
           TRINITY — ITA/ZAH, Universität Heidelberg

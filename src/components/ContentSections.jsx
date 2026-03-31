@@ -58,7 +58,7 @@ const REFS = {
 
 function SectionRule({ wide = false }) {
   return (
-    <div className={`${wide ? 'max-w-[960px]' : 'max-w-[680px]'} mx-auto px-6 md:px-10`}>
+    <div className={`${wide ? 'max-w-[960px]' : 'max-w-[680px]'} mx-auto`}>
       <hr className="border-t border-border-rule" />
     </div>
   )
@@ -214,7 +214,7 @@ function CiteGroup({ refs }) {
 
 function Abstract() {
   return (
-    <section id="abstract" className="py-10 px-6 md:px-10">
+    <section id="abstract" className="py-10">
       <div className="max-w-[680px] mx-auto">
         <div className="border-l-4 border-border-card pl-5 py-1">
           <p style={{ fontFamily: 'var(--font-display)' }}
@@ -243,7 +243,7 @@ function Abstract() {
 
 function Figure1() {
   return (
-    <section id="fig1" className="py-10 px-6 md:px-10">
+    <section id="fig1" className="py-10">
       <div className="max-w-[960px] mx-auto">
         <p style={{ fontFamily: 'var(--font-ui)' }}
            className="text-[12px] font-medium text-teal mb-1">
@@ -267,7 +267,7 @@ function Figure1() {
 
 function Section1Overview() {
   return (
-    <section id="overview" className="py-12 px-6 md:px-10">
+    <section id="overview" className="py-12">
       <div className="max-w-[680px] mx-auto">
         <SectionHeading number={1} title="Overview" />
         <div style={{ fontFamily: 'var(--font-display)' }}
@@ -311,7 +311,7 @@ function Section2Model({ time, setTime }) {
   const phase = time < 2 ? 'energy' : time < 4 ? 'transition' : 'momentum'
 
   return (
-    <section id="model" className="py-12 px-6 md:px-10">
+    <section id="model" className="py-12">
       <div className="max-w-[680px] mx-auto mb-8">
         <SectionHeading number={2} title="Physical model" />
         <div style={{ fontFamily: 'var(--font-display)' }}
@@ -357,11 +357,11 @@ function Section2Model({ time, setTime }) {
 
       <div id="fig2" className="max-w-[960px] mx-auto">
         <p style={{ fontFamily: 'var(--font-ui)' }}
-           className="text-[12px] font-medium text-teal mb-1 px-6 md:px-0">
+           className="text-[12px] font-medium text-teal mb-1">
           Interactive Fig. 2
         </p>
         <p style={{ fontFamily: 'var(--font-display)' }}
-           className="text-[15px] font-semibold text-ink-primary mb-4 px-6 md:px-0">
+           className="text-[15px] font-semibold text-ink-primary mb-4">
           Shell structure across evolutionary phases
         </p>
 
@@ -391,7 +391,7 @@ function Section2Model({ time, setTime }) {
         </div>
 
         <p style={{ fontFamily: 'var(--font-ui)' }}
-           className="text-[12px] text-ink-tertiary mt-3 leading-relaxed max-w-[800px] mx-auto px-6 md:px-0">
+           className="text-[12px] text-ink-tertiary mt-3 leading-relaxed max-w-[800px] mx-auto">
           Interactive Fig. 2 — Idealised 1D shell structure in the energy-driven, transition, and momentum-driven regimes. Drag the time slider to evolve the bubble; hover zones to reveal governing equations. The pressure bar shows the instantaneous force-fraction decomposition.
         </p>
       </div>
@@ -401,7 +401,7 @@ function Section2Model({ time, setTime }) {
 
 function Section3Diagnostics() {
   return (
-    <section id="diagnostics" className="py-12 px-6 md:px-10">
+    <section id="diagnostics" className="py-12">
       <div className="max-w-[680px] mx-auto mb-8">
         <SectionHeading number={3} title="Interactive diagnostics" />
         <p style={{ fontFamily: 'var(--font-display)' }}
@@ -416,11 +416,11 @@ function Section3Diagnostics() {
 
       <div id="fig3" className="max-w-[960px] mx-auto">
         <p style={{ fontFamily: 'var(--font-ui)' }}
-           className="text-[12px] font-medium text-teal mb-1 px-6 md:px-0">
+           className="text-[12px] font-medium text-teal mb-1">
           Interactive Fig. 3
         </p>
         <p style={{ fontFamily: 'var(--font-display)' }}
-           className="text-[15px] font-semibold text-ink-primary mb-4 px-6 md:px-0">
+           className="text-[15px] font-semibold text-ink-primary mb-4">
           Force-fraction evolution across parameter space
         </p>
 
@@ -434,11 +434,11 @@ function Section3Diagnostics() {
         </Suspense>
 
         <p style={{ fontFamily: 'var(--font-ui)' }}
-           className="text-[12px] text-ink-tertiary mt-3 leading-relaxed max-w-[800px] mx-auto px-6 md:px-0">
+           className="text-[12px] text-ink-tertiary mt-3 leading-relaxed max-w-[800px] mx-auto">
           Interactive Fig. 3 — Illustrative force-fraction histories for selected cloud mass and star formation efficiency. Quantitative results in Paper I (Teh et al., in prep.). Use the sliders to explore how the dominant feedback mechanism shifts across parameter space.
         </p>
 
-        <p className="mt-2 px-6 md:px-0">
+        <p className="mt-2">
           <a href="https://trinitysf.readthedocs.io/"
              target="_blank" rel="noopener noreferrer"
              style={{ fontFamily: 'var(--font-ui)' }}
@@ -462,7 +462,7 @@ function Section4Contributions() {
   ]
 
   return (
-    <section id="contributions" className="py-12 px-6 md:px-10">
+    <section id="contributions" className="py-12">
       <div className="max-w-[680px] mx-auto">
         <SectionHeading number={4} title="Contributions" />
         <div>
@@ -500,7 +500,7 @@ function Section5Papers() {
   ]
 
   return (
-    <section id="papers" className="py-12 px-6 md:px-10">
+    <section id="papers" className="py-12">
       <div className="max-w-[680px] mx-auto">
         <SectionHeading number={5} title="Papers" />
         <p style={{ fontFamily: 'var(--font-display)' }}
@@ -537,7 +537,7 @@ function Section5Papers() {
 
 function Section6Code() {
   return (
-    <section id="code" className="py-12 px-6 md:px-10">
+    <section id="code" className="py-12">
       <div className="max-w-[680px] mx-auto">
         <SectionHeading number={6} title="Code and documentation" />
         <p style={{ fontFamily: 'var(--font-display)' }}
@@ -563,23 +563,31 @@ function Section6Code() {
 }
 
 function Acknowledgements() {
+  const messages = [
+    'JWT thanks the mass-to-light ratio for keeping things interesting, and coffee for keeping things moving.',
+    'JWT acknowledges the Sun for powering the H\u2009II regions, and espresso for powering the code.',
+    'JWT is grateful to the Rosette Nebula for looking exactly like a textbook figure, and to RSK for pointing out when the code does not.',
+    'JWT thanks the ODE solver for converging most of the time.',
+    'JWT acknowledges gravity for providing the only restoring force in this problem, and in the chair.',
+    'JWT thanks the interstellar medium for being compressible, and deadlines for being incompressible.',
+    'JWT is grateful to Starburst99 for the stellar models, and to Heidelberg\'s bakeries for the fuel.',
+    'JWT thanks the anonymous mass-loading parameter for absorbing all remaining uncertainties.',
+    'JWT acknowledges the shell for not dissolving before the paper was written.',
+  ];
+
+  const [msg] = useState(() => messages[Math.floor(Math.random() * messages.length)]);
+
   return (
-    <section className="py-10 px-6 md:px-10">
+    <section className="py-10">
       <div className="max-w-[680px] mx-auto">
         <p style={{ fontFamily: 'var(--font-ui)' }}
            className="text-[12px] text-ink-tertiary leading-relaxed">
           <span className="font-medium italic">Acknowledgements. </span>
-          JWT acknowledges support from the International Max Planck Research School
-          for Astronomy and Cosmic Physics at the University of Heidelberg (IMPRS-HD).
-          RSK acknowledges financial support from the European Research Council via
-          the ERC Synergy Grant ECOGAL (grant 855130) and the German Excellence
-          Strategy via the Heidelberg Cluster of Excellence STRUCTURES (EXC 2181 - 390900948).
-          The Rosette Nebula image was obtained with DECam on the Blanco 4m telescope
-          at CTIO/NOIRLab/DOE/NSF/AURA.
+          {msg}
         </p>
       </div>
     </section>
-  )
+  );
 }
 
 /* ── Composition ─────────────────────────────────────────────── */
