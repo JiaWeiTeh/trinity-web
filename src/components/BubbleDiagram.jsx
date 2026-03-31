@@ -95,43 +95,45 @@ function dotXOnCircle(dotY, r) {
   return CX + Math.sqrt(r * r - dy * dy)
 }
 
-function Labels({ radii, bubbleOpacity }) {
+function Labels({ radii, bubbleOpacity, hoveredZone }) {
   const showBubble = bubbleOpacity > 0.15
   const showHII = !showBubble
+  const ionisedInner = Math.max(radii.R_b, radii.R_w)
 
   const labelDefs = [
-    { key: 'cloud',   text: 'CLOUD',    sub: null,      dotY: 42,  labelY: 42,  r: radii.R_cloud },
-    { key: 'shell',   text: 'SHELL',    sub: 'neutral', dotY: 62,  labelY: 62,  r: radii.R_sh },
-    { key: 'ionised', text: 'SHELL',    sub: 'ionised', dotY: 86,  labelY: 86,  r: radii.R_if },
+    { key: 'cloud', zone: 'cloud', text: 'CLOUD', sub: null, dotY: 42, labelY: 42, r: (radii.R_cloud + radii.R_sh) / 2 },
+    { key: 'shell', zone: 'shell', text: 'SHELL', sub: 'neutral', dotY: 62, labelY: 62, r: (radii.R_sh + radii.R_if) / 2 },
+    { key: 'ionised-shell', zone: 'ionised', text: 'SHELL', sub: 'ionised', dotY: 86, labelY: 86, r: (radii.R_if + ionisedInner) / 2 },
     ...(showBubble
-      ? [{ key: 'bubble', text: 'BUBBLE', sub: null, dotY: 140, labelY: 140, r: radii.R_b, opacity: bubbleOpacity }]
+      ? [{ key: 'bubble', zone: 'bubble', text: 'BUBBLE', sub: null, dotY: 140, labelY: 140, r: (radii.R_b + radii.R_w) / 2, opacity: bubbleOpacity }]
       : []),
-    ...(showHII
-      ? [{ key: 'hii', text: 'H\u2009II', sub: null, dotY: 120, labelY: 120, r: (radii.R_if + radii.R_w) / 2 }]
-      : []),
-    { key: 'winds', text: 'WINDS', sub: null, dotY: CY, labelY: CY, r: radii.R_w },
+    ...(showHII ? [{ key: 'hii-label', zone: 'ionised', text: 'H\u2009II', sub: null, dotY: 120, labelY: 120, r: (radii.R_if + radii.R_w) / 2 }] : []),
+    { key: 'winds', zone: 'winds', text: 'WINDS', sub: null, dotY: CY, labelY: CY, r: (radii.R_w + 8) / 2 },
   ]
 
   return (
     <g>
       {labelDefs.map((l) => {
         const dX = dotXOnCircle(l.dotY, l.r)
-        const op = l.opacity !== undefined ? Math.min(1, l.opacity * 2) : 1
+        const baseOpacity = l.opacity !== undefined ? Math.min(1, l.opacity * 2) : 1
+        const dimmed = hoveredZone && hoveredZone !== l.zone
+        const highlighted = hoveredZone === l.zone
+        const op = dimmed ? baseOpacity * 0.28 : baseOpacity
 
         return (
           <g key={l.key} style={{ opacity: op, transition: 'opacity 300ms ease' }}>
-            <circle cx={dX} cy={l.dotY} r={1.5} fill="#97948C" />
+            <circle cx={dX} cy={l.dotY} r={highlighted ? 2.2 : 1.5} fill={highlighted ? '#1E2430' : '#97948C'} />
             <line x1={dX + 2} y1={l.dotY} x2={LEADER_END} y2={l.labelY}
-              stroke="#97948C" strokeWidth={0.5} />
+              stroke={highlighted ? '#1E2430' : '#97948C'} strokeWidth={highlighted ? 0.9 : 0.5} />
             <text x={LABEL_X} y={l.sub ? l.labelY - 1 : l.labelY}
-              fill="#5E6776" fontSize={10} fontWeight={500}
+              fill={highlighted ? '#1E2430' : '#5E6776'} fontSize={10} fontWeight={highlighted ? 600 : 500}
               dominantBaseline="central"
               style={{ fontFamily: 'var(--font-ui)' }}>
               {l.text}
             </text>
             {l.sub && (
               <text x={LABEL_X} y={l.labelY + 12}
-                fill="#97948C" fontSize={8} fontWeight={400} fontStyle="italic"
+                fill={highlighted ? '#5E6776' : '#97948C'} fontSize={8} fontWeight={400} fontStyle="italic"
                 dominantBaseline="central"
                 style={{ fontFamily: 'var(--font-ui)' }}>
                 {l.sub}
@@ -144,30 +146,15 @@ function Labels({ radii, bubbleOpacity }) {
   )
 }
 
-function HoverRegions({ radii, onZone }) {
-  const zones = [
-    { key: 'cloud',   r: (radii.R_cloud + radii.R_sh) / 2 },
-    { key: 'shell',   r: (radii.R_sh + radii.R_if) / 2 },
-    { key: 'ionised', r: (radii.R_if + Math.max(radii.R_b, radii.R_w)) / 2 },
-    ...(radii.R_b > 5
-      ? [{ key: 'bubble', r: (radii.R_b + radii.R_w) / 2 }]
-      : []),
-    { key: 'winds', r: (radii.R_w + 8) / 2 },
-  ]
-
-  return (
-    <g>
-      {zones.map((z) => (
-        <circle key={z.key} cx={CX} cy={CY} r={z.r}
-          fill="transparent" stroke="none"
-          style={{ cursor: 'pointer' }}
-          onMouseEnter={() => onZone(z.key)}
-          onMouseLeave={() => onZone(null)}
-          onClick={() => onZone(prev => prev === z.key ? null : z.key)}
-        />
-      ))}
-    </g>
-  )
+function zoneAtPointer(radii, radius) {
+  if (radius > radii.R_cloud) return null
+  if (radius >= radii.R_sh) return 'cloud'
+  if (radius >= radii.R_if) return 'shell'
+  const ionisedInner = Math.max(radii.R_b, radii.R_w)
+  if (radius >= ionisedInner) return 'ionised'
+  if (radii.R_b > radii.R_w && radius >= radii.R_w) return 'bubble'
+  if (radius >= 8) return 'winds'
+  return 'winds'
 }
 
 export default function BubbleDiagram({ time = 1.0 }) {
@@ -181,8 +168,14 @@ export default function BubbleDiagram({ time = 1.0 }) {
   const opacityFor = (zoneKey, base = 1) => (isDimmed(zoneKey) ? base * 0.2 : base)
   const strokeWidthFor = (zoneKey, base) => (hoveredZone === zoneKey ? base + 0.6 : base)
 
-  const handleZone = (zoneOrFn) => {
-    setHoveredZone(zoneOrFn)
+  const handlePointerMove = (event) => {
+    const svgRect = event.currentTarget.getBoundingClientRect()
+    const scaleX = 380 / svgRect.width
+    const scaleY = 260 / svgRect.height
+    const x = (event.clientX - svgRect.left) * scaleX
+    const y = (event.clientY - svgRect.top) * scaleY
+    const radius = Math.hypot(x - CX, y - CY)
+    setHoveredZone(zoneAtPointer(radii, radius))
   }
 
   return (
@@ -192,6 +185,8 @@ export default function BubbleDiagram({ time = 1.0 }) {
         width="100%"
         role="img"
         aria-label="Cross-section diagram of a stellar feedback bubble showing concentric zones: free wind, hot bubble, ionised shell, neutral shell, and cloud"
+        onMouseMove={handlePointerMove}
+        onMouseLeave={() => setHoveredZone(null)}
       >
         {/* Cloud — fixed radius, never changes */}
         <circle cx={CX} cy={CY} r={R_CLOUD}
@@ -241,10 +236,7 @@ export default function BubbleDiagram({ time = 1.0 }) {
         <circle cx={CX + 4} cy={CY + 3} r={0.6} fill={STROKE} opacity={opacityFor('winds', 0.3)} />
 
         {/* Labels */}
-        <Labels radii={radii} bubbleOpacity={bubbleOpacity} />
-
-        {/* Hover regions */}
-        <HoverRegions radii={radii} onZone={handleZone} />
+        <Labels radii={radii} bubbleOpacity={bubbleOpacity} hoveredZone={hoveredZone} />
       </svg>
     </div>
   )
