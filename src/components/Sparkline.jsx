@@ -58,7 +58,7 @@ export default function Sparkline({ time }) {
 
       {/* Cursor dot */}
       <circle cx={cursorX} cy={cursorY} r={3.5}
-        fill="#0EA5C8" stroke="#F7F6F2" strokeWidth={1.5} />
+        fill="#0EA5C8" stroke="#FFFFFF" strokeWidth={1.5} />
 
       {/* Y-axis label */}
       <text x={4} y={H / 2}

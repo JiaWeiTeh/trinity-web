@@ -35,7 +35,7 @@ export default function Navbar() {
   return (
     <>
       <nav
-        className="fixed top-0 left-0 right-0 z-50 bg-paper/80 backdrop-blur-md border-b border-border-rule transition-all duration-300"
+        className="fixed top-0 left-0 right-0 z-50 bg-desk/80 backdrop-blur-md border-b border-border-rule transition-all duration-300"
         style={{
           opacity: visible ? 1 : 0,
           pointerEvents: visible ? 'auto' : 'none',
@@ -109,7 +109,7 @@ export default function Navbar() {
 
       {/* Full-screen mobile overlay */}
       {menuOpen && (
-        <div className="fixed inset-0 z-40 bg-paper/95 backdrop-blur-lg flex flex-col items-center justify-center gap-8 sm:hidden">
+        <div className="fixed inset-0 z-40 bg-white/95 backdrop-blur-lg flex flex-col items-center justify-center gap-8 sm:hidden">
           {navLinks.map((link) => (
             <a
               key={link.href}

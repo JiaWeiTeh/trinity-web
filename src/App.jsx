@@ -7,8 +7,10 @@ export default function App() {
   return (
     <>
       <Navbar />
-      <TitleBlock />
-      <ContentSections />
+      <main className="paper-container">
+        <TitleBlock />
+        <ContentSections />
+      </main>
       <Footer />
     </>
   )

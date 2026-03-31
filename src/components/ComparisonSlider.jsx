@@ -187,7 +187,7 @@ export default function ComparisonSlider() {
           position: 'absolute',
           inset: 0,
           clipPath: `inset(0 0 0 ${pct}%)`,
-          background: '#F7F6F2',
+          background: '#FFFFFF',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
