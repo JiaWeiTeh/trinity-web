@@ -1,6 +1,6 @@
 export default function TitleBlock() {
   return (
-    <section className="pt-20 md:pt-28 pb-8 px-6 md:px-10">
+    <section className="pb-8">
       <div className="max-w-[680px] mx-auto text-center">
 
         {/* Title */}
