@@ -2,9 +2,9 @@
 
 Interactive showcase website for the TRINITY stellar feedback code.
 
-- **Live site:** https://jiaweiteh.github.io/trinity-web/
-- **TRINITY source code:** https://github.com/JiaWeiTeh/trinity
-- **Full documentation:** https://trinitysf.readthedocs.io/
+- **Live site:** <a href="https://jiaweiteh.github.io/trinity-web/" target="_blank">jiaweiteh.github.io/trinity-web</a>
+- **TRINITY source code:** <a href="https://github.com/JiaWeiTeh/trinity" target="_blank">github.com/JiaWeiTeh/trinity</a>
+- **Full documentation:** <a href="https://trinitysf.readthedocs.io/" target="_blank">trinitysf.readthedocs.io</a>
 
 ## Local development
 
