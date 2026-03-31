@@ -3,8 +3,10 @@ export default function Footer() {
     <footer className="py-8">
       <div className="max-w-[1060px] mx-auto px-6 md:px-10 flex flex-col md:flex-row items-center justify-between gap-4">
         <div style={{ fontFamily: 'var(--font-ui)' }}
-             className="text-[12px] text-ink-tertiary">
-          TRINITY — ITA/ZAH, Universität Heidelberg
+             className="text-[12px] text-ink-tertiary text-center md:text-left">
+          <div>TRINITY — ITA/ZAH, Universität Heidelberg</div>
+          <div className="opacity-70">Contact.</div>
+          <div>Jia Wei Teh</div>
         </div>
         <div className="flex items-center gap-4">
           <a href="https://github.com/JiaWeiTeh/trinity"

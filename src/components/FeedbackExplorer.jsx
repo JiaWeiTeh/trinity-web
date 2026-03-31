@@ -7,7 +7,6 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-  Label,
   ReferenceLine,
 } from 'recharts'
 import gridData from '../data/feedbackGrid.json'
@@ -85,23 +84,12 @@ const CHANNEL_META = {
 
 // Stack order (bottom to top): gravity, winds, sn, phii, prad
 const STACK_ORDER = ['gravity', 'winds', 'sn', 'phii', 'prad']
-
-// Custom X-axis label: italic t, upright Myr
-function XAxisLabel({ viewBox }) {
-  const { x, y, width } = viewBox
-  return (
-    <text
-      x={x + width / 2}
-      y={y + 18}
-      textAnchor="middle"
-      fill="#5E6776"
-      fontSize={12}
-    >
-      <tspan fontStyle="italic">t</tspan>
-      <tspan>{' '}(Myr)</tspan>
-    </text>
-  )
-}
+const PRESETS = [
+  { label: 'low-mass cloud', logM: 4.5, sfe: 12 },
+  { label: 'massive cloud', logM: 6.8, sfe: 12 },
+  { label: 'low SFE', logM: 5.8, sfe: 6 },
+  { label: 'high SFE', logM: 5.8, sfe: 28 },
+]
 
 function CustomTooltip({ active, payload, label }) {
   if (!active || !payload?.length) return null
@@ -122,6 +110,7 @@ function CustomTooltip({ active, payload, label }) {
 export default function FeedbackExplorer() {
   const [logM, setLogM] = useState(5.5)
   const [sfe, setSfe] = useState(10)
+  const [pinnedTime, setPinnedTime] = useState(null)
 
   const chartData = useMemo(() => {
     const d = interpolateData(logM, sfe)
@@ -133,29 +122,83 @@ export default function FeedbackExplorer() {
     })
   }, [logM, sfe])
 
+  const pinnedRow = useMemo(() => {
+    if (!chartData.length || pinnedTime === null) return null
+    let closest = chartData[0]
+    for (const row of chartData) {
+      if (Math.abs(row.time - pinnedTime) < Math.abs(closest.time - pinnedTime)) {
+        closest = row
+      }
+    }
+    return closest
+  }, [chartData, pinnedTime])
+
+  const pinnedSummary = useMemo(() => {
+    if (!pinnedRow) return null
+    const ranked = DATA_KEYS
+      .map((key) => ({ key, value: pinnedRow[key] }))
+      .sort((a, b) => b.value - a.value)
+    const [top, second] = ranked
+    return {
+      time: pinnedRow.time,
+      dominant: CHANNEL_META[top.key].name,
+      second: CHANNEL_META[second.key].name,
+      sentence: `At ${pinnedRow.time.toFixed(1)} Myr, ${CHANNEL_META[top.key].name.toLowerCase()} dominates while ${CHANNEL_META[second.key].name.toLowerCase()} is secondary.`,
+    }
+  }, [pinnedRow])
+
   return (
     <div>
+      <div className="flex flex-wrap gap-2 mb-4" style={{ fontFamily: 'var(--font-ui)' }}>
+        {PRESETS.map((preset) => (
+          <button
+            key={preset.label}
+            type="button"
+            onClick={() => {
+              setLogM(preset.logM)
+              setSfe(preset.sfe)
+              setPinnedTime(null)
+            }}
+            className="text-[12px] px-2.5 py-1.5 rounded-full border border-border-card text-ink-secondary hover:bg-teal-wash hover:text-ink-primary transition-colors cursor-pointer"
+          >
+            {preset.label}
+          </button>
+        ))}
+      </div>
+
       {/* Chart */}
       <div className="bg-card border border-border-card rounded-lg p-4">
         <ResponsiveContainer width="100%" height={300}>
-          <AreaChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 20 }}>
+          <AreaChart
+            data={chartData}
+            margin={{ top: 10, right: 14, left: 20, bottom: 26 }}
+            onClick={(state) => {
+              if (typeof state?.activeLabel === 'number') {
+                setPinnedTime(state.activeLabel)
+              }
+            }}
+          >
             <CartesianGrid strokeDasharray="3 3" stroke="rgba(30, 36, 48, 0.06)" />
             <XAxis
               dataKey="time"
               stroke="rgba(30, 36, 48, 0.3)"
+              height={40}
               tick={{ fill: '#5E6776', fontSize: 12 }}
-            >
-              <Label content={<XAxisLabel />} position="bottom" />
-            </XAxis>
+              label={{ value: 't (Myr)', position: 'insideBottom', offset: -14, fill: '#5E6776', fontSize: 12, fontStyle: 'italic' }}
+            />
             <YAxis
               domain={[0, 1]}
               ticks={[0, 0.2, 0.4, 0.6, 0.8, 1.0]}
+              width={52}
               stroke="rgba(30, 36, 48, 0.3)"
               tickFormatter={(v) => v.toFixed(1)}
               tick={{ fill: '#5E6776', fontSize: 12 }}
-              label={{ value: 'Force fraction', angle: -90, position: 'insideLeft', offset: 10, fill: '#5E6776', fontSize: 12 }}
+              label={{ value: 'Force fraction', angle: -90, position: 'insideLeft', offset: -8, fill: '#5E6776', fontSize: 12 }}
             />
             <ReferenceLine y={0.5} stroke="#2A3442" strokeOpacity={0.15} strokeDasharray="4 3" strokeWidth={0.8} />
+            {pinnedRow && (
+              <ReferenceLine x={pinnedRow.time} stroke="#1E2430" strokeOpacity={0.45} strokeDasharray="3 3" />
+            )}
             <Tooltip content={<CustomTooltip />} />
             {STACK_ORDER.map((key) => (
               <Area
@@ -172,6 +215,18 @@ export default function FeedbackExplorer() {
           </AreaChart>
         </ResponsiveContainer>
       </div>
+
+      {pinnedSummary && (
+        <div className="mt-4 border border-border-card rounded-lg px-4 py-3 bg-white" style={{ fontFamily: 'var(--font-ui)' }}>
+          <div className="text-[12px] text-ink-tertiary mb-1">Pinned diagnostic readout</div>
+          <div className="text-[13px] text-ink-secondary">
+            <span className="font-medium text-ink-primary">t = {pinnedSummary.time.toFixed(1)} Myr</span>
+            {' '}· dominant: <span className="font-medium text-ink-primary">{pinnedSummary.dominant}</span>
+            {' '}· second: <span className="font-medium text-ink-primary">{pinnedSummary.second}</span>
+          </div>
+          <p className="text-[13px] text-ink-secondary mt-1.5 italic">{pinnedSummary.sentence}</p>
+        </div>
+      )}
 
       {/* Legend */}
       <div className="flex flex-wrap gap-x-4 gap-y-2 text-[13px] text-ink-secondary mt-4" style={{ fontFamily: 'var(--font-ui)' }}>
@@ -202,7 +257,10 @@ export default function FeedbackExplorer() {
             max="7"
             step="0.5"
             value={logM}
-            onChange={(e) => setLogM(parseFloat(e.target.value))}
+            onChange={(e) => {
+              setLogM(parseFloat(e.target.value))
+              setPinnedTime(null)
+            }}
             className="w-full slider"
           />
           <div className="flex justify-between text-[12px] text-ink-tertiary mt-1" style={{ fontFamily: 'var(--font-ui)' }}>
@@ -224,7 +282,10 @@ export default function FeedbackExplorer() {
             max="30"
             step="1"
             value={sfe}
-            onChange={(e) => setSfe(parseInt(e.target.value))}
+            onChange={(e) => {
+              setSfe(Number(e.target.value))
+              setPinnedTime(null)
+            }}
             className="w-full slider"
           />
           <div className="flex justify-between text-[12px] text-ink-tertiary mt-1" style={{ fontFamily: 'var(--font-ui)' }}>
