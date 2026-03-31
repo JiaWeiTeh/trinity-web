@@ -245,7 +245,7 @@ function Abstract() {
 function Figure1() {
   return (
     <section id="fig1" className="py-10">
-      <div className="max-w-[960px] mx-auto">
+      <div className="max-w-[680px] mx-auto">
         <p style={{ fontFamily: 'var(--font-ui)' }}
            className="text-[12px] font-medium text-teal mb-1">
           Interactive Fig. 1
@@ -255,7 +255,9 @@ function Figure1() {
           From nebula to schematic
         </p>
 
-        <ComparisonSlider />
+        <div className="max-w-[340px] mx-auto">
+          <ComparisonSlider />
+        </div>
 
         <p style={{ fontFamily: 'var(--font-ui)' }}
            className="text-[12px] text-ink-tertiary mt-3 leading-relaxed max-w-[680px]">
