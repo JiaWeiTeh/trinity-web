@@ -4,8 +4,6 @@ import 'katex/dist/katex.min.css'
 import ComparisonSlider from './ComparisonSlider'
 import BubbleDiagram from './BubbleDiagram'
 import TimeScrubber from './TimeScrubber'
-import Sparkline from './Sparkline'
-import PressureBar from './PressureBar'
 
 const FeedbackExplorer = lazy(() => import('./FeedbackExplorer'))
 
@@ -393,14 +391,6 @@ function Section2Model({ time, setTime }) {
             <BubbleDiagram time={time} />
           </div>
 
-          <div className="w-full max-w-[320px]">
-            <Sparkline time={time} />
-          </div>
-
-          <div className="w-full max-w-[320px]">
-            <PressureBar time={time} />
-          </div>
-
           <p style={{ fontFamily: 'var(--font-display)' }}
              className="text-[15px] italic text-ink-secondary text-center min-h-[48px] max-w-[520px]">
             {phase === 'energy' && 'Energy-driven: hot bubble pressure inflates the shell.'}
@@ -415,7 +405,7 @@ function Section2Model({ time, setTime }) {
 
         <p style={{ fontFamily: 'var(--font-ui)' }}
            className="text-[12px] text-ink-tertiary mt-3 leading-relaxed max-w-[680px] mx-auto">
-          Interactive Fig. 2 — Idealised 1D shell structure in the energy-driven, transition, and momentum-driven regimes. Drag the time slider to evolve the bubble and hover layer labels to isolate each zone. The pressure bar shows the instantaneous force-fraction decomposition.
+          Interactive Fig. 2 — Idealised 1D shell structure in the energy-driven, transition, and momentum-driven regimes. Drag the time slider to evolve the bubble and hover layer labels to isolate each zone.
         </p>
       </div>
     </section>
@@ -426,7 +416,7 @@ function Section3Diagnostics() {
   return (
     <section id="diagnostics" className="py-12">
       <div className="max-w-[680px] mx-auto mb-8">
-        <SectionHeading number={3} title="Interactive diagnostics" />
+        <SectionHeading number={3} title="Diagnostic atlas" />
         <p style={{ fontFamily: 'var(--font-display)' }}
            className="text-[17px] text-ink-secondary leading-[1.65]">
           TRINITY computes the full force-fraction history for any combination of cloud mass and star-formation efficiency.
@@ -474,45 +464,6 @@ function Section3Diagnostics() {
   )
 }
 
-function Section4Contributions() {
-  const items = [
-    { title: 'Phase-aware driving pressure', desc: 'Switches between thermal and ram pressure at each evolutionary phase.' },
-    { title: 'Smooth energy → momentum transition', desc: 'Blends driving pressure across the cooling transition instead of a hard switch.' },
-    { title: 'Flexible density profiles', desc: 'Supports power-law (α = 0, −1, −2) and Bonnor-Ebert sphere profiles.' },
-    { title: 'Radiation pressure + dust', desc: 'Direct and IR-reprocessed radiation pressure on dusty shells.' },
-    { title: 'Ionisation-front tracking', desc: 'Strömgren-radius calculation within the swept-up shell.' },
-    { title: 'Terminal momentum diagnostics', desc: 'Tracks total injected momentum and bubble size for population synthesis.' },
-  ]
-
-  return (
-    <section id="contributions" className="py-12">
-      <div className="max-w-[680px] mx-auto">
-        <SectionHeading number={4} title="Contributions" />
-        <div>
-          {items.map((item, i) => (
-            <div key={i} className="py-3.5 border-b border-border-rule flex gap-4 items-baseline last:border-b-0">
-              <span style={{ fontFamily: 'var(--font-ui)' }}
-                    className="text-[13px] text-ink-tertiary w-5 shrink-0 text-right">
-                {i + 1}
-              </span>
-              <div>
-                <div style={{ fontFamily: 'var(--font-display)' }}
-                     className="text-[15px] font-semibold text-ink-primary">
-                  {item.title}
-                </div>
-                <div style={{ fontFamily: 'var(--font-display)' }}
-                     className="text-[14px] text-ink-secondary mt-0.5">
-                  {item.desc}
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  )
-}
-
 function Section5Papers() {
   const papers = [
     { num: 'Paper I', title: 'Code & Methods', status: 'Teh et al. (in prep.)' },
@@ -525,7 +476,7 @@ function Section5Papers() {
   return (
     <section id="papers" className="py-12">
       <div className="max-w-[680px] mx-auto">
-        <SectionHeading number={5} title="Papers" />
+        <SectionHeading number={4} title="Papers" />
         <p style={{ fontFamily: 'var(--font-display)' }}
            className="text-[17px] text-ink-secondary leading-[1.65] mb-6">
           TRINITY is developed across a series of methods and science papers.
@@ -562,7 +513,7 @@ function Section6Code() {
   return (
     <section id="code" className="py-12">
       <div className="max-w-[680px] mx-auto">
-        <SectionHeading number={6} title="Code and documentation" />
+        <SectionHeading number={5} title="Code and documentation" />
         <p style={{ fontFamily: 'var(--font-display)' }}
            className="text-[17px] text-ink-secondary leading-[1.65]">
           Full documentation, installation guide, and API reference are available at{' '}
@@ -593,19 +544,19 @@ function Appendices() {
         <div className="space-y-3">
           <details className="appendix-card">
             <summary>Appendix A. Notation</summary>
-            <p>R<sub>sh</sub>: shell outer radius; R<sub>b</sub>: bubble radius; R<sub>IF</sub>: ionisation-front radius; P<sub>H II</sub>: ionised-gas thermal pressure; P<sub>rad</sub>: radiation pressure.</p>
+            <p>TBD.</p>
           </details>
           <details className="appendix-card">
             <summary>Appendix B. Explorer assumptions</summary>
-            <p>The explorer shows interpolated force fractions from a precomputed grid (log M<sub>cl</sub>=4–7 and ε<sub>sf</sub>=5–30%) with channels normalised to sum to unity at every timestep.</p>
+            <p>TBD.</p>
           </details>
           <details className="appendix-card">
             <summary>Appendix C. Image credits</summary>
-            <p>Rosette Nebula image: DECam, CTIO/NOIRLab/DOE/NSF/AURA. Schematic figures and derived visual diagnostics are generated for TRINITY website presentation.</p>
+            <p>TBD.</p>
           </details>
           <details className="appendix-card">
             <summary>Appendix D. Code availability</summary>
-            <p>TRINITY source code and documentation are maintained publicly via the project GitHub repository and Read the Docs documentation site.</p>
+            <p>TBD.</p>
           </details>
         </div>
       </div>
@@ -671,8 +622,6 @@ export default function ContentSections() {
       <Section2Model time={time} setTime={setTime} />
       <SectionRule />
       <Section3Diagnostics />
-      <SectionRule />
-      <Section4Contributions />
       <SectionRule />
       <Section5Papers />
       <SectionRule />

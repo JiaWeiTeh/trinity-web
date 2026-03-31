@@ -3,13 +3,13 @@ export default function TimeScrubber({ time, onTimeChange }) {
     <div style={{ maxWidth: 480, margin: '0 auto', padding: '0 8px' }}>
       {/* Phase labels */}
       <div style={{
-        display: 'flex', justifyContent: 'space-between',
+        position: 'relative', height: 14,
         fontFamily: 'var(--font-ui)', fontSize: 11, color: '#97948C',
         marginBottom: 6, letterSpacing: '0.04em'
       }}>
-        <span>Energy</span>
-        <span>Transition</span>
-        <span>Momentum</span>
+        <span style={{ position: 'absolute', left: '10%', transform: 'translateX(-50%)' }}>Energy</span>
+        <span style={{ position: 'absolute', left: '30%', transform: 'translateX(-50%)' }}>Transition</span>
+        <span style={{ position: 'absolute', left: '70%', transform: 'translateX(-50%)' }}>Momentum</span>
       </div>
 
       {/* Slider with tick marks */}

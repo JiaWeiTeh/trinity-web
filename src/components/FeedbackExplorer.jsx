@@ -7,7 +7,6 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-  Label,
   ReferenceLine,
 } from 'recharts'
 import gridData from '../data/feedbackGrid.json'
@@ -90,26 +89,7 @@ const PRESETS = [
   { label: 'massive cloud', logM: 6.8, sfe: 12 },
   { label: 'low SFE', logM: 5.8, sfe: 6 },
   { label: 'high SFE', logM: 5.8, sfe: 28 },
-  { label: 'early wind-dominated', logM: 5.2, sfe: 10 },
-  { label: 'late H II sustained', logM: 6.4, sfe: 24 },
 ]
-
-// Custom X-axis label: italic t, upright Myr
-function XAxisLabel({ viewBox }) {
-  const { x, y, width } = viewBox
-  return (
-    <text
-      x={x + width / 2}
-      y={y + 18}
-      textAnchor="middle"
-      fill="#5E6776"
-      fontSize={12}
-    >
-      <tspan fontStyle="italic">t</tspan>
-      <tspan>{' '}(Myr)</tspan>
-    </text>
-  )
-}
 
 function CustomTooltip({ active, payload, label }) {
   if (!active || !payload?.length) return null
@@ -191,7 +171,7 @@ export default function FeedbackExplorer() {
         <ResponsiveContainer width="100%" height={300}>
           <AreaChart
             data={chartData}
-            margin={{ top: 10, right: 10, left: 0, bottom: 20 }}
+            margin={{ top: 10, right: 14, left: 20, bottom: 26 }}
             onClick={(state) => {
               if (typeof state?.activeLabel === 'number') {
                 setPinnedTime(state.activeLabel)
@@ -202,17 +182,18 @@ export default function FeedbackExplorer() {
             <XAxis
               dataKey="time"
               stroke="rgba(30, 36, 48, 0.3)"
+              height={40}
               tick={{ fill: '#5E6776', fontSize: 12 }}
-            >
-              <Label content={<XAxisLabel />} position="bottom" />
-            </XAxis>
+              label={{ value: 't (Myr)', position: 'insideBottom', offset: -14, fill: '#5E6776', fontSize: 12, fontStyle: 'italic' }}
+            />
             <YAxis
               domain={[0, 1]}
               ticks={[0, 0.2, 0.4, 0.6, 0.8, 1.0]}
+              width={52}
               stroke="rgba(30, 36, 48, 0.3)"
               tickFormatter={(v) => v.toFixed(1)}
               tick={{ fill: '#5E6776', fontSize: 12 }}
-              label={{ value: 'Force fraction', angle: -90, position: 'insideLeft', offset: 10, fill: '#5E6776', fontSize: 12 }}
+              label={{ value: 'Force fraction', angle: -90, position: 'insideLeft', offset: -8, fill: '#5E6776', fontSize: 12 }}
             />
             <ReferenceLine y={0.5} stroke="#2A3442" strokeOpacity={0.15} strokeDasharray="4 3" strokeWidth={0.8} />
             {pinnedRow && (
