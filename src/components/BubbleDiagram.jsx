@@ -1,6 +1,4 @@
 import { useState } from 'react'
-import 'katex/dist/katex.min.css'
-import katex from 'katex'
 
 const STROKE = '#2A3442'
 const CX = 120
@@ -50,34 +48,6 @@ function getRadii(time) {
     fracs = lerpFracs(TRANS_FRACS, MOMENTUM_FRACS, f)
   }
   return getRadiiFromFractions(fracs)
-}
-
-const ZONE_EQUATIONS = {
-  winds: {
-    title: 'Free wind',
-    latex: '\\rho_w(r) = \\frac{\\dot{M}_w}{4\\pi r^2 v_\\infty}',
-    source: 'Castor et al. (1975)',
-  },
-  bubble: {
-    title: 'Hot bubble',
-    latex: '\\frac{dE_b}{dt} = L_w - L_{\\rm cool} - P_b \\frac{dV_b}{dt}',
-    source: 'Weaver et al. (1977)',
-  },
-  ionised: {
-    title: 'Ionised shell',
-    latex: '\\frac{d\\phi}{dr} = -\\frac{4\\pi r^2}{Q_i}\\alpha_B n_{\\rm sh}^2 - n_{\\rm sh}\\sigma_d \\phi',
-    source: 'Rahner et al. (2017)',
-  },
-  shell: {
-    title: 'Shell dynamics',
-    latex: '\\frac{d}{dt}\\left(M_{\\rm sh}\\dot{R}\\right) = 4\\pi R^2 P_{\\rm drive} - \\frac{G M_{\\rm sh} M_{\\rm enc}}{R^2}',
-    source: 'Rahner et al. (2017)',
-  },
-  cloud: {
-    title: 'Cloud profile',
-    latex: '\\rho_{\\rm cl}(r) = \\rho_0 \\left(\\frac{r}{r_0}\\right)^{-\\alpha_\\rho}',
-    source: 'Power-law profile',
-  },
 }
 
 function ShellHatching({ shellR, ionisedR }) {
@@ -200,50 +170,6 @@ function HoverRegions({ radii, onZone }) {
   )
 }
 
-function EquationTooltip({ zone }) {
-  if (!zone || !ZONE_EQUATIONS[zone]) return null
-  const eq = ZONE_EQUATIONS[zone]
-
-  let html
-  try {
-    html = katex.renderToString(eq.latex, { throwOnError: false, displayMode: true })
-  } catch {
-    html = eq.latex
-  }
-
-  return (
-    <div style={{
-      position: 'absolute',
-      left: 12, top: '50%', transform: 'translateY(-50%)',
-      background: '#FFFFFF',
-      border: '0.5px solid #D3D1C7',
-      borderRadius: 8,
-      padding: '10px 14px',
-      boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
-      maxWidth: 240,
-      zIndex: 10,
-      pointerEvents: 'none',
-    }}>
-      <div style={{
-        fontFamily: 'var(--font-ui)',
-        fontSize: 11, fontWeight: 500,
-        color: '#1E2430',
-        marginBottom: 6
-      }}>
-        {eq.title}
-      </div>
-      <div dangerouslySetInnerHTML={{ __html: html }} />
-      <div style={{
-        fontFamily: 'var(--font-ui)',
-        fontSize: 9, color: '#97948C',
-        marginTop: 6
-      }}>
-        {eq.source}
-      </div>
-    </div>
-  )
-}
-
 export default function BubbleDiagram({ time = 1.0 }) {
   const [hoveredZone, setHoveredZone] = useState(null)
 
@@ -251,6 +177,9 @@ export default function BubbleDiagram({ time = 1.0 }) {
   const bubbleOpacity = radii.R_b > 5 ? 0.5 * (radii.R_b / 64) : 0
   const showHIITexture = time > 3.5
   const transition = 'all 300ms ease'
+  const isDimmed = (zoneKey) => hoveredZone && hoveredZone !== zoneKey
+  const opacityFor = (zoneKey, base = 1) => (isDimmed(zoneKey) ? base * 0.2 : base)
+  const strokeWidthFor = (zoneKey, base) => (hoveredZone === zoneKey ? base + 0.6 : base)
 
   const handleZone = (zoneOrFn) => {
     setHoveredZone(zoneOrFn)
@@ -266,44 +195,50 @@ export default function BubbleDiagram({ time = 1.0 }) {
       >
         {/* Cloud — fixed radius, never changes */}
         <circle cx={CX} cy={CY} r={R_CLOUD}
-          stroke={STROKE} strokeWidth={0.5} fill="none" opacity={0.25} />
+          stroke={STROKE} strokeWidth={strokeWidthFor('cloud', 0.5)} fill="none" opacity={opacityFor('cloud', 0.25)} />
 
         {/* Shell outer (R_sh) */}
         <circle cx={CX} cy={CY} r={radii.R_sh}
-          stroke={STROKE} strokeWidth={1.2} fill="none"
-          style={{ transition }} />
+          stroke={STROKE} strokeWidth={strokeWidthFor('shell', 1.2)} fill="none"
+          style={{ transition, opacity: opacityFor('shell', 1) }} />
 
         {/* Ionisation front (R_if) */}
         <circle cx={CX} cy={CY} r={radii.R_if}
-          stroke={STROKE} strokeWidth={1.0} fill="none"
-          strokeDasharray="2 2.5" style={{ transition }} />
+          stroke={STROKE} strokeWidth={strokeWidthFor('ionised', 1)} fill="none"
+          strokeDasharray="2 2.5" style={{ transition, opacity: opacityFor('ionised', 1) }} />
 
         {/* Bubble (R_b) */}
         <circle cx={CX} cy={CY} r={radii.R_b}
-          stroke={STROKE} strokeWidth={0.6} fill="none"
+          stroke={STROKE} strokeWidth={strokeWidthFor('bubble', 0.6)} fill="none"
           strokeDasharray="3.5 2.5"
-          style={{ opacity: bubbleOpacity, transition }} />
+          style={{ opacity: opacityFor('bubble', bubbleOpacity), transition }} />
 
         {/* Free wind outer (R_w) */}
         <circle cx={CX} cy={CY} r={radii.R_w}
-          stroke={STROKE} strokeWidth={0.5} fill="none"
-          style={{ opacity: 0.4, transition }} />
+          stroke={STROKE} strokeWidth={strokeWidthFor('winds', 0.5)} fill="none"
+          style={{ opacity: opacityFor('winds', 0.4), transition }} />
 
         {/* Cluster boundary */}
         <circle cx={CX} cy={CY} r={8}
-          stroke={STROKE} strokeWidth={0.7} fill="none" />
+          stroke={STROKE} strokeWidth={0.7} fill="none" style={{ opacity: opacityFor('winds', 1) }} />
 
         {/* Shell hatching */}
-        <ShellHatching shellR={radii.R_sh} ionisedR={radii.R_if} />
+        <g style={{ opacity: opacityFor('shell', 1), transition: 'opacity 200ms ease' }}>
+          <ShellHatching shellR={radii.R_sh} ionisedR={radii.R_if} />
+        </g>
 
         {/* H II texture */}
-        {showHIITexture && <HIITexture ionisedR={radii.R_if} windsR={radii.R_w} />}
+        {showHIITexture && (
+          <g style={{ opacity: opacityFor('ionised', 1), transition: 'opacity 200ms ease' }}>
+            <HIITexture ionisedR={radii.R_if} windsR={radii.R_w} />
+          </g>
+        )}
 
         {/* Central cluster */}
-        <circle cx={CX} cy={CY} r={2.5} fill={STROKE} />
-        <circle cx={CX + 3} cy={CY - 3} r={1} fill={STROKE} opacity={0.5} />
-        <circle cx={CX - 3} cy={CY + 3} r={0.8} fill={STROKE} opacity={0.4} />
-        <circle cx={CX + 4} cy={CY + 3} r={0.6} fill={STROKE} opacity={0.3} />
+        <circle cx={CX} cy={CY} r={2.5} fill={STROKE} style={{ opacity: opacityFor('winds', 1) }} />
+        <circle cx={CX + 3} cy={CY - 3} r={1} fill={STROKE} opacity={opacityFor('winds', 0.5)} />
+        <circle cx={CX - 3} cy={CY + 3} r={0.8} fill={STROKE} opacity={opacityFor('winds', 0.4)} />
+        <circle cx={CX + 4} cy={CY + 3} r={0.6} fill={STROKE} opacity={opacityFor('winds', 0.3)} />
 
         {/* Labels */}
         <Labels radii={radii} bubbleOpacity={bubbleOpacity} />
@@ -311,8 +246,6 @@ export default function BubbleDiagram({ time = 1.0 }) {
         {/* Hover regions */}
         <HoverRegions radii={radii} onZone={handleZone} />
       </svg>
-
-      <EquationTooltip zone={hoveredZone} />
     </div>
   )
 }
