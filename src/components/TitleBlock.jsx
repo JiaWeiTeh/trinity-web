@@ -24,8 +24,7 @@ export default function TitleBlock() {
         {/* Affiliations */}
         <p style={{ fontFamily: 'var(--font-ui)' }}
            className="text-[12px] text-ink-tertiary mb-4 leading-relaxed">
-          <span className="block"><sup>1</sup> ITA/ZAH, Universität Heidelberg</span>
-          <span className="block"><sup>2</sup> ARI/ZAH, Universität Heidelberg</span>
+          <sup>1</sup> ITA/ZAH, Universität Heidelberg &nbsp;&nbsp; <sup>2</sup> ARI/ZAH, Universität Heidelberg
         </p>
 
         {/* Metadata line */}

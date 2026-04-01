@@ -597,9 +597,26 @@ function Contact() {
     <section className="py-10">
       <div className="max-w-[680px] mx-auto">
         <p style={{ fontFamily: 'var(--font-ui)' }}
-           className="text-[12px] text-ink-tertiary leading-relaxed">
-          <span className="font-medium italic">Contact. </span>
-          Jia Wei Teh · PhD student, International Max Planck Research School for Astronomy and Cosmic Physics at the University of Heidelberg (IMPRS-HD) · Institut für Theoretische Astrophysik (ITA), Zentrum für Astronomie der Universität Heidelberg, Albert-Ueberle-Str. 2, 69120 Heidelberg, Germany
+           className="text-[12px] font-medium italic text-ink-tertiary mb-2">
+          Contact
+        </p>
+        <p style={{ fontFamily: 'var(--font-ui)' }}
+           className="text-[13px] text-ink-primary leading-relaxed">
+          Jia Wei Teh
+        </p>
+        <p style={{ fontFamily: 'var(--font-ui)' }}
+           className="text-[12px] text-ink-secondary leading-relaxed mt-0.5">
+          PhD student, International Max Planck Research School for Astronomy
+          and Cosmic Physics at the University of Heidelberg (IMPRS-HD)
+        </p>
+        <p style={{ fontFamily: 'var(--font-ui)' }}
+           className="text-[12px] text-ink-tertiary leading-relaxed mt-0.5">
+          Institut für Theoretische Astrophysik (ITA), Zentrum für Astronomie
+          der Universität Heidelberg
+        </p>
+        <p style={{ fontFamily: 'var(--font-ui)' }}
+           className="text-[12px] text-ink-tertiary leading-relaxed mt-0.5">
+          Albert-Ueberle-Str. 2, 69120 Heidelberg, Germany
         </p>
       </div>
     </section>
