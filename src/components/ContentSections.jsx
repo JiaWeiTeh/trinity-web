@@ -1,7 +1,6 @@
 import { useState, useRef, useEffect, lazy, Suspense } from 'react'
 import katex from 'katex'
 import 'katex/dist/katex.min.css'
-import ComparisonSlider from './ComparisonSlider'
 import BubbleDiagram from './BubbleDiagram'
 import TimeScrubber from './TimeScrubber'
 
@@ -131,14 +130,21 @@ function NotationTerm({ label, definition }) {
   )
 }
 
-function Cite({ authors, year, title, journal, volume, page }) {
+function formatFirstThreeAuthors(authors) {
+  const parts = authors.split(', ')
+  const firstThree = parts.slice(0, 6).join(', ')
+  return parts.length > 6 ? `${firstThree} et al.` : firstThree
+}
+
+function Cite({ authors, year, journal, volume, page, bare = false }) {
   const [showTooltip, setShowTooltip] = useState(false)
   const [above, setAbove] = useState(true)
   const spanRef = useRef(null)
 
   const surname = authors.split(',')[0].split('.').pop().trim()
   const label = `${surname} et al. ${year}`
-  const full = `${authors}, ${year}, ${title}, ${journal}, ${volume}, ${page}`
+  const authorRow = formatFirstThreeAuthors(authors)
+  const journalRow = `${journal} ${volume}, ${page} (${year})`
 
   useEffect(() => {
     if (showTooltip && spanRef.current) {
@@ -156,7 +162,7 @@ function Cite({ authors, year, title, journal, volume, page }) {
     >
       <span style={{ fontFamily: 'var(--font-display)' }}
             className="text-teal cursor-help">
-        ({label})
+        {bare ? label : `(${label})`}
       </span>
       {showTooltip && (
         <span
@@ -167,57 +173,25 @@ function Cite({ authors, year, title, journal, volume, page }) {
                      whitespace-nowrap z-20 pointer-events-none
                      ${above ? 'bottom-full mb-2' : 'top-full mt-2'}`}
         >
-          {full}
+          <span className="block">{authorRow}</span>
+          <span className="block">{journalRow}</span>
         </span>
       )}
     </span>
   )
 }
 
-function CiteGroup({ refs }) {
-  const [show, setShow] = useState(false)
-  const [above, setAbove] = useState(true)
-  const spanRef = useRef(null)
-
-  const labels = refs.map(r => {
-    const surname = r.authors.split(',')[0].split('.').pop().trim()
-    return `${surname} et al. ${r.year}`
-  }).join('; ')
-
-  const fulls = refs.map(r =>
-    `${r.authors}, ${r.year}, ${r.journal}, ${r.volume}, ${r.page}`
-  )
-
-  useEffect(() => {
-    if (show && spanRef.current) {
-      const rect = spanRef.current.getBoundingClientRect()
-      setAbove(rect.top > 120)
-    }
-  }, [show])
-
+function CiteList({ refs }) {
   return (
-    <span
-      ref={spanRef}
-      className="relative inline-block"
-      onMouseEnter={() => setShow(true)}
-      onMouseLeave={() => setShow(false)}
-    >
-      <span style={{ fontFamily: 'var(--font-display)' }}
-            className="text-teal cursor-help">
-        ({labels})
-      </span>
-      {show && (
-        <span
-          style={{ fontFamily: 'var(--font-ui)' }}
-          className={`absolute left-1/2 -translate-x-1/2
-                     bg-white border border-border-card rounded-lg shadow-sm
-                     px-3 py-2 text-[11px] text-ink-secondary leading-relaxed
-                     z-20 pointer-events-none whitespace-pre-line
-                     ${above ? 'bottom-full mb-2' : 'top-full mt-2'}`}
-        >
-          {fulls.join('\n')}
+    <span style={{ fontFamily: 'var(--font-display)' }} className="text-teal">
+      (
+      {refs.map((r, i) => (
+        <span key={i}>
+          {i > 0 && '; '}
+          <Cite {...r} bare />
         </span>
-      )}
+      ))}
+      )
     </span>
   )
 }
@@ -232,7 +206,7 @@ function Abstract() {
           <p style={{ fontFamily: 'var(--font-display)' }}
              className="text-[15px] text-ink-secondary leading-[1.7]">
             TRINITY is a 1D spherical thin-shell code that self-consistently evolves stellar wind bubbles, photoionised regions, and swept-up shells in giant molecular clouds. The code couples stellar winds, supernovae, radiation pressure, photoionised-gas thermal pressure, and gravity across energy-driven, transition, and momentum-driven phases. It succeeds WARPFIELD {' '}
-            <CiteGroup refs={[REFS.rahner17, REFS.rahner19]} /> with a phase-aware treatment of the energy-to-momentum transition, flexible density profiles, and ionisation-front tracking within the shell. This site presents the code, its physical model, and interactive diagnostics exploring feedback dominance across parameter space.
+            <CiteList refs={[REFS.rahner17, REFS.rahner19]} /> with a phase-aware treatment of the energy-to-momentum transition, flexible density profiles, and ionisation-front tracking within the shell. This site presents the code, its physical model, and interactive diagnostics exploring feedback dominance across parameter space.
           </p>
 
           {/* Keywords */}
@@ -248,32 +222,6 @@ function Abstract() {
             Paper I in preparation · Code version 1.0
           </p>
         </div>
-      </div>
-    </section>
-  )
-}
-
-function Figure1() {
-  return (
-    <section id="fig1" className="py-10">
-      <div className="max-w-[680px] mx-auto">
-        <p style={{ fontFamily: 'var(--font-ui)' }}
-           className="text-[12px] font-medium text-teal mb-1">
-          Interactive Fig. 1
-        </p>
-        <p style={{ fontFamily: 'var(--font-display)' }}
-           className="text-[15px] font-semibold text-ink-primary mb-4">
-          From nebula to schematic
-        </p>
-
-        <div className="max-w-[340px] mx-auto">
-          <ComparisonSlider />
-        </div>
-
-        <p style={{ fontFamily: 'var(--font-ui)' }}
-           className="text-[12px] text-ink-tertiary mt-3 leading-relaxed max-w-[680px]">
-          Fig. 1 — Comparison between NGC 2244 (Rosette Nebula; DECam, CTIO/NOIRLab/DOE/NSF/AURA) and the idealised spherical zones evolved by TRINITY. Drag the divider to compare observed morphology with model structure.
-        </p>
       </div>
     </section>
   )
@@ -313,7 +261,7 @@ function Section1Overview() {
         <div style={{ fontFamily: 'var(--font-display)' }}
              className="text-[17px] text-ink-secondary leading-[1.65] space-y-4">
           <p>
-            The Rosette Nebula (<Ref target="fig1">Fig. 1</Ref>) illustrates the multi-zone structure that TRINITY captures: a central cluster driving a wind cavity, surrounded by a hot bubble, an ionised shell, a neutral swept-up shell, and the ambient molecular cloud.
+            The Rosette Nebula illustrates the multi-zone structure that TRINITY captures: a central cluster driving a wind cavity, surrounded by a hot bubble, an ionised shell, a neutral swept-up shell, and the ambient molecular cloud.
           </p>
         </div>
       </div>
@@ -468,9 +416,6 @@ function Section5Papers() {
   const papers = [
     { num: 'Paper I', title: 'Code & Methods', status: 'Teh et al. (in prep.)' },
     { num: 'Paper II', title: 'Feedback Dominance', status: '(upcoming)' },
-    { num: 'Paper III', title: 'Cluster Property Inference', status: '(upcoming)' },
-    { num: 'Paper IV', title: 'Scaling Relations', status: '(upcoming)' },
-    { num: 'Paper V', title: 'Synthetic Bubble Populations', status: '(upcoming)' },
   ]
 
   return (
@@ -522,13 +467,6 @@ function Section6Code() {
              style={{ fontFamily: 'var(--font-ui)' }}
              className="text-teal underline underline-offset-[3px] decoration-1">
             trinitysf.readthedocs.io
-          </a>.
-          {' '}The source code is hosted on{' '}
-          <a href="https://github.com/JiaWeiTeh/trinity"
-             target="_blank" rel="noopener noreferrer"
-             style={{ fontFamily: 'var(--font-ui)' }}
-             className="text-teal underline underline-offset-[3px] decoration-1">
-            GitHub
           </a>.
         </p>
       </div>
@@ -631,8 +569,6 @@ export default function ContentSections() {
   return (
     <div>
       <Abstract />
-      <SectionRule />
-      <Figure1 />
       <SectionRule />
       <Section1Overview />
       <SectionRule />
