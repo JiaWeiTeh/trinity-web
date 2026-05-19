@@ -236,17 +236,30 @@ sup {
   margin: 0 auto;
 }
 
+/* Physical index tabs attached to the paper's right edge. Horizontally
+   pinned to the paper edge with min()/media-query so they track both
+   the centered layout (≥1140px) and the margin-bounded layout
+   (<1140px); vertically fixed to viewport center so they remain
+   reachable while scrolling. */
 .paper-tabs {
   position: fixed;
   top: 50%;
-  right: 0;
+  /* Margin-bounded layout: paper has 24px right margin, capped at
+     1060px wide. Tabs sit 4px inside the paper's right edge. */
+  left: min(calc(100% - 28px), 1080px);
   transform: translateY(-50%);
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  z-index: 30;
-  padding-left: 2px;
+  gap: 6px;
+  z-index: 5;
   pointer-events: none;
+}
+
+/* Centered layout: paper at max-width 1060 centered in viewport. */
+@media (min-width: 1140px) {
+  .paper-tabs {
+    left: calc(50% + 526px);
+  }
 }
 
 .paper-tab {
@@ -254,19 +267,18 @@ sup {
   writing-mode: vertical-rl;
   text-orientation: mixed;
   font-family: var(--font-ui);
-  font-size: 11px;
-  letter-spacing: 0.12em;
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--color-ink-tertiary);
   background: var(--color-card);
-  border: 0.5px solid var(--color-border-card);
-  border-right: none;
-  border-radius: 4px 0 0 4px;
-  padding: 14px 5px 14px 6px;
+  border: 1px solid var(--color-border-card);
+  border-left: none;
+  border-radius: 0 4px 4px 0;
+  padding: 16px 6px 16px 8px;
+  min-width: 32px;
   cursor: pointer;
-  box-shadow:
-    -1px 1px 2px rgba(180, 170, 155, 0.10),
-    -2px 2px 6px rgba(180, 170, 155, 0.06);
+  box-shadow: 1px 1px 2px rgba(180, 170, 155, 0.10);
   transition:
     transform 180ms ease,
     color 140ms ease,
@@ -277,17 +289,17 @@ sup {
 
 .paper-tab:hover {
   color: var(--color-ink-primary);
-  transform: translateX(-2px);
+  background: var(--color-paper);
 }
 
 .paper-tab.is-active {
-  color: var(--color-teal);
+  color: var(--color-ink-primary);
   background: var(--color-paper);
-  border-color: var(--color-border-card);
-  transform: translateX(-6px);
+  transform: translateX(3px);
   box-shadow:
-    -2px 1px 3px rgba(180, 170, 155, 0.14),
-    -4px 3px 10px rgba(180, 170, 155, 0.08);
+    2px 1px 4px rgba(180, 170, 155, 0.16),
+    4px 3px 10px rgba(180, 170, 155, 0.06);
+  z-index: 1;
 }
 
 .paper-tab-label {

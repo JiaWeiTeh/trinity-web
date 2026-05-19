@@ -1,6 +1,6 @@
 const TABS = [
   { key: 'paper', label: 'Paper' },
-  { key: 'docs', label: 'Documentation' },
+  { key: 'docs', label: 'Docs' },
 ]
 
 export default function PaperTabs({ activeView, onChange }) {
