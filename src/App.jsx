@@ -43,7 +43,7 @@ export default function App() {
           {view === 'paper' ? (
             <>
               <TitleBlock onViewChange={changeView} />
-              <ContentSections />
+              <ContentSections onViewChange={changeView} />
             </>
           ) : (
             <Suspense
@@ -61,7 +61,7 @@ export default function App() {
           )}
         </main>
       </div>
-      <Footer />
+      <Footer onViewChange={changeView} />
     </>
   )
 }

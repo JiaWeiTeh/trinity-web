@@ -359,7 +359,7 @@ function Section2Model({ time, setTime }) {
   )
 }
 
-function Section3Diagnostics() {
+function Section3Diagnostics({ onViewChange }) {
   return (
     <section id="diagnostics" className="py-12">
       <div className="max-w-[680px] mx-auto mb-8">
@@ -399,12 +399,13 @@ function Section3Diagnostics() {
         </p>
 
         <p className="mt-2">
-          <a href="https://trinitysf.readthedocs.io/"
-             target="_blank" rel="noopener noreferrer"
-             style={{ fontFamily: 'var(--font-ui)' }}
-             className="text-[13px] text-teal underline underline-offset-[3px] decoration-1">
+          <button
+            type="button"
+            onClick={() => onViewChange?.('docs')}
+            style={{ fontFamily: 'var(--font-ui)' }}
+            className="text-[13px] text-teal underline underline-offset-[3px] decoration-1">
             How does TRINITY compute this? →
-          </a>
+          </button>
         </p>
       </div>
     </section>
@@ -448,20 +449,21 @@ function Section4Papers() {
   )
 }
 
-function Section5Code() {
+function Section5Code({ onViewChange }) {
   return (
     <section id="code" className="py-12">
       <div className="max-w-[680px] mx-auto">
         <SectionHeading number={5} title="Code and documentation" />
         <p style={{ fontFamily: 'var(--font-display)' }}
            className="text-[17px] text-ink-secondary leading-[1.65]">
-          Full documentation, installation guide, and API reference are available at{' '}
-          <a href="https://trinitysf.readthedocs.io/"
-             target="_blank" rel="noopener noreferrer"
-             style={{ fontFamily: 'var(--font-ui)' }}
-             className="text-teal underline underline-offset-[3px] decoration-1">
-            trinitysf.readthedocs.io
-          </a>.
+          Full documentation, installation guide, and API reference are available in the{' '}
+          <button
+            type="button"
+            onClick={() => onViewChange?.('docs')}
+            style={{ fontFamily: 'var(--font-ui)' }}
+            className="text-teal underline underline-offset-[3px] decoration-1">
+            Documentation tab
+          </button>.
         </p>
       </div>
     </section>
@@ -557,7 +559,7 @@ function Contact() {
 
 /* ── Composition ─────────────────────────────────────────────── */
 
-export default function ContentSections() {
+export default function ContentSections({ onViewChange }) {
   const [time, setTime] = useState(1.0)
 
   return (
@@ -568,11 +570,11 @@ export default function ContentSections() {
       <SectionRule />
       <Section2Model time={time} setTime={setTime} />
       <SectionRule />
-      <Section3Diagnostics />
+      <Section3Diagnostics onViewChange={onViewChange} />
       <SectionRule />
       <Section4Papers />
       <SectionRule />
-      <Section5Code />
+      <Section5Code onViewChange={onViewChange} />
       <SectionRule />
       <Appendices />
       <SectionRule />
