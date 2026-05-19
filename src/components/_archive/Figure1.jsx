@@ -1,4 +1,4 @@
-import ComparisonSlider from '../ComparisonSlider'
+import ComparisonSlider from './ComparisonSlider'
 
 export default function Figure1() {
   return (
