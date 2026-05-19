@@ -76,7 +76,9 @@ export default function Navbar({ view = 'paper', onViewChange }) {
             TRINITY
           </a>
 
-          {/* Desktop links */}
+          {/* Desktop links — only shown in paper view; the fixed side tabs
+              handle view switching, so the navbar stays a single-purpose
+              within-view nav. */}
           <div className="hidden sm:flex items-center gap-6">
             {onPaper && navLinks.map((link) => (
               <a
@@ -90,15 +92,16 @@ export default function Navbar({ view = 'paper', onViewChange }) {
                 {link.label}
               </a>
             ))}
-            <button
-              type="button"
-              onClick={handleDocsClick}
-              aria-pressed={!onPaper}
-              className={`text-sm transition-colors ${onPaper ? 'text-teal hover:text-teal/80' : 'text-ink-primary hover:text-teal'}`}
-              style={{ fontFamily: 'var(--font-ui)' }}
-            >
-              {onPaper ? 'Docs' : '← Back to paper'}
-            </button>
+            {!onPaper && (
+              <button
+                type="button"
+                onClick={handleDocsClick}
+                className="text-ink-secondary text-sm hover:text-ink-primary transition-colors"
+                style={{ fontFamily: 'var(--font-ui)' }}
+              >
+                ← Back to paper
+              </button>
+            )}
           </div>
 
           {/* Hamburger button (mobile) */}

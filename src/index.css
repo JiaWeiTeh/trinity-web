@@ -237,18 +237,20 @@ sup {
 }
 
 .paper-tabs {
-  position: absolute;
-  top: 96px;
-  right: -2px;
-  transform: translateX(100%);
+  position: fixed;
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
   display: flex;
   flex-direction: column;
   gap: 10px;
-  z-index: 4;
+  z-index: 30;
   padding-left: 2px;
+  pointer-events: none;
 }
 
 .paper-tab {
+  pointer-events: auto;
   writing-mode: vertical-rl;
   text-orientation: mixed;
   font-family: var(--font-ui);
@@ -258,13 +260,13 @@ sup {
   color: var(--color-ink-tertiary);
   background: var(--color-card);
   border: 0.5px solid var(--color-border-card);
-  border-left: none;
-  border-radius: 0 4px 4px 0;
-  padding: 14px 6px 14px 5px;
+  border-right: none;
+  border-radius: 4px 0 0 4px;
+  padding: 14px 5px 14px 6px;
   cursor: pointer;
   box-shadow:
-    1px 1px 2px rgba(180, 170, 155, 0.10),
-    2px 2px 6px rgba(180, 170, 155, 0.06);
+    -1px 1px 2px rgba(180, 170, 155, 0.10),
+    -2px 2px 6px rgba(180, 170, 155, 0.06);
   transition:
     transform 180ms ease,
     color 140ms ease,
@@ -275,60 +277,28 @@ sup {
 
 .paper-tab:hover {
   color: var(--color-ink-primary);
-  transform: translateX(2px);
+  transform: translateX(-2px);
 }
 
 .paper-tab.is-active {
   color: var(--color-teal);
   background: var(--color-paper);
   border-color: var(--color-border-card);
-  transform: translateX(6px);
+  transform: translateX(-6px);
   box-shadow:
-    2px 1px 3px rgba(180, 170, 155, 0.14),
-    4px 3px 10px rgba(180, 170, 155, 0.08);
+    -2px 1px 3px rgba(180, 170, 155, 0.14),
+    -4px 3px 10px rgba(180, 170, 155, 0.08);
 }
 
 .paper-tab-label {
   display: inline-block;
 }
 
-/* Side tabs only when there's room to the side of the paper.
-   Below the breakpoint we tuck them above the content as a top bar. */
-@media (max-width: 1180px) {
+/* On narrow screens fixed side tabs would crowd content — hide them
+   and let the navbar hamburger handle view switching instead. */
+@media (max-width: 900px) {
   .paper-tabs {
-    position: static;
-    transform: none;
-    flex-direction: row;
-    justify-content: flex-end;
-    gap: 6px;
-    margin: 0 24px 8px;
-    padding: 0;
-  }
-  .paper-tab {
-    writing-mode: horizontal-tb;
-    border: 0.5px solid var(--color-border-card);
-    border-bottom: none;
-    border-radius: 4px 4px 0 0;
-    padding: 6px 14px;
-    box-shadow:
-      1px -1px 2px rgba(180, 170, 155, 0.10),
-      2px -2px 6px rgba(180, 170, 155, 0.06);
-  }
-  .paper-tab:hover {
-    transform: translateY(-2px);
-  }
-  .paper-tab.is-active {
-    transform: translateY(-2px);
-  }
-}
-
-@media (max-width: 767px) {
-  .paper-tabs {
-    margin: 0 8px 6px;
-  }
-  .paper-tab {
-    font-size: 10px;
-    padding: 5px 10px;
+    display: none;
   }
 }
 
