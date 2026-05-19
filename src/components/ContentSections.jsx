@@ -444,11 +444,6 @@ function Section5Papers() {
             </div>
           ))}
         </div>
-        <p style={{ fontFamily: 'var(--font-display)' }}
-           className="text-[14px] italic text-ink-tertiary mt-6">
-          Further papers covering stochastic sampling, observational comparisons,
-          and sub-grid prescriptions are planned.
-        </p>
       </div>
     </section>
   )
