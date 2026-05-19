@@ -8,9 +8,10 @@ const navLinks = [
   { label: '4. Papers', href: '#papers' },
 ]
 
-export default function Navbar() {
+export default function Navbar({ view = 'paper', onViewChange }) {
   const [visible, setVisible] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
+  const onPaper = view === 'paper'
 
   useEffect(() => {
     const handleScroll = () => {
@@ -25,13 +26,19 @@ export default function Navbar() {
     e.preventDefault()
     setMenuOpen(false)
     if (href === '#top') {
-      history.pushState(null, '', window.location.pathname)
+      history.pushState(null, '', window.location.pathname + window.location.search)
       window.scrollTo({ top: 0, behavior: 'smooth' })
       return
     }
     history.pushState(null, '', href)
     const el = document.querySelector(href)
     if (el) el.scrollIntoView({ behavior: 'smooth' })
+  }
+
+  const handleDocsClick = (e) => {
+    e.preventDefault()
+    setMenuOpen(false)
+    onViewChange?.(onPaper ? 'docs' : 'paper')
   }
 
   useEffect(() => {
@@ -69,9 +76,11 @@ export default function Navbar() {
             TRINITY
           </a>
 
-          {/* Desktop links */}
+          {/* Desktop links — only shown in paper view; the fixed side tabs
+              handle view switching, so the navbar stays a single-purpose
+              within-view nav. */}
           <div className="hidden sm:flex items-center gap-6">
-            {navLinks.map((link) => (
+            {onPaper && navLinks.map((link) => (
               <a
                 key={link.href}
                 href={link.href}
@@ -83,20 +92,16 @@ export default function Navbar() {
                 {link.label}
               </a>
             ))}
-            <a
-              href="https://trinitysf.readthedocs.io/"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="TRINITY documentation (opens in new tab)"
-              className="text-teal text-sm hover:text-teal/80 transition-colors flex items-center gap-1"
-              style={{ fontFamily: 'var(--font-ui)' }}
-            >
-              Docs
-              <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M4 1h7v7" />
-                <path d="M11 1L1 11" />
-              </svg>
-            </a>
+            {!onPaper && (
+              <button
+                type="button"
+                onClick={handleDocsClick}
+                className="text-ink-secondary text-sm hover:text-ink-primary transition-colors"
+                style={{ fontFamily: 'var(--font-ui)' }}
+              >
+                ← Back to paper
+              </button>
+            )}
           </div>
 
           {/* Hamburger button (mobile) */}
@@ -126,7 +131,7 @@ export default function Navbar() {
       {/* Full-screen mobile overlay */}
       {menuOpen && (
         <div className="fixed inset-0 z-40 bg-white/95 backdrop-blur-lg flex flex-col items-center justify-center gap-8 sm:hidden">
-          {navLinks.map((link) => (
+          {onPaper && navLinks.map((link) => (
             <a
               key={link.href}
               href={link.href}
@@ -137,19 +142,13 @@ export default function Navbar() {
               {link.label}
             </a>
           ))}
-          <a
-            href="https://trinitysf.readthedocs.io/"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="TRINITY documentation (opens in new tab)"
-            className="text-teal text-xl hover:text-teal/80 transition-colors flex items-center gap-2"
+          <button
+            type="button"
+            onClick={handleDocsClick}
+            className="text-teal text-xl hover:text-teal/80 transition-colors"
           >
-            Docs
-            <svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M4 1h7v7" />
-              <path d="M11 1L1 11" />
-            </svg>
-          </a>
+            {onPaper ? 'Documentation' : '← Back to paper'}
+          </button>
         </div>
       )}
     </>

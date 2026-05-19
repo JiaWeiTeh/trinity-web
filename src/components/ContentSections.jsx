@@ -1,6 +1,5 @@
 import { useState, useRef, useEffect, lazy, Suspense } from 'react'
 import katex from 'katex'
-import 'katex/dist/katex.min.css'
 import BubbleDiagram from './BubbleDiagram'
 import TimeScrubber from './TimeScrubber'
 
@@ -412,7 +411,7 @@ function Section3Diagnostics() {
   )
 }
 
-function Section5Papers() {
+function Section4Papers() {
   const papers = [
     { num: 'Paper I', title: 'Code & Methods', status: 'Teh et al. (in prep.)' },
     { num: 'Paper II', title: 'Feedback Dominance', status: '(upcoming)' },
@@ -444,17 +443,12 @@ function Section5Papers() {
             </div>
           ))}
         </div>
-        <p style={{ fontFamily: 'var(--font-display)' }}
-           className="text-[14px] italic text-ink-tertiary mt-6">
-          Further papers covering stochastic sampling, observational comparisons,
-          and sub-grid prescriptions are planned.
-        </p>
       </div>
     </section>
   )
 }
 
-function Section6Code() {
+function Section5Code() {
   return (
     <section id="code" className="py-12">
       <div className="max-w-[680px] mx-auto">
@@ -576,9 +570,9 @@ export default function ContentSections() {
       <SectionRule />
       <Section3Diagnostics />
       <SectionRule />
-      <Section5Papers />
+      <Section4Papers />
       <SectionRule />
-      <Section6Code />
+      <Section5Code />
       <SectionRule />
       <Appendices />
       <SectionRule />
