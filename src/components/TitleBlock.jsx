@@ -1,4 +1,4 @@
-export default function TitleBlock() {
+export default function TitleBlock({ onViewChange }) {
   return (
     <section className="pb-8">
       <div className="max-w-[680px] mx-auto text-center">
@@ -35,12 +35,13 @@ export default function TitleBlock() {
 
         {/* Links */}
         <div className="flex justify-center gap-5">
-          <a href="https://trinitysf.readthedocs.io/"
-             target="_blank" rel="noopener noreferrer"
-             style={{ fontFamily: 'var(--font-ui)' }}
-             className="text-[13px] text-teal underline underline-offset-[3px] decoration-1">
+          <button
+            type="button"
+            onClick={() => onViewChange?.('docs')}
+            style={{ fontFamily: 'var(--font-ui)' }}
+            className="text-[13px] text-teal underline underline-offset-[3px] decoration-1">
             Read documentation →
-          </a>
+          </button>
           <a href="#papers"
              style={{ fontFamily: 'var(--font-ui)' }}
              className="text-[13px] text-teal underline underline-offset-[3px] decoration-1">
