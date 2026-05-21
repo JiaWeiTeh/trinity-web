@@ -9,27 +9,41 @@ const DocsView = lazy(() => import('./components/DocsView'))
 
 const VALID_VIEWS = ['paper', 'docs']
 
-function readViewFromUrl() {
+function readLocation() {
   const params = new URLSearchParams(window.location.search)
   const v = params.get('view')
-  return VALID_VIEWS.includes(v) ? v : 'paper'
+  return {
+    view: VALID_VIEWS.includes(v) ? v : 'paper',
+    page: params.get('page'),
+  }
 }
 
 export default function App() {
-  const [view, setView] = useState(readViewFromUrl)
+  const [{ view, page }, setLocation] = useState(readLocation)
 
-  const changeView = useCallback((next) => {
-    setView(next)
+  const changeView = useCallback((nextView) => {
+    setLocation({ view: nextView, page: null })
     const url = new URL(window.location.href)
-    if (next === 'paper') url.searchParams.delete('view')
-    else url.searchParams.set('view', next)
+    if (nextView === 'paper') url.searchParams.delete('view')
+    else url.searchParams.set('view', nextView)
+    url.searchParams.delete('page')
+    url.hash = ''
+    history.pushState(null, '', url.toString())
+    window.scrollTo({ top: 0, behavior: 'instant' })
+  }, [])
+
+  const changePage = useCallback((nextPage) => {
+    setLocation({ view: 'docs', page: nextPage })
+    const url = new URL(window.location.href)
+    url.searchParams.set('view', 'docs')
+    url.searchParams.set('page', nextPage)
     url.hash = ''
     history.pushState(null, '', url.toString())
     window.scrollTo({ top: 0, behavior: 'instant' })
   }, [])
 
   useEffect(() => {
-    const onPop = () => setView(readViewFromUrl())
+    const onPop = () => setLocation(readLocation())
     window.addEventListener('popstate', onPop)
     return () => window.removeEventListener('popstate', onPop)
   }, [])
@@ -56,7 +70,7 @@ export default function App() {
                 </div>
               }
             >
-              <DocsView />
+              <DocsView page={page} onPageChange={changePage} />
             </Suspense>
           )}
         </main>
