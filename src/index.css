@@ -367,6 +367,19 @@ sup {
   background: var(--color-teal-wash);
 }
 
+.docs-index-select {
+  display: none;
+  width: 100%;
+  font-family: var(--font-ui);
+  font-size: 13px;
+  color: var(--color-ink-primary);
+  background: var(--color-paper);
+  border: 1px solid var(--color-border-card);
+  border-radius: 6px;
+  padding: 8px 10px;
+  cursor: pointer;
+}
+
 .docs-body {
   min-width: 0;
 }
@@ -377,13 +390,6 @@ sup {
   font-size: 16px;
   line-height: 1.65;
   padding-bottom: 32px;
-  scroll-margin-top: 80px;
-}
-
-.docs-article + .docs-article {
-  margin-top: 32px;
-  padding-top: 32px;
-  border-top: 1px solid var(--color-border-rule);
 }
 
 .docs-article h1 {
@@ -520,10 +526,14 @@ sup {
     padding-right: 0;
     padding-bottom: 12px;
     max-height: none;
+    overflow-y: visible;
   }
+  /* Swap the page list for a dropdown — a list of clickable page titles
+     is awkward to navigate on a phone. */
   .docs-index-list {
-    flex-direction: row;
-    flex-wrap: wrap;
-    gap: 6px;
+    display: none;
+  }
+  .docs-index-select {
+    display: block;
   }
 }
