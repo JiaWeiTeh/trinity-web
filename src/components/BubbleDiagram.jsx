@@ -99,7 +99,7 @@ function dotXOnCircle(dotY, r) {
   return CX + Math.sqrt(r * r - dy * dy)
 }
 
-function Labels({ radii, bubbleOpacity, hoveredZone }) {
+function Labels({ radii, bubbleOpacity, hoveredZone, groupOpacity }) {
   const showBubble = bubbleOpacity > 0.15
   const showHII = !showBubble
   const ionisedInner = Math.max(radii.R_b, radii.R_w)
@@ -116,7 +116,7 @@ function Labels({ radii, bubbleOpacity, hoveredZone }) {
   ]
 
   return (
-    <g>
+    <g style={{ opacity: groupOpacity, transition: 'opacity 300ms ease' }}>
       {labelDefs.map((l) => {
         const dX = dotXOnCircle(l.dotY, l.r)
         const baseOpacity = l.opacity !== undefined ? Math.min(1, l.opacity * 2) : 1
@@ -166,6 +166,7 @@ export default function BubbleDiagram({ time = 1.0 }) {
 
   const radii = getRadii(time)
   const bubbleOpacity = radii.R_b > 5 ? 0.5 * (radii.R_b / 64) : 0
+  const labelOpacity = Math.max(0, Math.min(1, (time - T_TRANS) / 1.0))
   const showHIITexture = time > 3.5
   const transition = 'all 300ms ease'
   const isDimmed = (zoneKey) => hoveredZone && hoveredZone !== zoneKey
@@ -240,7 +241,7 @@ export default function BubbleDiagram({ time = 1.0 }) {
         <circle cx={CX + 4} cy={CY + 3} r={0.6} fill={STROKE} opacity={opacityFor('winds', 0.3)} />
 
         {/* Labels */}
-        <Labels radii={radii} bubbleOpacity={bubbleOpacity} hoveredZone={hoveredZone} />
+        <Labels radii={radii} bubbleOpacity={bubbleOpacity} hoveredZone={hoveredZone} groupOpacity={labelOpacity} />
       </svg>
     </div>
   )
