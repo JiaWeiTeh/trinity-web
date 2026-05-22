@@ -10,11 +10,14 @@ const T_MOM = 4.0
 const LABEL_X = 260
 const LEADER_END = 254
 
+const START_FRACS = {
+  freeWind: 0.0952, hotBubble: 0.0143, hii: 0.0143, shell: 0.0095, cloud: 0.8667
+}
 const ENERGY_FRACS = {
   freeWind: 0.1667, hotBubble: 0.4444, hii: 0.0556, shell: 0.1111, cloud: 0.2222
 }
 const TRANS_FRACS = {
-  freeWind: 0.4352, hotBubble: 0.2278, hii: 0.0694, shell: 0.1111, cloud: 0.1565
+  freeWind: 0.6430, hotBubble: 0.0200, hii: 0.0694, shell: 0.1111, cloud: 0.1565
 }
 const MOMENTUM_FRACS = {
   freeWind: 0.7037, hotBubble: 0.0111, hii: 0.0833, shell: 0.1111, cloud: 0.0907
@@ -39,7 +42,8 @@ function getRadiiFromFractions(fracs) {
 function getRadii(time) {
   let fracs
   if (time <= T_TRANS) {
-    fracs = ENERGY_FRACS
+    const f = Math.min(time / T_TRANS, 1)
+    fracs = lerpFracs(START_FRACS, ENERGY_FRACS, f)
   } else if (time <= T_MOM) {
     const f = (time - T_TRANS) / (T_MOM - T_TRANS)
     fracs = lerpFracs(ENERGY_FRACS, TRANS_FRACS, f)
