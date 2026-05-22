@@ -352,7 +352,7 @@ function Section2Model({ time, setTime }) {
 
         <p style={{ fontFamily: 'var(--font-ui)' }}
            className="text-[12px] text-ink-tertiary mt-3 leading-relaxed max-w-[680px] mx-auto">
-          Interactive Fig. 2 — Idealised 1D shell structure in the energy-driven, transition, and momentum-driven regimes. Drag the time slider to evolve the bubble and hover layer labels to isolate each zone.
+          Interactive Fig. 2 — Idealised 1D shell structure in the energy-driven, transition, and momentum-driven regimes. Drag the time slider to evolve the bubble and hover layer labels to isolate each zone. Layer sizes are schematic and not to scale — shown for illustration only.
         </p>
       </div>
     </section>

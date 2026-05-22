@@ -11,7 +11,7 @@ const LABEL_X = 260
 const LEADER_END = 254
 
 const START_FRACS = {
-  freeWind: 0.1000, hotBubble: 0.1300, hii: 0.0300, shell: 0.0800, cloud: 0.6600
+  freeWind: 0.0952, hotBubble: 0.0143, hii: 0.0143, shell: 0.0095, cloud: 0.8667
 }
 const ENERGY_FRACS = {
   freeWind: 0.1667, hotBubble: 0.4444, hii: 0.0556, shell: 0.1111, cloud: 0.2222
