@@ -37,10 +37,10 @@ export default function TitleBlock({ onViewChange }) {
         <div className="flex justify-center gap-5">
           <button
             type="button"
-            onClick={() => onViewChange?.('docs')}
+            onClick={() => onViewChange?.('start')}
             style={{ fontFamily: 'var(--font-ui)' }}
             className="text-[13px] text-teal underline underline-offset-[3px] decoration-1">
-            Read documentation →
+            Get started →
           </button>
           <a href="#papers"
              style={{ fontFamily: 'var(--font-ui)' }}
