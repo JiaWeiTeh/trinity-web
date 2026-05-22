@@ -415,7 +415,7 @@ function Section3Diagnostics({ onViewChange }) {
 function Section4Papers() {
   const papers = [
     { num: 'Paper I', title: 'Code & Methods', status: 'Teh et al. (in prep.)' },
-    { num: 'Paper II', title: 'Feedback Dominance', status: '(upcoming)' },
+    { num: 'Paper II', title: '', status: '(upcoming)' },
   ]
 
   return (
@@ -433,13 +433,15 @@ function Section4Papers() {
                     className="text-[12px] font-medium text-teal w-[56px] shrink-0">
                 {p.num}
               </span>
-              <span style={{ fontFamily: 'var(--font-display)' }}
-                    className="text-[15px] font-semibold text-ink-primary">
-                {p.title}
-              </span>
+              {p.title && (
+                <span style={{ fontFamily: 'var(--font-display)' }}
+                      className="text-[15px] font-semibold text-ink-primary">
+                  {p.title}
+                </span>
+              )}
               <span style={{ fontFamily: 'var(--font-ui)' }}
                     className="text-[12px] text-ink-tertiary">
-                — {p.status}
+                {p.title ? '— ' : ''}{p.status}
               </span>
             </div>
           ))}
