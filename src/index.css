@@ -191,6 +191,12 @@ sup {
   overflow: hidden;
 }
 
+/* Docs view needs overflow visible so the sticky sidebar can stick to
+   the viewport; an overflow:hidden ancestor disables position: sticky. */
+.paper-container--docs {
+  overflow: visible;
+}
+
 @media (min-width: 1140px) {
   .paper-container {
     padding: 56px 72px 64px;
