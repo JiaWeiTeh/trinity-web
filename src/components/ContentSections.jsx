@@ -311,7 +311,7 @@ function Section2Model({ time, setTime }) {
         <div style={{ fontFamily: 'var(--font-display)' }}
              className="text-[17px] text-ink-secondary leading-[1.65] space-y-4">
           <p>
-            This phase-aware treatment (<Ref target="eq3">Eq. 3</Ref>) is one of the key differences from WARPFIELD, which does not include photoionised-gas pressure as a driving term (see <Ref target="fig2">Interactive Fig. 2</Ref> for the effect on shell structure).
+            This phase-aware treatment (<Ref target="eq3">Eq. 3</Ref>) is one of the key differences from WARPFIELD, which does not include photoionised-gas pressure as a driving term (see <Ref target="fig1">Interactive Fig. 1</Ref> for the effect on shell structure).
             <Sidenote>
               The max(
               <NotationTerm label={<>P<sub>b</sub></>} definition="Thermal pressure inside the hot shocked wind bubble." />
@@ -323,10 +323,10 @@ function Section2Model({ time, setTime }) {
         </div>
       </div>
 
-      <div id="fig2" className="max-w-[680px] mx-auto">
+      <div id="fig1" className="max-w-[680px] mx-auto">
         <p style={{ fontFamily: 'var(--font-ui)' }}
            className="text-[12px] font-medium text-teal mb-1">
-          Interactive Fig. 2
+          Interactive Fig. 1
         </p>
         <p style={{ fontFamily: 'var(--font-display)' }}
            className="text-[15px] font-semibold text-ink-primary mb-4">
@@ -352,7 +352,7 @@ function Section2Model({ time, setTime }) {
 
         <p style={{ fontFamily: 'var(--font-ui)' }}
            className="text-[12px] text-ink-tertiary mt-3 leading-relaxed max-w-[680px] mx-auto">
-          Interactive Fig. 2 — Idealised 1D shell structure in the energy-driven, transition, and momentum-driven regimes. Drag the time slider to evolve the bubble and hover layer labels to isolate each zone. Layer sizes are schematic and not to scale — shown for illustration only.
+          Interactive Fig. 1 — Idealised 1D shell structure in the energy-driven, transition, and momentum-driven regimes. Drag the time slider to evolve the bubble and hover layer labels to isolate each zone. Layer sizes are schematic and not to scale — shown for illustration only.
         </p>
       </div>
     </section>
@@ -374,10 +374,10 @@ function Section3Diagnostics({ onViewChange }) {
         </p>
       </div>
 
-      <div id="fig3" className="max-w-[680px] mx-auto">
+      <div id="fig2" className="max-w-[680px] mx-auto">
         <p style={{ fontFamily: 'var(--font-ui)' }}
            className="text-[12px] font-medium text-teal mb-1">
-          Interactive Fig. 3
+          Interactive Fig. 2
         </p>
         <p style={{ fontFamily: 'var(--font-display)' }}
            className="text-[15px] font-semibold text-ink-primary mb-4">
@@ -395,7 +395,7 @@ function Section3Diagnostics({ onViewChange }) {
 
         <p style={{ fontFamily: 'var(--font-ui)' }}
            className="text-[12px] text-ink-tertiary mt-3 leading-relaxed max-w-[680px] mx-auto">
-          Interactive Fig. 3 — Illustrative force-fraction histories for selected cloud mass and star formation efficiency. Quantitative results in Paper I (Teh et al., in prep.). Use the sliders to explore how the dominant feedback mechanism shifts across parameter space.
+          Interactive Fig. 2 — Illustrative force-fraction histories for selected cloud mass and star formation efficiency. Quantitative results in Paper I (Teh et al., in prep.). Use the sliders to explore how the dominant feedback mechanism shifts across parameter space.
         </p>
 
         <p className="mt-2">
