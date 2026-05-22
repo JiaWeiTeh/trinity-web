@@ -53,7 +53,10 @@ export default function App() {
       <Navbar view={view} onViewChange={changeView} />
       <div className="paper-wrap">
         <PaperTabs activeView={view} onChange={changeView} />
-        <main id="paper-content" className="paper-container">
+        <main
+          id="paper-content"
+          className={`paper-container${view === 'docs' ? ' paper-container--docs' : ''}`}
+        >
           {view === 'paper' ? (
             <>
               <TitleBlock onViewChange={changeView} />
