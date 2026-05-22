@@ -4,8 +4,7 @@ const navLinks = [
   { label: 'Abstract', href: '#abstract' },
   { label: '1. Overview', href: '#overview' },
   { label: '2. Model', href: '#model' },
-  { label: '3. Diagnostics', href: '#diagnostics' },
-  { label: '4. Papers', href: '#papers' },
+  { label: '3. Papers', href: '#papers' },
 ]
 
 export default function Navbar({ view = 'paper', onViewChange }) {
