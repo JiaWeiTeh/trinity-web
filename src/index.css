@@ -461,6 +461,15 @@ sup {
   line-height: 1.35;
 }
 
+.docs-article h4 {
+  font-family: var(--font-ui);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-ink-secondary);
+  margin: 18px 0 6px;
+  line-height: 1.35;
+}
+
 .docs-article p {
   margin: 0 0 14px;
 }

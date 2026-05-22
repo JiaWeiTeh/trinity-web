@@ -22,8 +22,9 @@ directory. See *Outputs* below for the file layout.
 ## Parameter-file formats
 
 A parameter file lists one `keyword    value` entry per line (see the
-Parameters reference for the full keyword list). The *value* syntax
-alone decides whether the file is a single run or a sweep:
+[Parameter Specifications](?view=docs&page=parameters) for the full
+keyword list). The *value* syntax alone decides whether the file is a
+single run or a sweep:
 
 **`param/sweep_hybrid_example.param`**
 
@@ -167,8 +168,9 @@ reference.
 
 ## Logging
 
-The Parameters reference lists the four logging parameters (`log_level`,
-`log_console`, `log_file`, `log_colors`) and their defaults. This
+The [Parameter Specifications](?view=docs&page=parameters) list the four
+logging parameters (`log_level`, `log_console`, `log_file`,
+`log_colors`) and their defaults. This
 section covers the conceptual ladder of log levels and an example of the
 output.
 
@@ -204,5 +206,6 @@ With `log_level = INFO`:
 
 Most parameter errors are typos against the schema; the authoritative
 list of valid keywords and defaults is `src/_input/default.param`,
-mirrored in the Parameters reference. For issues and feature requests,
+mirrored in the [Parameter Specifications](?view=docs&page=parameters).
+For issues and feature requests,
 see [github.com/JiaWeiTeh/trinity/issues](https://github.com/JiaWeiTeh/trinity/issues).
