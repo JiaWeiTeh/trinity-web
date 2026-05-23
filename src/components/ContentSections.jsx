@@ -429,12 +429,15 @@ function Acknowledgements() {
   return (
     <section className="py-10">
       <div className="max-w-[680px] mx-auto">
+        <p style={{ fontFamily: 'var(--font-ui)' }}
+           className="text-[12px] font-medium italic text-ink-tertiary mb-2">
+          Acknowledgements
+        </p>
         <p
           onClick={advance}
           title="Click for another"
           style={{ fontFamily: 'var(--font-ui)', opacity: visible ? 1 : 0, transition: 'opacity 500ms ease', cursor: 'pointer' }}
           className="text-[12px] text-ink-tertiary leading-relaxed hover:text-ink-secondary">
-          <span className="font-medium italic">Acknowledgements. </span>
           {messages[index]}
         </p>
       </div>
