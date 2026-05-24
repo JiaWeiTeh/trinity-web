@@ -1,17 +1,6 @@
 export default function TimeScrubber({ time, onTimeChange }) {
   return (
     <div style={{ maxWidth: 480, margin: '0 auto', padding: '0 8px' }}>
-      {/* Phase labels */}
-      <div style={{
-        position: 'relative', height: 14,
-        fontFamily: 'var(--font-ui)', fontSize: 11, color: '#97948C',
-        marginBottom: 6, letterSpacing: '0.04em'
-      }}>
-        <span style={{ position: 'absolute', left: '10%', transform: 'translateX(-50%)' }}>Energy</span>
-        <span style={{ position: 'absolute', left: '30%', transform: 'translateX(-50%)' }}>Transition</span>
-        <span style={{ position: 'absolute', left: '70%', transform: 'translateX(-50%)' }}>Momentum</span>
-      </div>
-
       {/* Slider with tick marks */}
       <div style={{ position: 'relative' }}>
         <input
@@ -21,17 +10,17 @@ export default function TimeScrubber({ time, onTimeChange }) {
           onChange={e => onTimeChange(parseFloat(e.target.value))}
           className="w-full slider"
         />
-        {/* Phase boundary ticks at t=2 (20%) and t=4 (40%) */}
+        {/* Phase boundary ticks at t=0.5 (5%) and t=0.6 (6%) */}
         <div style={{ position: 'absolute', left: 0, right: 0, top: 0, height: 0, pointerEvents: 'none' }}>
           <div style={{
             position: 'absolute',
-            left: '20%', top: -2,
+            left: '5%', top: -2,
             width: 1, height: 8,
             background: '#D3D1C7'
           }} />
           <div style={{
             position: 'absolute',
-            left: '40%', top: -2,
+            left: '6%', top: -2,
             width: 1, height: 8,
             background: '#D3D1C7'
           }} />
