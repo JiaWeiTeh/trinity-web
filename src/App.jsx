@@ -6,8 +6,9 @@ import PaperTabs from './components/PaperTabs'
 import Footer from './components/Footer'
 
 const DocsView = lazy(() => import('./components/DocsView'))
+const StartView = lazy(() => import('./components/StartView'))
 
-const VALID_VIEWS = ['paper', 'docs']
+const VALID_VIEWS = ['paper', 'start', 'docs']
 
 function readLocation() {
   const params = new URLSearchParams(window.location.search)
@@ -17,6 +18,15 @@ function readLocation() {
     page: params.get('page'),
   }
 }
+
+const docsFallback = (
+  <div
+    style={{ fontFamily: 'var(--font-ui)' }}
+    className="text-[13px] text-ink-tertiary py-20 text-center"
+  >
+    Loading…
+  </div>
+)
 
 export default function App() {
   const [{ view, page }, setLocation] = useState(readLocation)
@@ -42,6 +52,15 @@ export default function App() {
     window.scrollTo({ top: 0, behavior: 'instant' })
   }, [])
 
+  const navigateTo = useCallback((href) => {
+    const query = href.includes('?') ? href.slice(href.indexOf('?')) : ''
+    const params = new URLSearchParams(query)
+    const p = params.get('page')
+    const v = params.get('view')
+    if (p) changePage(p)
+    else changeView(VALID_VIEWS.includes(v) ? v : 'paper')
+  }, [changePage, changeView])
+
   useEffect(() => {
     const onPop = () => setLocation(readLocation())
     window.addEventListener('popstate', onPop)
@@ -57,23 +76,20 @@ export default function App() {
           id="paper-content"
           className={`paper-container${view === 'docs' ? ' paper-container--docs' : ''}`}
         >
-          {view === 'paper' ? (
+          {view === 'paper' && (
             <>
               <TitleBlock onViewChange={changeView} />
-              <ContentSections onViewChange={changeView} />
+              <ContentSections />
             </>
-          ) : (
-            <Suspense
-              fallback={
-                <div
-                  style={{ fontFamily: 'var(--font-ui)' }}
-                  className="text-[13px] text-ink-tertiary py-20 text-center"
-                >
-                  Loading documentation…
-                </div>
-              }
-            >
-              <DocsView page={page} onPageChange={changePage} />
+          )}
+          {view === 'start' && (
+            <Suspense fallback={docsFallback}>
+              <StartView onNavigate={navigateTo} />
+            </Suspense>
+          )}
+          {view === 'docs' && (
+            <Suspense fallback={docsFallback}>
+              <DocsView page={page} onPageChange={changePage} onNavigate={navigateTo} />
             </Suspense>
           )}
         </main>

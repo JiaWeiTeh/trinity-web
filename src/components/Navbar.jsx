@@ -7,10 +7,21 @@ const navLinks = [
   { label: '3. Papers', href: '#papers' },
 ]
 
+const viewLinks = [
+  { key: 'paper', label: 'Paper' },
+  { key: 'start', label: 'Getting started' },
+  { key: 'docs', label: 'Documentation' },
+]
+
 export default function Navbar({ view = 'paper', onViewChange }) {
   const [visible, setVisible] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
   const onPaper = view === 'paper'
+
+  const switchView = (key) => {
+    setMenuOpen(false)
+    onViewChange?.(key)
+  }
 
   useEffect(() => {
     const handleScroll = () => {
@@ -32,12 +43,6 @@ export default function Navbar({ view = 'paper', onViewChange }) {
     history.pushState(null, '', href)
     const el = document.querySelector(href)
     if (el) el.scrollIntoView({ behavior: 'smooth' })
-  }
-
-  const handleDocsClick = (e) => {
-    e.preventDefault()
-    setMenuOpen(false)
-    onViewChange?.(onPaper ? 'docs' : 'paper')
   }
 
   useEffect(() => {
@@ -94,7 +99,7 @@ export default function Navbar({ view = 'paper', onViewChange }) {
             {!onPaper && (
               <button
                 type="button"
-                onClick={handleDocsClick}
+                onClick={() => switchView('paper')}
                 className="text-ink-secondary text-sm hover:text-ink-primary transition-colors"
                 style={{ fontFamily: 'var(--font-ui)' }}
               >
@@ -127,7 +132,8 @@ export default function Navbar({ view = 'paper', onViewChange }) {
         </div>
       </nav>
 
-      {/* Full-screen mobile overlay */}
+      {/* Full-screen mobile overlay — also the view switcher on mobile,
+          where the fixed side tabs are hidden. */}
       {menuOpen && (
         <div className="fixed inset-0 z-40 bg-white/95 backdrop-blur-lg flex flex-col items-center justify-center gap-8 sm:hidden">
           {onPaper && navLinks.map((link) => (
@@ -141,13 +147,18 @@ export default function Navbar({ view = 'paper', onViewChange }) {
               {link.label}
             </a>
           ))}
-          <button
-            type="button"
-            onClick={handleDocsClick}
-            className="text-teal text-xl hover:text-teal/80 transition-colors"
-          >
-            {onPaper ? 'Documentation' : '← Back to paper'}
-          </button>
+          <div className="flex flex-col items-center gap-5 pt-2 border-t border-border-rule">
+            {viewLinks.filter((v) => v.key !== view).map((v) => (
+              <button
+                key={v.key}
+                type="button"
+                onClick={() => switchView(v.key)}
+                className="text-teal text-xl hover:text-teal/80 transition-colors"
+              >
+                {v.label}
+              </button>
+            ))}
+          </div>
         </div>
       )}
     </>

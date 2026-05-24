@@ -210,7 +210,7 @@ function Abstract() {
           <p style={{ fontFamily: 'var(--font-ui)' }}
              className="text-[12px] text-ink-tertiary mt-4">
             <span className="font-medium" style={{ fontStyle: 'italic' }}>Key words. </span>
-            ISM: bubbles — H{'\u2009'}II regions — stars: winds, outflows — methods: numerical — stars: formation
+            ISM: bubbles — H{' '}II regions — stars: winds, outflows — methods: numerical — stars: formation
           </p>
 
           {/* Status line */}
@@ -245,14 +245,14 @@ function Section1Overview() {
             </Sidenote>
           </p>
           <p>
-            The dynamics of the swept-up shell are governed by a single equation of motion balancing the driving pressure against gravity:
+            The dynamics of the swept-up shell are governed by a single equation of motion balancing the driving pressure and the radiation force against gravity:
           </p>
         </div>
 
         <Equation
           id="eq1"
           number={1}
-          latex={String.raw`\frac{d}{dt}\!\left(M_{\rm sh}\,\dot{R}\right) = 4\pi R^2\,P_{\rm drive} - \frac{G\,M_{\rm sh}\,M_{\rm enc}}{R^2}`}
+          latex={String.raw`\frac{d}{dt}\!\left(M_{\rm sh}\,\dot{R}\right) = 4\pi R^2\,P_{\rm drive} + F_{\rm rad} - \frac{G\,M_{\rm sh}\,M_{\rm enc}}{R^2}`}
         />
 
         <div style={{ fontFamily: 'var(--font-display)' }}
@@ -296,14 +296,14 @@ function Section2Model({ time, setTime }) {
         <div style={{ fontFamily: 'var(--font-display)' }}
              className="text-[17px] text-ink-secondary leading-[1.65] space-y-4">
           <p>
-            As radiative cooling drains thermal energy from the bubble interior, the system transitions to a momentum-driven regime where photoionised-gas pressure and wind ram pressure sustain the expansion. TRINITY switches the driving pressure formulation between phases:
+            As radiative cooling drains thermal energy from the bubble interior, the system passes through a transition regime and into a momentum-driven regime where photoionised-gas pressure and wind ram pressure sustain the expansion. TRINITY switches the driving pressure formulation between phases:
           </p>
         </div>
 
         <Equation
           id="eq3"
           number={3}
-          latex={String.raw`P_{\rm drive} = \begin{cases} \max\!\left(P_{\rm b},\; P_{\rm H\,\scriptscriptstyle II}\right) & \text{energy-driven} \\[6pt] P_{\rm H\,\scriptscriptstyle II} + P_{\rm ram} & \text{momentum-driven} \end{cases}`}
+          latex={String.raw`P_{\rm drive} = \begin{cases} \max\!\left(P_{\rm b},\; P_{\rm H\,\scriptscriptstyle II}\right) & \text{energy-driven} \\[6pt] \max\!\left(P_{\rm b},\; P_{\rm H\,\scriptscriptstyle II} + P_{\rm ram}\right) & \text{transition} \\[6pt] P_{\rm H\,\scriptscriptstyle II} + P_{\rm ram} & \text{momentum-driven} \end{cases}`}
         />
 
         <div style={{ fontFamily: 'var(--font-display)' }}
@@ -311,11 +311,11 @@ function Section2Model({ time, setTime }) {
           <p>
             This phase-aware treatment (<Ref target="eq3">Eq. 3</Ref>) is one of the key differences from WARPFIELD, which does not include photoionised-gas pressure as a driving term (see <Ref target="fig1">Interactive Fig. 1</Ref> for the effect on shell structure).
             <Sidenote>
-              The max(
+              In the max formulation, {' '}
               <NotationTerm label={<>P<sub>b</sub></>} definition="Thermal pressure inside the hot shocked wind bubble." />
-              , {' '}
+              {' '}and{' '}
               <NotationTerm label={<>P<sub>H II</sub></>} definition="Thermal pressure in ionised gas at approximately 10⁴ K." />
-              ) formulation prevents double-counting when the bubble pressure already exceeds the H{'\u2009'}II pressure.
+              {' '}describe competing equilibria for the cavity gas — a hot wind-shock state vs. a photoionisation-equilibrium state — so the driving pressure is whichever equilibrium is set higher, not the sum.
             </Sidenote>
           </p>
         </div>
@@ -357,7 +357,7 @@ function Section2Model({ time, setTime }) {
   )
 }
 
-function Section4Papers() {
+function Section3Papers() {
   const papers = [
     { num: 'Paper I', title: 'Code & Methods', status: 'Teh et al. (in prep.)' },
     { num: 'Paper II', title: '', status: '(upcoming)' },
@@ -399,7 +399,7 @@ function Section4Papers() {
 function Acknowledgements() {
   const messages = [
     'JWT thanks the mass-to-light ratio for keeping things interesting, and coffee for keeping things moving.',
-    'JWT acknowledges the Sun for powering the H\u2009II regions, and espresso for powering the code.',
+    'JWT acknowledges the Sun for powering the H II regions, and espresso for powering the code.',
     'JWT is grateful to the Rosette Nebula for looking exactly like a textbook figure, and to RSK for pointing out when the code does not.',
     'JWT thanks the ODE solver for converging most of the time.',
     'JWT acknowledges gravity for providing the only restoring force in this problem, and in the chair.',
@@ -420,7 +420,6 @@ function Acknowledgements() {
     }, 500);
   }, [messages.length]);
 
-  // Auto-advance every minute; clicking resets the timer via the index dependency.
   useEffect(() => {
     const id = setTimeout(advance, 60000);
     return () => clearTimeout(id);
@@ -489,11 +488,11 @@ export default function ContentSections({ onViewChange }) {
       <SectionRule />
       <Section2Model time={time} setTime={setTime} />
       <SectionRule />
-      <Section4Papers />
+      <Section3Papers />
       <SectionRule />
       <Acknowledgements />
       <SectionRule />
       <Contact />
     </div>
-  )
+  );
 }

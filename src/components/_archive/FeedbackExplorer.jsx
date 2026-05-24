@@ -9,7 +9,7 @@ import {
   ResponsiveContainer,
   ReferenceLine,
 } from 'recharts'
-import gridData from '../data/feedbackGrid.json'
+import gridData from './feedbackGrid.json'
 
 const LOG_M_VALUES = [4, 4.5, 5, 5.5, 6, 6.5, 7]
 const SFE_VALUES = [5, 10, 15, 20, 25, 30]
