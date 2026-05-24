@@ -10,11 +10,14 @@ const T_MOM = 4.0
 const LABEL_X = 260
 const LEADER_END = 254
 
+const START_FRACS = {
+  freeWind: 0.0952, hotBubble: 0.0143, hii: 0.0143, shell: 0.0095, cloud: 0.8667
+}
 const ENERGY_FRACS = {
   freeWind: 0.1667, hotBubble: 0.4444, hii: 0.0556, shell: 0.1111, cloud: 0.2222
 }
 const TRANS_FRACS = {
-  freeWind: 0.4352, hotBubble: 0.2278, hii: 0.0694, shell: 0.1111, cloud: 0.1565
+  freeWind: 0.6430, hotBubble: 0.0200, hii: 0.0694, shell: 0.1111, cloud: 0.1565
 }
 const MOMENTUM_FRACS = {
   freeWind: 0.7037, hotBubble: 0.0111, hii: 0.0833, shell: 0.1111, cloud: 0.0907
@@ -39,7 +42,8 @@ function getRadiiFromFractions(fracs) {
 function getRadii(time) {
   let fracs
   if (time <= T_TRANS) {
-    fracs = ENERGY_FRACS
+    const f = Math.min(time / T_TRANS, 1)
+    fracs = lerpFracs(START_FRACS, ENERGY_FRACS, f)
   } else if (time <= T_MOM) {
     const f = (time - T_TRANS) / (T_MOM - T_TRANS)
     fracs = lerpFracs(ENERGY_FRACS, TRANS_FRACS, f)
@@ -95,7 +99,7 @@ function dotXOnCircle(dotY, r) {
   return CX + Math.sqrt(r * r - dy * dy)
 }
 
-function Labels({ radii, bubbleOpacity, hoveredZone }) {
+function Labels({ radii, bubbleOpacity, hoveredZone, groupOpacity }) {
   const showBubble = bubbleOpacity > 0.15
   const showHII = !showBubble
   const ionisedInner = Math.max(radii.R_b, radii.R_w)
@@ -112,7 +116,7 @@ function Labels({ radii, bubbleOpacity, hoveredZone }) {
   ]
 
   return (
-    <g>
+    <g style={{ opacity: groupOpacity, transition: 'opacity 300ms ease' }}>
       {labelDefs.map((l) => {
         const dX = dotXOnCircle(l.dotY, l.r)
         const baseOpacity = l.opacity !== undefined ? Math.min(1, l.opacity * 2) : 1
@@ -162,6 +166,7 @@ export default function BubbleDiagram({ time = 1.0 }) {
 
   const radii = getRadii(time)
   const bubbleOpacity = radii.R_b > 5 ? 0.5 * (radii.R_b / 64) : 0
+  const labelOpacity = Math.max(0, Math.min(1, (time - T_TRANS) / 1.0))
   const showHIITexture = time > 3.5
   const transition = 'all 300ms ease'
   const isDimmed = (zoneKey) => hoveredZone && hoveredZone !== zoneKey
@@ -236,7 +241,7 @@ export default function BubbleDiagram({ time = 1.0 }) {
         <circle cx={CX + 4} cy={CY + 3} r={0.6} fill={STROKE} opacity={opacityFor('winds', 0.3)} />
 
         {/* Labels */}
-        <Labels radii={radii} bubbleOpacity={bubbleOpacity} hoveredZone={hoveredZone} />
+        <Labels radii={radii} bubbleOpacity={bubbleOpacity} hoveredZone={hoveredZone} groupOpacity={labelOpacity} />
       </svg>
     </div>
   )
