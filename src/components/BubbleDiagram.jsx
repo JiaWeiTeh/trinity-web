@@ -48,7 +48,7 @@ function getRadii(time) {
     const f = (time - T_TRANS) / (T_MOM - T_TRANS)
     fracs = lerpFracs(ENERGY_FRACS, TRANS_FRACS, f)
   } else {
-    const f = Math.min((time - T_MOM) / (10 - T_MOM), 1)
+    const f = Math.min((time - T_MOM) / (5 - T_MOM), 1)
     fracs = lerpFracs(TRANS_FRACS, MOMENTUM_FRACS, f)
   }
   return getRadiiFromFractions(fracs)
