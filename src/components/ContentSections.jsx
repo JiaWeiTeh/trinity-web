@@ -1,9 +1,7 @@
-import { useState, useRef, useEffect, lazy, Suspense } from 'react'
+import { useState, useRef, useEffect, useCallback } from 'react'
 import katex from 'katex'
 import BubbleDiagram from './BubbleDiagram'
 import TimeScrubber from './TimeScrubber'
-
-const FeedbackExplorer = lazy(() => import('./FeedbackExplorer'))
 
 /* ── Reference data ─────────────────────────────────────────── */
 
@@ -205,14 +203,14 @@ function Abstract() {
           <p style={{ fontFamily: 'var(--font-display)' }}
              className="text-[15px] text-ink-secondary leading-[1.7]">
             TRINITY is a 1D spherical thin-shell code that self-consistently evolves stellar wind bubbles, photoionised regions, and swept-up shells in giant molecular clouds. The code couples stellar winds, supernovae, radiation pressure, photoionised-gas thermal pressure, and gravity across energy-driven, transition, and momentum-driven phases. It succeeds WARPFIELD {' '}
-            <CiteList refs={[REFS.rahner17, REFS.rahner19]} /> with a phase-aware treatment of the energy-to-momentum transition, flexible density profiles, and ionisation-front tracking within the shell. This site presents the code, its physical model, and interactive diagnostics exploring feedback dominance across parameter space.
+            <CiteList refs={[REFS.rahner17, REFS.rahner19]} /> with a phase-aware treatment of the energy-to-momentum transition, flexible density profiles, and ionisation-front tracking within the shell. This site presents the code, its physical model, and an interactive diagnostic of the shell structure across evolutionary phases.
           </p>
 
           {/* Keywords */}
           <p style={{ fontFamily: 'var(--font-ui)' }}
              className="text-[12px] text-ink-tertiary mt-4">
             <span className="font-medium" style={{ fontStyle: 'italic' }}>Key words. </span>
-            ISM: bubbles — H{'\u2009'}II regions — stars: winds, outflows — methods: numerical — stars: formation
+            ISM: bubbles — H{' '}II regions — stars: winds, outflows — methods: numerical — stars: formation
           </p>
 
           {/* Status line */}
@@ -247,14 +245,14 @@ function Section1Overview() {
             </Sidenote>
           </p>
           <p>
-            The dynamics of the swept-up shell are governed by a single equation of motion balancing the driving pressure against gravity:
+            The dynamics of the swept-up shell are governed by a single equation of motion balancing the driving pressure and the radiation force against gravity:
           </p>
         </div>
 
         <Equation
           id="eq1"
           number={1}
-          latex={String.raw`\frac{d}{dt}\!\left(M_{\rm sh}\,\dot{R}\right) = 4\pi R^2\,P_{\rm drive} - \frac{G\,M_{\rm sh}\,M_{\rm enc}}{R^2}`}
+          latex={String.raw`\frac{d}{dt}\!\left(M_{\rm sh}\,\dot{R}\right) = 4\pi R^2\,P_{\rm drive} + F_{\rm rad} - \frac{G\,M_{\rm sh}\,M_{\rm enc}}{R^2}`}
         />
 
         <div style={{ fontFamily: 'var(--font-display)' }}
@@ -298,35 +296,35 @@ function Section2Model({ time, setTime }) {
         <div style={{ fontFamily: 'var(--font-display)' }}
              className="text-[17px] text-ink-secondary leading-[1.65] space-y-4">
           <p>
-            As radiative cooling drains thermal energy from the bubble interior, the system transitions to a momentum-driven regime where photoionised-gas pressure and wind ram pressure sustain the expansion. TRINITY switches the driving pressure formulation between phases:
+            As radiative cooling drains thermal energy from the bubble interior, the system passes through a transition regime and into a momentum-driven regime where photoionised-gas pressure and wind ram pressure sustain the expansion. TRINITY switches the driving pressure formulation between phases:
           </p>
         </div>
 
         <Equation
           id="eq3"
           number={3}
-          latex={String.raw`P_{\rm drive} = \begin{cases} \max\!\left(P_{\rm b},\; P_{\rm H\,\scriptscriptstyle II}\right) & \text{energy-driven} \\[6pt] P_{\rm H\,\scriptscriptstyle II} + P_{\rm ram} & \text{momentum-driven} \end{cases}`}
+          latex={String.raw`P_{\rm drive} = \begin{cases} \max\!\left(P_{\rm b},\; P_{\rm H\,\scriptscriptstyle II}\right) & \text{energy-driven} \\[6pt] \max\!\left(P_{\rm b},\; P_{\rm H\,\scriptscriptstyle II} + P_{\rm ram}\right) & \text{transition} \\[6pt] P_{\rm H\,\scriptscriptstyle II} + P_{\rm ram} & \text{momentum-driven} \end{cases}`}
         />
 
         <div style={{ fontFamily: 'var(--font-display)' }}
              className="text-[17px] text-ink-secondary leading-[1.65] space-y-4">
           <p>
-            This phase-aware treatment (<Ref target="eq3">Eq. 3</Ref>) is one of the key differences from WARPFIELD, which does not include photoionised-gas pressure as a driving term (see <Ref target="fig2">Interactive Fig. 2</Ref> for the effect on shell structure).
+            This phase-aware treatment (<Ref target="eq3">Eq. 3</Ref>) is one of the key differences from WARPFIELD, which does not include photoionised-gas pressure as a driving term (see <Ref target="fig1">Interactive Fig. 1</Ref> for the effect on shell structure).
             <Sidenote>
-              The max(
+              In the max formulation, {' '}
               <NotationTerm label={<>P<sub>b</sub></>} definition="Thermal pressure inside the hot shocked wind bubble." />
-              , {' '}
+              {' '}and{' '}
               <NotationTerm label={<>P<sub>H II</sub></>} definition="Thermal pressure in ionised gas at approximately 10⁴ K." />
-              ) formulation prevents double-counting when the bubble pressure already exceeds the H{'\u2009'}II pressure.
+              {' '}describe competing equilibria for the cavity gas — a hot wind-shock state vs. a photoionisation-equilibrium state — so the driving pressure is whichever equilibrium is set higher, not the sum.
             </Sidenote>
           </p>
         </div>
       </div>
 
-      <div id="fig2" className="max-w-[680px] mx-auto">
+      <div id="fig1" className="max-w-[680px] mx-auto">
         <p style={{ fontFamily: 'var(--font-ui)' }}
            className="text-[12px] font-medium text-teal mb-1">
-          Interactive Fig. 2
+          Interactive Fig. 1
         </p>
         <p style={{ fontFamily: 'var(--font-display)' }}
            className="text-[15px] font-semibold text-ink-primary mb-4">
@@ -352,60 +350,7 @@ function Section2Model({ time, setTime }) {
 
         <p style={{ fontFamily: 'var(--font-ui)' }}
            className="text-[12px] text-ink-tertiary mt-3 leading-relaxed max-w-[680px] mx-auto">
-          Interactive Fig. 2 — Idealised 1D shell structure in the energy-driven, transition, and momentum-driven regimes. Drag the time slider to evolve the bubble and hover layer labels to isolate each zone.
-        </p>
-      </div>
-    </section>
-  )
-}
-
-function Section3Diagnostics({ onViewChange }) {
-  return (
-    <section id="diagnostics" className="py-12">
-      <div className="max-w-[680px] mx-auto mb-8">
-        <SectionHeading number={3} title="Diagnostic atlas" />
-        <p style={{ fontFamily: 'var(--font-display)' }}
-           className="text-[17px] text-ink-secondary leading-[1.65]">
-          TRINITY computes the full force-fraction history for any combination of cloud mass and star-formation efficiency.
-          <Sidenote>
-            The grid spans M<sub>cl</sub> = 10⁴–10⁷ M<sub>☉</sub> and ε<sub>sf</sub> = 5–30%. Force fractions are normalised to sum to unity.
-          </Sidenote>
-          {' '}The explorer below interpolates across a precomputed grid to show how the dominant feedback mechanism shifts across parameter space.
-        </p>
-      </div>
-
-      <div id="fig3" className="max-w-[680px] mx-auto">
-        <p style={{ fontFamily: 'var(--font-ui)' }}
-           className="text-[12px] font-medium text-teal mb-1">
-          Interactive Fig. 3
-        </p>
-        <p style={{ fontFamily: 'var(--font-display)' }}
-           className="text-[15px] font-semibold text-ink-primary mb-4">
-          Force-fraction evolution across parameter space
-        </p>
-
-        <Suspense fallback={
-          <div style={{ fontFamily: 'var(--font-ui)' }}
-               className="text-[13px] text-ink-tertiary py-20 text-center">
-            Loading explorer…
-          </div>
-        }>
-          <FeedbackExplorer />
-        </Suspense>
-
-        <p style={{ fontFamily: 'var(--font-ui)' }}
-           className="text-[12px] text-ink-tertiary mt-3 leading-relaxed max-w-[680px] mx-auto">
-          Interactive Fig. 3 — Illustrative force-fraction histories for selected cloud mass and star formation efficiency. Quantitative results in Paper I (Teh et al., in prep.). Use the sliders to explore how the dominant feedback mechanism shifts across parameter space.
-        </p>
-
-        <p className="mt-2">
-          <button
-            type="button"
-            onClick={() => onViewChange?.('docs')}
-            style={{ fontFamily: 'var(--font-ui)' }}
-            className="text-[13px] text-teal underline underline-offset-[3px] decoration-1">
-            How does TRINITY compute this? →
-          </button>
+          Interactive Fig. 1 — Idealised 1D shell structure in the energy-driven, transition, and momentum-driven regimes. Drag the time slider to evolve the bubble and hover layer labels to isolate each zone. Layer sizes are schematic and not to scale — shown for illustration only.
         </p>
       </div>
     </section>
@@ -415,13 +360,13 @@ function Section3Diagnostics({ onViewChange }) {
 function Section4Papers() {
   const papers = [
     { num: 'Paper I', title: 'Code & Methods', status: 'Teh et al. (in prep.)' },
-    { num: 'Paper II', title: 'Feedback Dominance', status: '(upcoming)' },
+    { num: 'Paper II', title: '', status: '(upcoming)' },
   ]
 
   return (
     <section id="papers" className="py-12">
       <div className="max-w-[680px] mx-auto">
-        <SectionHeading number={4} title="Papers" />
+        <SectionHeading number={3} title="Papers" />
         <p style={{ fontFamily: 'var(--font-display)' }}
            className="text-[17px] text-ink-secondary leading-[1.65] mb-6">
           TRINITY is developed across a series of methods and science papers.
@@ -433,13 +378,15 @@ function Section4Papers() {
                     className="text-[12px] font-medium text-teal w-[56px] shrink-0">
                 {p.num}
               </span>
-              <span style={{ fontFamily: 'var(--font-display)' }}
-                    className="text-[15px] font-semibold text-ink-primary">
-                {p.title}
-              </span>
+              {p.title && (
+                <span style={{ fontFamily: 'var(--font-display)' }}
+                      className="text-[15px] font-semibold text-ink-primary">
+                  {p.title}
+                </span>
+              )}
               <span style={{ fontFamily: 'var(--font-ui)' }}
                     className="text-[12px] text-ink-tertiary">
-                — {p.status}
+                {p.title ? '— ' : ''}{p.status}
               </span>
             </div>
           ))}
@@ -449,59 +396,10 @@ function Section4Papers() {
   )
 }
 
-function Section5Code({ onViewChange }) {
-  return (
-    <section id="code" className="py-12">
-      <div className="max-w-[680px] mx-auto">
-        <SectionHeading number={5} title="Code and documentation" />
-        <p style={{ fontFamily: 'var(--font-display)' }}
-           className="text-[17px] text-ink-secondary leading-[1.65]">
-          Full documentation, installation guide, and API reference are available in the{' '}
-          <button
-            type="button"
-            onClick={() => onViewChange?.('docs')}
-            style={{ fontFamily: 'var(--font-ui)' }}
-            className="text-teal underline underline-offset-[3px] decoration-1">
-            Documentation tab
-          </button>.
-        </p>
-      </div>
-    </section>
-  )
-}
-
-function Appendices() {
-  return (
-    <section id="appendices" className="py-12">
-      <div className="max-w-[680px] mx-auto">
-        <SectionHeading number="A" title="Appendices" />
-        <div className="space-y-3">
-          <details className="appendix-card">
-            <summary>Appendix A. Notation</summary>
-            <p>TBD.</p>
-          </details>
-          <details className="appendix-card">
-            <summary>Appendix B. Explorer assumptions</summary>
-            <p>TBD.</p>
-          </details>
-          <details className="appendix-card">
-            <summary>Appendix C. Image credits</summary>
-            <p>TBD.</p>
-          </details>
-          <details className="appendix-card">
-            <summary>Appendix D. Code availability</summary>
-            <p>TBD.</p>
-          </details>
-        </div>
-      </div>
-    </section>
-  )
-}
-
 function Acknowledgements() {
   const messages = [
     'JWT thanks the mass-to-light ratio for keeping things interesting, and coffee for keeping things moving.',
-    'JWT acknowledges the Sun for powering the H\u2009II regions, and espresso for powering the code.',
+    'JWT acknowledges the Sun for powering the H II regions, and espresso for powering the code.',
     'JWT is grateful to the Rosette Nebula for looking exactly like a textbook figure, and to RSK for pointing out when the code does not.',
     'JWT thanks the ODE solver for converging most of the time.',
     'JWT acknowledges gravity for providing the only restoring force in this problem, and in the chair.',
@@ -511,15 +409,35 @@ function Acknowledgements() {
     'JWT acknowledges the shell for not dissolving before the paper was written.',
   ];
 
-  const [msg] = useState(() => messages[Math.floor(Math.random() * messages.length)]);
+  const [index, setIndex] = useState(() => Math.floor(Math.random() * messages.length));
+  const [visible, setVisible] = useState(true);
+
+  const advance = useCallback(() => {
+    setVisible(false);
+    setTimeout(() => {
+      setIndex((i) => (i + 1) % messages.length);
+      setVisible(true);
+    }, 500);
+  }, [messages.length]);
+
+  useEffect(() => {
+    const id = setTimeout(advance, 60000);
+    return () => clearTimeout(id);
+  }, [index, advance]);
 
   return (
     <section className="py-10">
       <div className="max-w-[680px] mx-auto">
         <p style={{ fontFamily: 'var(--font-ui)' }}
-           className="text-[12px] text-ink-tertiary leading-relaxed">
-          <span className="font-medium italic">Acknowledgements. </span>
-          {msg}
+           className="text-[12px] font-medium italic text-ink-tertiary mb-2">
+          Acknowledgements
+        </p>
+        <p
+          onClick={advance}
+          title="Click for another"
+          style={{ fontFamily: 'var(--font-ui)', opacity: visible ? 1 : 0, transition: 'opacity 500ms ease', cursor: 'pointer' }}
+          className="text-[12px] text-ink-tertiary leading-relaxed hover:text-ink-secondary">
+          {messages[index]}
         </p>
       </div>
     </section>
@@ -559,7 +477,7 @@ function Contact() {
 
 /* ── Composition ─────────────────────────────────────────────── */
 
-export default function ContentSections({ onViewChange }) {
+export default function ContentSections() {
   const [time, setTime] = useState(1.0)
 
   return (
@@ -570,17 +488,11 @@ export default function ContentSections({ onViewChange }) {
       <SectionRule />
       <Section2Model time={time} setTime={setTime} />
       <SectionRule />
-      <Section3Diagnostics onViewChange={onViewChange} />
-      <SectionRule />
       <Section4Papers />
-      <SectionRule />
-      <Section5Code onViewChange={onViewChange} />
-      <SectionRule />
-      <Appendices />
       <SectionRule />
       <Acknowledgements />
       <SectionRule />
       <Contact />
     </div>
-  )
+  );
 }

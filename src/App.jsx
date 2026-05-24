@@ -79,7 +79,7 @@ export default function App() {
           {view === 'paper' && (
             <>
               <TitleBlock onViewChange={changeView} />
-              <ContentSections onViewChange={changeView} />
+              <ContentSections />
             </>
           )}
           {view === 'start' && (
