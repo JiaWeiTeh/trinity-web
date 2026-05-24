@@ -479,7 +479,7 @@ function Contact() {
 /* ── Composition ─────────────────────────────────────────────── */
 
 export default function ContentSections({ onViewChange }) {
-  const [time, setTime] = useState(1.0)
+  const [time, setTime] = useState(0)
 
   return (
     <div>
