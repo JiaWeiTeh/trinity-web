@@ -10,7 +10,7 @@ export default function TimeScrubber({ time, onTimeChange }) {
           onChange={e => onTimeChange(parseFloat(e.target.value))}
           className="w-full slider"
         />
-        {/* Phase boundary ticks at t=0.5 (10%) and t=0.6 (12%) */}
+        {/* Phase boundary ticks at t=0.5 (10%) and t=0.7 (14%) */}
         <div style={{ position: 'absolute', left: 0, right: 0, top: 0, height: 0, pointerEvents: 'none' }}>
           <div style={{
             position: 'absolute',
@@ -20,7 +20,7 @@ export default function TimeScrubber({ time, onTimeChange }) {
           }} />
           <div style={{
             position: 'absolute',
-            left: '12%', top: -2,
+            left: '14%', top: -2,
             width: 1, height: 8,
             background: '#D3D1C7'
           }} />

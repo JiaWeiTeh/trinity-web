@@ -5,7 +5,7 @@ const CX = 120
 const CY = 130
 const R_CLOUD = 105
 const T_TRANS = 0.5
-const T_MOM = 0.6
+const T_MOM = 0.7
 
 const LABEL_X = 260
 const LEADER_END = 254
