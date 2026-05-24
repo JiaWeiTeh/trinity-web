@@ -218,10 +218,6 @@ export default function BubbleDiagram({ time = 1.0 }) {
           stroke={STROKE} strokeWidth={strokeWidthFor('winds', 0.5)} fill="none"
           style={{ opacity: opacityFor('winds', 0.4), transition }} />
 
-        {/* Cluster boundary */}
-        <circle cx={CX} cy={CY} r={8}
-          stroke={STROKE} strokeWidth={0.7} fill="none" style={{ opacity: opacityFor('winds', 1) }} />
-
         {/* Shell hatching */}
         <g style={{ opacity: opacityFor('shell', 1), transition: 'opacity 200ms ease' }}>
           <ShellHatching shellR={radii.R_sh} ionisedR={radii.R_if} />
