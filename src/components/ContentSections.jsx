@@ -357,7 +357,7 @@ function Section2Model({ time, setTime }) {
   )
 }
 
-function Section4Papers() {
+function Section3Papers() {
   const papers = [
     { num: 'Paper I', title: 'Code & Methods', status: 'Teh et al. (in prep.)' },
     { num: 'Paper II', title: '', status: '(upcoming)' },
@@ -488,7 +488,7 @@ export default function ContentSections() {
       <SectionRule />
       <Section2Model time={time} setTime={setTime} />
       <SectionRule />
-      <Section4Papers />
+      <Section3Papers />
       <SectionRule />
       <Acknowledgements />
       <SectionRule />
