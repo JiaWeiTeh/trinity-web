@@ -54,45 +54,6 @@ function getRadii(time) {
   return getRadiiFromFractions(fracs)
 }
 
-function ShellHatching({ shellR, ionisedR }) {
-  const midR = (shellR + ionisedR) / 2
-  const halfWidth = 4
-  const angles = [-35, -15, 5, 25, 155, 175, 195, 215]
-  return (
-    <g>
-      {angles.map((deg) => {
-        const rad = (deg * Math.PI) / 180
-        const cx = CX + midR * Math.cos(rad)
-        const cy = CY + midR * Math.sin(rad)
-        return (
-          <line key={deg}
-            x1={cx - halfWidth} y1={cy} x2={cx + halfWidth} y2={cy}
-            stroke={STROKE} strokeWidth={0.3} opacity={0.13}
-          />
-        )
-      })}
-    </g>
-  )
-}
-
-function HIITexture({ ionisedR, windsR }) {
-  const positions = [0.3, 0.45, 0.6, 0.75]
-  return (
-    <g>
-      {positions.map((p, i) => {
-        const r = windsR + (ionisedR - windsR) * p
-        const x = CX + r * 0.15
-        return (
-          <line key={i}
-            x1={x} y1={CY - r * 0.3} x2={x} y2={CY + r * 0.3}
-            stroke={STROKE} strokeWidth={0.3} opacity={0.1} strokeDasharray="1 2"
-          />
-        )
-      })}
-    </g>
-  )
-}
-
 function dotXOnCircle(dotY, r) {
   const dy = dotY - CY
   if (Math.abs(dy) >= r) return CX + r * 0.3
@@ -167,7 +128,6 @@ export default function BubbleDiagram({ time = 1.0 }) {
   const radii = getRadii(time)
   const bubbleOpacity = radii.R_b > 5 ? 0.5 * (radii.R_b / 64) : 0
   const labelOpacity = Math.max(0, Math.min(1, (time - T_TRANS) / (T_MOM - T_TRANS)))
-  const showHIITexture = time > 3.5
   const transition = 'all 300ms ease'
   const isDimmed = (zoneKey) => hoveredZone && hoveredZone !== zoneKey
   const opacityFor = (zoneKey, base = 1) => (isDimmed(zoneKey) ? base * 0.2 : base)
@@ -217,18 +177,6 @@ export default function BubbleDiagram({ time = 1.0 }) {
         <circle cx={CX} cy={CY} r={radii.R_w}
           stroke={STROKE} strokeWidth={strokeWidthFor('winds', 0.5)} fill="none"
           style={{ opacity: opacityFor('winds', 0.4), transition }} />
-
-        {/* Shell hatching */}
-        <g style={{ opacity: opacityFor('shell', 1), transition: 'opacity 200ms ease' }}>
-          <ShellHatching shellR={radii.R_sh} ionisedR={radii.R_if} />
-        </g>
-
-        {/* H II texture */}
-        {showHIITexture && (
-          <g style={{ opacity: opacityFor('ionised', 1), transition: 'opacity 200ms ease' }}>
-            <HIITexture ionisedR={radii.R_if} windsR={radii.R_w} />
-          </g>
-        )}
 
         {/* Central cluster */}
         <circle cx={CX} cy={CY} r={2.5} fill={STROKE} style={{ opacity: opacityFor('winds', 1) }} />
