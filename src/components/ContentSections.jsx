@@ -202,8 +202,8 @@ function Abstract() {
         <div className="border-l-4 border-border-card pl-5 py-1">
           <p style={{ fontFamily: 'var(--font-display)' }}
              className="text-[15px] text-ink-secondary leading-[1.7]">
-            TRINITY is a 1D spherical thin-shell code that self-consistently evolves stellar wind bubbles, photoionised regions, and swept-up shells in giant molecular clouds. The code couples stellar winds, supernovae, radiation pressure, photoionised-gas thermal pressure, and gravity across energy-driven, transition, and momentum-driven phases. It succeeds WARPFIELD {' '}
-            <CiteList refs={[REFS.rahner17, REFS.rahner19]} /> with a phase-aware treatment of the energy-to-momentum transition, flexible density profiles, and ionisation-front tracking within the shell. This site presents the code, its physical model, and an interactive diagnostic of the shell structure across evolutionary phases.
+            TRINITY is a 1D spherical thin-shell code for stellar feedback in giant molecular clouds. It couples stellar winds, supernovae, radiation pressure, the thermal pressure of photoionised gas, and gravity in a single equation of motion for the swept-up shell. The shell is followed from the early energy-driven phase, when a hot wind bubble does the pushing, into the late momentum-driven phase. TRINITY succeeds WARPFIELD {' '}
+            <CiteList refs={[REFS.rahner17, REFS.rahner19]} />; it adds a driving pressure that depends on the phase, a configurable cloud density profile, and an ionisation front tracked inside the shell. The pages below give the model and an interactive view of the shell across all three phases.
           </p>
 
           {/* Keywords */}
@@ -232,20 +232,21 @@ function Section1Overview() {
         <div style={{ fontFamily: 'var(--font-display)' }}
              className="text-[17px] text-ink-secondary leading-[1.65] space-y-4">
           <p>
-            Massive stars reshape their natal molecular clouds through stellar winds, supernovae, radiation pressure, and the thermal pressure of photoionised gas.
+            Massive stars destroy the clouds that formed them. Stellar winds, supernovae, radiation pressure, and the thermal pressure of photoionised gas all push on the surrounding gas, and a giant molecular cloud is dispersed within a few Myr of the first massive stars forming.
             <Sidenote>
               In the energy-driven phase, the hot shocked wind at T ~ 10⁶–10⁷ K provides the dominant pressure. This is the classical <span className="whitespace-nowrap">Weaver et al. (1977)</span> regime.
             </Sidenote>
-            {' '}The relative importance of these mechanisms — and how dominance shifts over time — controls cloud dispersal timescales, triggered star formation, and the momentum budget available to drive galactic outflows.
+            {' '}Which mechanism does the pushing, and when, sets how fast the cloud disperses, whether the expanding shell triggers a new generation of stars, and how much momentum survives to drive a galactic outflow.
           </p>
           <p>
-            Existing models typically treat these feedback channels in isolation or make simplifying assumptions about the transition from energy-driven to momentum-driven expansion. TRINITY evolves all five mechanisms self-consistently within a 1D spherical thin-shell framework, tracking the full dynamical sequence from initial wind-blown bubble through shell formation, radiative cooling, and late-time momentum-driven expansion.
+            Many feedback models follow one channel at a time, or fix the energy-to-momentum transition by hand. TRINITY evolves all five together and lets the transition happen on its own, as radiative cooling drains the bubble.
             <Sidenote>
               WARPFIELD (Rahner et al. 2017, 2019) is the predecessor 1D feedback code. TRINITY adds phase-aware driving, smooth transitions, and ionisation-front tracking.
             </Sidenote>
+            {' '}A single run follows the shell from the first wind-blown bubble, through the moment it cools and collapses into a thin shell, to its late coasting expansion.
           </p>
           <p>
-            The dynamics of the swept-up shell are governed by a single equation of motion balancing the driving pressure and the radiation force against gravity:
+            The shell obeys one equation of motion, with the driving pressure and radiation force on one side and gravity on the other:
           </p>
         </div>
 
@@ -258,7 +259,7 @@ function Section1Overview() {
         <div style={{ fontFamily: 'var(--font-display)' }}
              className="text-[17px] text-ink-secondary leading-[1.65] space-y-4">
           <p>
-            The Rosette Nebula illustrates the multi-zone structure that TRINITY captures: a central cluster driving a wind cavity, surrounded by a hot bubble, an ionised shell, a neutral swept-up shell, and the ambient molecular cloud.
+            The Rosette Nebula has the same layered structure TRINITY models: a central cluster, a wind cavity, a hot bubble, an ionised shell, a neutral swept-up shell, and the molecular cloud beyond.
           </p>
         </div>
       </div>
@@ -296,7 +297,7 @@ function Section2Model({ time, setTime }) {
         <div style={{ fontFamily: 'var(--font-display)' }}
              className="text-[17px] text-ink-secondary leading-[1.65] space-y-4">
           <p>
-            As radiative cooling drains thermal energy from the bubble interior, the system passes through a transition regime and into a momentum-driven regime where photoionised-gas pressure and wind ram pressure sustain the expansion. TRINITY switches the driving pressure formulation between phases:
+            Radiative cooling drains the bubble of thermal energy. Once that energy is gone the bubble can no longer push, and the shell coasts on photoionised-gas pressure and wind ram pressure instead. The driving pressure therefore changes from one phase to the next:
           </p>
         </div>
 
@@ -309,13 +310,13 @@ function Section2Model({ time, setTime }) {
         <div style={{ fontFamily: 'var(--font-display)' }}
              className="text-[17px] text-ink-secondary leading-[1.65] space-y-4">
           <p>
-            This phase-aware treatment (<Ref target="eq3">Eq. 3</Ref>) is one of the key differences from WARPFIELD, which does not include photoionised-gas pressure as a driving term (see <Ref target="fig1">Interactive Fig. 1</Ref> for the effect on shell structure).
+            WARPFIELD never carries photoionised-gas pressure as a driving term; TRINITY does, and switches its form with the phase (<Ref target="eq3">Eq. 3</Ref>). <Ref target="fig1">Interactive Fig. 1</Ref> shows what that does to the shell structure.
             <Sidenote>
               In the max formulation, {' '}
               <NotationTerm label={<>P<sub>b</sub></>} definition="Thermal pressure inside the hot shocked wind bubble." />
               {' '}and{' '}
-              <NotationTerm label={<>P<sub>H II</sub></>} definition="Thermal pressure in ionised gas at approximately 10⁴ K." />
-              {' '}describe competing equilibria for the cavity gas — a hot wind-shock state vs. a photoionisation-equilibrium state — so the driving pressure is whichever equilibrium is set higher, not the sum.
+              <NotationTerm label={<>P<sub>H II</sub></>} definition="Thermal pressure in ionised gas at roughly 10⁴ K." />
+              {' '}describe competing equilibria for the cavity gas: a hot wind-shock state versus a photoionisation-equilibrium state, so the driving pressure is whichever equilibrium is set higher, not the sum.
             </Sidenote>
           </p>
         </div>
