@@ -267,7 +267,7 @@ function Section1Overview() {
 }
 
 function Section2Model({ time, setTime }) {
-  const phase = time < 0.5 ? 'energy' : time < 0.7 ? 'transition' : 'momentum'
+  const phase = time < 0.5 ? 'energy' : time < 1.2 ? 'transition' : 'momentum'
 
   return (
     <section id="model" className="py-12">
