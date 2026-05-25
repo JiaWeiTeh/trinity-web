@@ -7,6 +7,7 @@ import { lazy, Suspense } from 'react'
 
 const FeedbackExplorer = lazy(() => import('../FeedbackExplorer'))
 
+// eslint-disable-next-line no-unused-vars -- SectionHeading and Sidenote are used in JSX below; the project's eslint config does not include react/jsx-uses-vars.
 export default function Section3Diagnostics({ onViewChange, SectionHeading, Sidenote }) {
   return (
     <section id="diagnostics" className="py-12">
