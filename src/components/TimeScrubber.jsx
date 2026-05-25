@@ -16,13 +16,13 @@ export default function TimeScrubber({ time, onTimeChange }) {
             position: 'absolute',
             left: '10%', top: -2,
             width: 1, height: 8,
-            background: '#D3D1C7'
+            background: '#D8D2C6'
           }} />
           <div style={{
             position: 'absolute',
             left: '24%', top: -2,
             width: 1, height: 8,
-            background: '#D3D1C7'
+            background: '#D8D2C6'
           }} />
         </div>
       </div>
