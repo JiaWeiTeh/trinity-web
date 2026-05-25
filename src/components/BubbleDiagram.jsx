@@ -5,7 +5,7 @@ const CX = 120
 const CY = 130
 const R_CLOUD = 105
 const T_TRANS = 0.5
-const T_MOM = 0.7
+const T_MOM = 1.2
 
 const LABEL_X = 260
 const LEADER_END = 254
@@ -166,7 +166,7 @@ export default function BubbleDiagram({ time = 1.0 }) {
 
   const radii = getRadii(time)
   const bubbleOpacity = radii.R_b > 5 ? 0.5 * (radii.R_b / 64) : 0
-  const labelOpacity = Math.max(0, Math.min(1, (time - T_TRANS) / 0.5))
+  const labelOpacity = Math.max(0, Math.min(1, (time - T_TRANS) / (T_MOM - T_TRANS)))
   const showHIITexture = time > 3.5
   const transition = 'all 300ms ease'
   const isDimmed = (zoneKey) => hoveredZone && hoveredZone !== zoneKey
