@@ -331,9 +331,23 @@ function Section2Model({ time, setTime }) {
         </p>
 
         <div className="flex flex-col items-center gap-4">
-          <div className="figure-card w-full max-w-[520px] p-6 sm:p-8 flex justify-center">
-            <div className="w-full max-w-[380px]">
-              <BubbleDiagram time={time} />
+          <div className="figure-card w-full">
+            <div className="grid md:grid-cols-[1.3fr_1fr]">
+              <div className="figure-card-image flex items-center justify-center p-6 md:p-7 border-b border-border-card md:border-b-0 md:border-r">
+                <div className="w-full max-w-[380px]">
+                  <BubbleDiagram time={time} />
+                </div>
+              </div>
+              <div className="flex flex-col p-6 md:p-7">
+                <p style={{ fontFamily: 'var(--font-ui)' }}
+                   className="text-[11px] uppercase tracking-[0.18em] text-ink-tertiary">
+                  Figure caption
+                </p>
+                <p style={{ fontFamily: 'var(--font-display)' }}
+                   className="mt-3 text-[15px] leading-7 text-ink-secondary">
+                  Idealised 1D shell structure in the energy-driven, transition, and momentum-driven regimes. Drag the time slider to evolve the bubble and hover layer labels to isolate each zone. Layer sizes are schematic and not to scale — shown for illustration only.
+                </p>
+              </div>
             </div>
           </div>
 
@@ -341,11 +355,6 @@ function Section2Model({ time, setTime }) {
             <TimeScrubber time={time} onTimeChange={setTime} />
           </div>
         </div>
-
-        <p style={{ fontFamily: 'var(--font-ui)' }}
-           className="text-[12px] text-ink-tertiary mt-3 leading-relaxed max-w-[680px] mx-auto">
-          Interactive Fig. 1 — Idealised 1D shell structure in the energy-driven, transition, and momentum-driven regimes. Drag the time slider to evolve the bubble and hover layer labels to isolate each zone. Layer sizes are schematic and not to scale — shown for illustration only.
-        </p>
       </div>
     </section>
   )
@@ -471,7 +480,7 @@ function Contact() {
 
 /* ── Composition ─────────────────────────────────────────────── */
 
-export default function ContentSections({ onViewChange }) {
+export default function ContentSections() {
   const [time, setTime] = useState(0)
 
   return (

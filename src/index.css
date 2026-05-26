@@ -82,15 +82,21 @@ sup {
 }
 
 /* Wrapper that gives an interactive figure the same visual weight as a
-   paper figure: soft cream surface, light warm border, gentle shadow,
-   subtle teal radial highlight behind the diagram. */
+   paper figure: soft cream surface, light warm border, gentle shadow.
+   The image cell carries the subtle teal radial highlight; the caption
+   cell stays on the plain surface. */
 .figure-card {
-  background:
-    radial-gradient(circle at 50% 45%, rgba(14, 165, 200, 0.08), transparent 36%),
-    linear-gradient(180deg, #FFFEFA, #F7F4EE);
+  background: #FBFAF6;
   border: 1px solid var(--color-border-card);
   border-radius: 18px;
   box-shadow: 0 16px 45px rgba(55, 48, 39, 0.08);
+  overflow: hidden;
+}
+
+.figure-card-image {
+  background:
+    radial-gradient(circle at 50% 45%, rgba(14, 165, 200, 0.08), transparent 36%),
+    linear-gradient(180deg, #FFFEFA, #F7F4EE);
 }
 
 .figure-pulse {
@@ -145,28 +151,6 @@ sup {
   opacity: 1;
   visibility: visible;
   transform: translateY(0);
-}
-
-.appendix-card {
-  border: 1px solid var(--color-border-card);
-  border-radius: 8px;
-  background: var(--color-card);
-  padding: 10px 12px;
-}
-
-.appendix-card summary {
-  font-family: var(--font-ui);
-  font-size: 13px;
-  color: var(--color-ink-primary);
-  cursor: pointer;
-}
-
-.appendix-card p {
-  font-family: var(--font-ui);
-  font-size: 12px;
-  color: var(--color-ink-secondary);
-  margin: 8px 0 2px;
-  line-height: 1.6;
 }
 
 /* Sidenotes */
@@ -334,66 +318,45 @@ sup {
 
 /* ─── Documentation view ──────────────────────────────────────── */
 
+/* Single-column by default; at xl the article keeps its column and the
+   "On this page" rail appears to the right. */
 .docs-layout {
   display: grid;
-  grid-template-columns: 200px minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr);
   gap: 48px;
   align-items: start;
+}
+
+@media (min-width: 1280px) {
+  .docs-layout {
+    grid-template-columns: minmax(0, 1fr) 190px;
+  }
 }
 
 .docs-index {
   position: sticky;
   top: 80px;
   align-self: start;
-  padding-right: 12px;
-  border-right: 1px solid var(--color-border-rule);
+  padding-left: 24px;
+  border-left: 1px solid var(--color-border-rule);
   max-height: calc(100vh - 120px);
   overflow-y: auto;
 }
 
-.docs-index-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
+@media (max-width: 1279px) {
+  .docs-index {
+    display: none;
+  }
 }
 
-.docs-index-link {
-  font-family: var(--font-ui);
-  font-size: 13px;
-  color: var(--color-ink-secondary);
-  background: transparent;
-  border: none;
-  padding: 4px 8px;
-  border-radius: 4px;
-  cursor: pointer;
-  text-align: left;
-  width: 100%;
-  line-height: 1.4;
-  transition: color 120ms ease, background 120ms ease;
-}
-
-.docs-index-link:hover {
-  color: var(--color-ink-primary);
-  background: var(--color-card);
-}
-
-.docs-index-link.is-active {
-  color: var(--color-teal);
-  background: var(--color-teal-wash);
-}
-
-/* Nested section nav (## headings of the active page) */
+/* "On this page" — H2 section list inside the docs-index rail */
 .docs-section-list {
   list-style: none;
   margin: 4px 0 8px;
-  padding: 0 0 0 10px;
-  border-left: 1px solid var(--color-border-rule);
+  padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 1px;
+  gap: 2px;
 }
 
 .docs-section-link {
@@ -418,19 +381,6 @@ sup {
 
 .docs-section-link.is-active {
   color: var(--color-teal);
-}
-
-.docs-index-select {
-  display: none;
-  width: 100%;
-  font-family: var(--font-ui);
-  font-size: 13px;
-  color: var(--color-ink-primary);
-  background: var(--color-paper);
-  border: 1px solid var(--color-border-card);
-  border-radius: 6px;
-  padding: 8px 10px;
-  cursor: pointer;
 }
 
 .docs-body {
@@ -615,26 +565,3 @@ sup {
   overflow-y: hidden;
 }
 
-@media (max-width: 900px) {
-  .docs-layout {
-    grid-template-columns: 1fr;
-    gap: 16px;
-  }
-  .docs-index {
-    position: static;
-    border-right: none;
-    border-bottom: 1px solid var(--color-border-rule);
-    padding-right: 0;
-    padding-bottom: 12px;
-    max-height: none;
-    overflow-y: visible;
-  }
-  /* Swap the page list for a dropdown — a list of clickable page titles
-     is awkward to navigate on a phone. */
-  .docs-index-list {
-    display: none;
-  }
-  .docs-index-select {
-    display: block;
-  }
-}
