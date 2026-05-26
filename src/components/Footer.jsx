@@ -28,10 +28,6 @@ export default function Footer({ onViewChange }) {
             </svg>
           </button>
         </div>
-        <div style={{ fontFamily: 'var(--font-ui)' }}
-             className="text-[12px] text-ink-tertiary opacity-60">
-          Image: NOIRLab/DOE/NSF/AURA
-        </div>
       </div>
     </footer>
   )
