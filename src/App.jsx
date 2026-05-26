@@ -39,7 +39,7 @@ export default function App() {
     url.searchParams.delete('page')
     url.hash = ''
     history.pushState(null, '', url.toString())
-    window.scrollTo({ top: 0, behavior: 'instant' })
+    window.scrollTo({ top: 0, behavior: 'smooth' })
   }, [])
 
   const changePage = useCallback((nextPage) => {
@@ -49,7 +49,7 @@ export default function App() {
     url.searchParams.set('page', nextPage)
     url.hash = ''
     history.pushState(null, '', url.toString())
-    window.scrollTo({ top: 0, behavior: 'instant' })
+    window.scrollTo({ top: 0, behavior: 'smooth' })
   }, [])
 
   const navigateTo = useCallback((href) => {
