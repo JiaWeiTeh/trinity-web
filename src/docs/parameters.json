@@ -39,10 +39,10 @@
   { "name": "FB_thermCoeffSN", "group": "feedback", "defaultValue": "1", "unit": "—", "desc": "Thermalization efficiency for supernova ejecta." },
   { "name": "FB_vSN", "group": "feedback", "defaultValue": "1e4", "unit": "km/s", "desc": "Supernova ejecta velocity." },
 
-  { "name": "adiabaticOnlyInCore", "group": "phase control", "defaultValue": "False", "unit": "—", "desc": "Restrict adiabatic (energy-driven) phase to within core radius." },
-  { "name": "immediate_leak", "group": "phase control", "defaultValue": "True", "unit": "—", "desc": "Transition immediately to momentum-driven phase when bubble bursts." },
-  { "name": "phaseSwitch_LlossLgain", "group": "phase control", "defaultValue": "0.05", "unit": "—", "desc": "Threshold for (L_gain − L_loss) / L_gain to trigger phase transition." },
-  { "name": "use_adaptive_solver", "group": "phase control", "defaultValue": "True", "unit": "—", "desc": "Use the adaptive ODE solver for the energy-driven phase. If False, falls back to the original solver." },
+  { "name": "adiabaticOnlyInCore", "group": "phase", "defaultValue": "False", "unit": "—", "desc": "Restrict adiabatic (energy-driven) phase to within core radius." },
+  { "name": "immediate_leak", "group": "phase", "defaultValue": "True", "unit": "—", "desc": "Transition immediately to momentum-driven phase when bubble bursts." },
+  { "name": "phaseSwitch_LlossLgain", "group": "phase", "defaultValue": "0.05", "unit": "—", "desc": "Threshold for (L_gain − L_loss) / L_gain to trigger phase transition." },
+  { "name": "use_adaptive_solver", "group": "phase", "defaultValue": "True", "unit": "—", "desc": "Use the adaptive ODE solver for the energy-driven phase. If False, falls back to the original solver." },
 
   { "name": "cool_alpha", "group": "cooling", "defaultValue": "0.6", "unit": "—", "desc": "Cooling parameter α = v_2 · t_now / R_2." },
   { "name": "cool_beta", "group": "cooling", "defaultValue": "0.8", "unit": "—", "desc": "Cooling parameter β = −dP_b/dt." },
