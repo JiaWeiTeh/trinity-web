@@ -20,7 +20,7 @@ export default function TimeScrubber({ time, onTimeChange }) {
       <div className="mt-4 relative">
         <input
           type="range"
-          min={0} max={10} step={0.05}
+          min={0} max={5} step={0.05}
           value={time}
           onChange={(e) => onTimeChange(parseFloat(e.target.value))}
           className="w-full slider"
