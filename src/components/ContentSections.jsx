@@ -268,8 +268,6 @@ function Section1Overview() {
 }
 
 function Section2Model({ time, setTime }) {
-  const phase = time < 2 ? 'energy' : time < 4 ? 'transition' : 'momentum'
-
   return (
     <section id="model" className="py-12">
       <div className="max-w-[680px] mx-auto mb-8">
@@ -338,13 +336,6 @@ function Section2Model({ time, setTime }) {
               <BubbleDiagram time={time} />
             </div>
           </div>
-
-          <p style={{ fontFamily: 'var(--font-display)' }}
-             className="text-[15px] italic text-ink-secondary text-center min-h-[48px] max-w-[520px]">
-            {phase === 'energy' && 'Energy-driven: hot bubble pressure inflates the shell.'}
-            {phase === 'transition' && 'Transition: thermal energy radiates away.'}
-            {phase === 'momentum' && 'Momentum-driven: photoionised gas pressure and ram pressure sustain expansion.'}
-          </p>
 
           <div className="w-full max-w-[520px]">
             <TimeScrubber time={time} onTimeChange={setTime} />
