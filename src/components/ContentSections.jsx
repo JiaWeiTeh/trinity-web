@@ -398,18 +398,18 @@ function Section3Papers() {
 
 function Acknowledgements() {
   const messages = [
+    'JWT acknowledges the shell for not dissolving before the paper was written.',
+    'JWT thanks the ODE solver for converging most of the time.',
     'JWT thanks the mass-to-light ratio for keeping things interesting, and coffee for keeping things moving.',
     'JWT acknowledges the Sun for powering the H II regions, and espresso for powering the code.',
     'JWT is grateful to the Rosette Nebula for looking exactly like a textbook figure, and to RSK for pointing out when the code does not.',
-    'JWT thanks the ODE solver for converging most of the time.',
     'JWT acknowledges gravity for providing the only restoring force in this problem, and in the chair.',
     'JWT thanks the interstellar medium for being compressible, and deadlines for being incompressible.',
     'JWT is grateful to Starburst99 for the stellar models, and to Heidelberg\'s bakeries for the fuel.',
     'JWT thanks the anonymous mass-loading parameter for absorbing all remaining uncertainties.',
-    'JWT acknowledges the shell for not dissolving before the paper was written.',
   ];
 
-  const [index, setIndex] = useState(() => Math.floor(Math.random() * messages.length));
+  const [index, setIndex] = useState(0);
   const [visible, setVisible] = useState(true);
 
   const advance = useCallback(() => {
