@@ -333,8 +333,10 @@ function Section2Model({ time, setTime }) {
         </p>
 
         <div className="flex flex-col items-center gap-4">
-          <div className="w-full max-w-[380px]">
-            <BubbleDiagram time={time} />
+          <div className="figure-card w-full max-w-[520px] p-6 sm:p-8 flex justify-center">
+            <div className="w-full max-w-[380px]">
+              <BubbleDiagram time={time} />
+            </div>
           </div>
 
           <p style={{ fontFamily: 'var(--font-display)' }}
