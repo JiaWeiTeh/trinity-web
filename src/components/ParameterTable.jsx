@@ -50,6 +50,8 @@ function searchableText(p) {
     aliases: normalise((p.aliases || []).join(' ')),
     acceptedValues: normalise((p.acceptedValues || []).join(' ')),
     notes: normalise(p.notes || ''),
+    doc: normalise(p.doc || ''),
+    sourceComment: normalise(p.sourceComment || ''),
   }
 }
 
@@ -78,6 +80,10 @@ function scoreParam(p, query) {
       score += 35; note('description')
     } else if (text.notes.includes(term)) {
       score += 25; note('notes')
+    } else if (text.doc.includes(term)) {
+      score += 25; note('docs')
+    } else if (text.sourceComment.includes(term)) {
+      score += 25; note('schema comment')
     } else if (text.group.includes(term)) {
       score += 20; note('group')
     } else if (text.unit.includes(term) || text.defaultValue.includes(term)) {
