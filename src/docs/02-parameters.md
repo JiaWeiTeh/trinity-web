@@ -1,18 +1,18 @@
 # Parameter Specifications
 
-Every TRINITY simulation is driven by a plain-text parameter file. This
-page describes how such files are formatted and lists every keyword
-TRINITY recognises, with its default value, unit, and a short
-description. The same information can be inspected at run time through
-the `DescribedItem` objects attached to every entry in the output state
-dictionary (see [Running TRINITY](?view=docs&page=running), *Snapshot
-data model*).
+Every parameter TRINITY recognises is listed below, with its default,
+unit, and a short description. Use the search box to find a keyword by
+name, group, default, unit, or description, and the group dropdown to
+narrow by category.
+
+```parameter-table
+```
 
 ## File format
 
 The canonical parameter schema — the authoritative, fully-commented list
 of keys and defaults — lives at `src/_input/default.param`; the
-reference below mirrors it. Worked example files live under `param/`
+reference above mirrors it. Worked example files live under `param/`
 (see `param/simple_cluster.param` or `param/cloud_example_PL.param`) and
 override those defaults.
 
@@ -52,22 +52,12 @@ works in `[Msun, pc, Myr]`; conversion is automatic, driven by the
 # UNIT: [erg * s**-1 * cm**-1 * K**(-7/2)]
 ```
 
-## Parameter reference
-
-The keyword reference below lists every parameter TRINITY recognises.
-Use the search box to find a keyword by name, group, default, unit, or
-description, and the group dropdown to narrow the list to a single
-category.
-
-```parameter-table
-```
-
-### Derived quantities
+## Derived quantities
 
 - Cluster mass: $M_{\rm cluster} = M_{\rm cloud} \times {\rm sfe}$
 - Remaining cloud mass: $M_{\rm cloud,after} = M_{\rm cloud} - M_{\rm cluster}$
 
-### Density profiles
+## Density profiles
 
 When `dens_profile = densPL`, the density follows:
 
@@ -86,7 +76,7 @@ When `dens_profile = densBE`, TRINITY implements a Bonnor-Ebert sphere
 > **Note** — `densPL_alpha` is ignored when using `densBE`, and
 > `densBE_Omega` is ignored when using `densPL`.
 
-### Termination semantics
+## Termination semantics
 
 Setting `stop_r`, `stop_t`, or `stop_at_rCloud_nSnap` to `None` disables
 that termination condition, allowing the simulation to continue until
