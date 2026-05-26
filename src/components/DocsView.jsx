@@ -157,6 +157,12 @@ export default function DocsView({ page, onPageChange, onNavigate }) {
       <DocsHeader docs={docs} active={active} onPageChange={onPageChange} />
 
       <div className="docs-layout">
+        <div className="docs-body">
+          <article className="docs-article" ref={articleRef}>
+            <Markdown content={active.content} onNavigate={onNavigate} />
+          </article>
+        </div>
+
         <aside className="docs-index" aria-label="On this page">
           {sections.length > 0 && (
             <>
@@ -179,12 +185,6 @@ export default function DocsView({ page, onPageChange, onNavigate }) {
             </>
           )}
         </aside>
-
-        <div className="docs-body">
-          <article className="docs-article" ref={articleRef}>
-            <Markdown content={active.content} onNavigate={onNavigate} />
-          </article>
-        </div>
       </div>
     </section>
   )
