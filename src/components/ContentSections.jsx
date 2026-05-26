@@ -216,7 +216,7 @@ function Abstract() {
           {/* Status line */}
           <p style={{ fontFamily: 'var(--font-ui)' }}
              className="text-[11px] text-ink-tertiary mt-2 italic">
-            Paper I in preparation · Code version 1.0
+            Paper I · Code version 1.0
           </p>
         </div>
       </div>
@@ -362,7 +362,7 @@ function Section2Model({ time, setTime }) {
 
 function Section3Papers() {
   const papers = [
-    { num: 'Paper I', title: 'Code & Methods', status: 'Teh et al. (in prep.)' },
+    { num: 'Paper I', title: 'Code & Methods', status: 'Teh et al.' },
     { num: 'Paper II', title: '', status: '(upcoming)' },
   ]
 

@@ -30,7 +30,7 @@ export default function TitleBlock({ onViewChange }) {
         {/* Metadata line */}
         <p style={{ fontFamily: 'var(--font-ui)' }}
            className="text-[12px] text-ink-tertiary mb-6">
-          Methods code · Paper I in prep.
+          Methods code · Paper I
         </p>
 
         {/* Links */}
