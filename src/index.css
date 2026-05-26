@@ -153,28 +153,6 @@ sup {
   transform: translateY(0);
 }
 
-.appendix-card {
-  border: 1px solid var(--color-border-card);
-  border-radius: 8px;
-  background: var(--color-card);
-  padding: 10px 12px;
-}
-
-.appendix-card summary {
-  font-family: var(--font-ui);
-  font-size: 13px;
-  color: var(--color-ink-primary);
-  cursor: pointer;
-}
-
-.appendix-card p {
-  font-family: var(--font-ui);
-  font-size: 12px;
-  color: var(--color-ink-secondary);
-  margin: 8px 0 2px;
-  line-height: 1.6;
-}
-
 /* Sidenotes */
 .sidenote {
   font-family: var(--font-ui);
@@ -357,41 +335,7 @@ sup {
   overflow-y: auto;
 }
 
-.docs-index-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.docs-index-link {
-  font-family: var(--font-ui);
-  font-size: 13px;
-  color: var(--color-ink-secondary);
-  background: transparent;
-  border: none;
-  padding: 4px 8px;
-  border-radius: 4px;
-  cursor: pointer;
-  text-align: left;
-  width: 100%;
-  line-height: 1.4;
-  transition: color 120ms ease, background 120ms ease;
-}
-
-.docs-index-link:hover {
-  color: var(--color-ink-primary);
-  background: var(--color-card);
-}
-
-.docs-index-link.is-active {
-  color: var(--color-teal);
-  background: var(--color-teal-wash);
-}
-
-/* Nested section nav (## headings of the active page) */
+/* "On this page" — H2 section list inside the docs-index rail */
 .docs-section-list {
   list-style: none;
   margin: 4px 0 8px;
@@ -424,19 +368,6 @@ sup {
 
 .docs-section-link.is-active {
   color: var(--color-teal);
-}
-
-.docs-index-select {
-  display: none;
-  width: 100%;
-  font-family: var(--font-ui);
-  font-size: 13px;
-  color: var(--color-ink-primary);
-  background: var(--color-paper);
-  border: 1px solid var(--color-border-card);
-  border-radius: 6px;
-  padding: 8px 10px;
-  cursor: pointer;
 }
 
 .docs-body {
@@ -634,13 +565,5 @@ sup {
     padding-bottom: 12px;
     max-height: none;
     overflow-y: visible;
-  }
-  /* Swap the page list for a dropdown — a list of clickable page titles
-     is awkward to navigate on a phone. */
-  .docs-index-list {
-    display: none;
-  }
-  .docs-index-select {
-    display: block;
   }
 }
