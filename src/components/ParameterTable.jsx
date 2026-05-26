@@ -26,12 +26,49 @@ function normalise(s = '') {
     .trim()
 }
 
+/* Stopwords are filtered out of the query before scoring. Without this,
+   short common words ("i", "the", "not", "me") substring-match dozens
+   of parameter descriptions and aliases, so a casual query like
+   "im not sure what i want" returns most of the table. After filtering,
+   a query that contains only stopwords returns zero results — which is
+   the correct answer for noise. */
+const STOP_WORDS = new Set([
+  // articles, conjunctions, prepositions
+  'a', 'an', 'the', 'and', 'or', 'but', 'if', 'so', 'as', 'at', 'by',
+  'for', 'from', 'in', 'into', 'of', 'on', 'to', 'with', 'about',
+  'over', 'under', 'up', 'down', 'out', 'off', 'than', 'then', 'too',
+  // pronouns
+  'i', 'me', 'my', 'mine', 'you', 'your', 'yours', 'we', 'us', 'our',
+  'ours', 'he', 'him', 'his', 'she', 'her', 'hers', 'it', 'its',
+  'they', 'them', 'their', 'theirs',
+  // be / aux / modal
+  'am', 'is', 'are', 'was', 'were', 'be', 'been', 'being',
+  'have', 'has', 'had', 'do', 'does', 'did',
+  'can', 'could', 'will', 'would', 'should', 'shall', 'may', 'might', 'must',
+  // questions / negation
+  'what', 'whats', 'who', 'whose', 'whom', 'which', 'when', 'where',
+  'why', 'how', 'no', 'not', 'nor', 'never',
+  // determiners / quantifiers
+  'this', 'that', 'these', 'those', 'all', 'any', 'each', 'every',
+  'some', 'such', 'one', 'two', 'both', 'only', 'just', 'very',
+  // common verbs that show up in casual queries but aren't parameter content
+  'want', 'wants', 'need', 'needs', 'know', 'find', 'show', 'tell',
+  'help', 'see', 'look', 'try', 'mean', 'think', 'use', 'used',
+  // colloquial / typos / politeness
+  'im', 'sure', 'please', 'thanks', 'thank', 'hi', 'hey', 'hello',
+  'ok', 'okay', 'yes', 'yeah',
+])
+
 function expandQuery(query) {
   const q = normalise(query)
   if (!q) return []
-  const tokens = q.split(' ').filter(Boolean)
+  const rawTokens = q.split(' ').filter(Boolean)
+  const tokens = rawTokens.filter((t) => !STOP_WORDS.has(t))
+  if (tokens.length === 0) return []
   const expanded = new Set(tokens)
-  expanded.add(q)
+  // Re-add the joined non-stopword phrase as a single term so multi-word
+  // alias matches still fire (e.g. "molecular cloud" as an alias).
+  expanded.add(tokens.join(' '))
   for (const token of tokens) {
     for (const values of Object.values(SYNONYMS)) {
       if (values.includes(token)) values.forEach((v) => expanded.add(normalise(v)))
@@ -73,41 +110,58 @@ const SURFACE_TIER = {
 }
 
 /* Weighted scoring. The point weight controls ranking within a tier;
-   the surface controls the tier itself. */
+   the surface controls the tier itself.
+
+   Two anti-noise rules:
+   1. Substring matches require length >= 3. Short tokens like "g" or
+      "kb" only count when they exactly equal a whole word, so a search
+      for "G" finds the param G (and gamma_adia by name-prefix) instead
+      of every parameter that happens to contain the letter "g".
+   2. Names are matched word-by-word, after splitting on underscores
+      (already done by normalise). "bhcut" then matches SB99_BHCUT as
+      an exact-word hit even though the full name is "sb99 bhcut". */
+const MIN_SUBSTR = 3
+
 function scoreParam(p, query) {
   if (!query.trim()) return { score: 1, reason: '', tier: 0 }
   const terms = expandQuery(query)
+  if (terms.length === 0) return { score: 0, reason: '', tier: Infinity }
   const text = searchableText(p)
+  const nameWords = text.name.split(' ').filter(Boolean)
+  const aliasWords = text.aliases.split(' ').filter(Boolean)
+  const acceptedWords = text.acceptedValues.split(' ').filter(Boolean)
   let score = 0
   let reason = ''
   let tier = Infinity
-  // Always reflect the *highest-priority* surface that matched any term,
-  // both for sort and for the visible "matched on …" annotation.
   const note = (r) => {
     const t = SURFACE_TIER[r] ?? 99
     if (t < tier) { tier = t; reason = r }
   }
   for (const term of terms) {
     if (!term) continue
-    if (text.name === term) {
+    const long = term.length >= MIN_SUBSTR
+
+    if (text.name === term || nameWords.includes(term)) {
       score += 100; note('exact name')
-    } else if (text.name.startsWith(term)) {
+    } else if (text.name.startsWith(term) || nameWords.some((w) => w.startsWith(term))) {
       score += 80; note('parameter name')
-    } else if (text.aliases.split(' ').some((w) => w === term) || text.aliases.includes(term)) {
+    } else if (long && text.name.includes(term)) {
+      score += 60; note('parameter name')
+    } else if (aliasWords.includes(term) || (long && text.aliases.includes(term))) {
       score += 70; note('alias')
-    } else if (text.acceptedValues.split(' ').some((w) => w === term) || text.acceptedValues.includes(term)) {
+    } else if (acceptedWords.includes(term) || (long && text.acceptedValues.includes(term))) {
       score += 50; note('accepted value')
-    } else if (text.desc.includes(term)) {
+    } else if (long && text.desc.includes(term)) {
       score += 35; note('description')
-    } else if (text.notes.includes(term)) {
+    } else if (long && text.notes.includes(term)) {
       score += 25; note('notes')
-    } else if (text.doc.includes(term)) {
+    } else if (long && text.doc.includes(term)) {
       score += 25; note('docs')
-    } else if (text.sourceComment.includes(term)) {
+    } else if (long && text.sourceComment.includes(term)) {
       score += 25; note('schema comment')
-    } else if (text.group.includes(term)) {
+    } else if (long && text.group.includes(term)) {
       score += 20; note('group')
-    } else if (text.unit.includes(term) || text.defaultValue.includes(term)) {
+    } else if (long && (text.unit.includes(term) || text.defaultValue.includes(term))) {
       score += 10; note('unit/default')
     }
   }
@@ -117,6 +171,7 @@ function scoreParam(p, query) {
 export default function ParameterTable() {
   const [query, setQuery] = useState('')
   const [group, setGroup] = useState('all')
+  const [tableOpen, setTableOpen] = useState(true)
 
   const groups = useMemo(
     () => ['all', ...Array.from(new Set(paramsData.map((p) => p.group)))],
@@ -181,6 +236,23 @@ export default function ParameterTable() {
 
         <div className="mt-3 flex flex-wrap items-center gap-2 text-[12px] text-ink-tertiary">
           <span>Showing {results.length} of {paramsData.length} parameters.</span>
+          <button
+            type="button"
+            onClick={() => setTableOpen((v) => !v)}
+            aria-expanded={tableOpen}
+            aria-controls="parameter-table-body"
+            className="inline-flex items-center gap-1 text-ink-tertiary transition hover:text-teal"
+          >
+            <svg
+              width="10" height="10" viewBox="0 0 10 10" fill="none"
+              stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"
+              style={{ transform: tableOpen ? 'rotate(0deg)' : 'rotate(-90deg)', transition: 'transform 140ms ease' }}
+              aria-hidden="true"
+            >
+              <polyline points="2,3.5 5,6.5 8,3.5" />
+            </svg>
+            {tableOpen ? 'Hide table' : 'Show table'}
+          </button>
           {!hasQuery && (
             <>
               <span className="text-ink-tertiary/60">·</span>
@@ -200,7 +272,8 @@ export default function ParameterTable() {
         </div>
       </div>
 
-      <div className="mt-5 overflow-hidden rounded-md border border-border-card">
+      {tableOpen && (
+      <div id="parameter-table-body" className="mt-5 overflow-hidden rounded-md border border-border-card">
         <div
           className="grid grid-cols-[1.1fr_0.8fr_0.7fr_0.6fr_2fr] gap-3 bg-card px-4 py-3 text-[11px] uppercase tracking-[0.14em] text-ink-tertiary"
           role="row"
@@ -237,6 +310,7 @@ export default function ParameterTable() {
           </div>
         )}
       </div>
+      )}
     </div>
   )
 }
