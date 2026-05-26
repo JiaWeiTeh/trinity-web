@@ -82,15 +82,21 @@ sup {
 }
 
 /* Wrapper that gives an interactive figure the same visual weight as a
-   paper figure: soft cream surface, light warm border, gentle shadow,
-   subtle teal radial highlight behind the diagram. */
+   paper figure: soft cream surface, light warm border, gentle shadow.
+   The image cell carries the subtle teal radial highlight; the caption
+   cell stays on the plain surface. */
 .figure-card {
-  background:
-    radial-gradient(circle at 50% 45%, rgba(14, 165, 200, 0.08), transparent 36%),
-    linear-gradient(180deg, #FFFEFA, #F7F4EE);
+  background: #FBFAF6;
   border: 1px solid var(--color-border-card);
   border-radius: 18px;
   box-shadow: 0 16px 45px rgba(55, 48, 39, 0.08);
+  overflow: hidden;
+}
+
+.figure-card-image {
+  background:
+    radial-gradient(circle at 50% 45%, rgba(14, 165, 200, 0.08), transparent 36%),
+    linear-gradient(180deg, #FFFEFA, #F7F4EE);
 }
 
 .figure-pulse {
