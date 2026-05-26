@@ -1,0 +1,72 @@
+[
+  { "name": "model_name", "group": "administrative", "defaultValue": "default", "unit": "—", "desc": "Prefix for all output filenames. Use alphanumeric characters and underscores only." },
+  { "name": "path2output", "group": "administrative", "defaultValue": "def_dir", "unit": "path", "desc": "Output directory path. def_dir uses the current working directory." },
+  { "name": "output_format", "group": "administrative", "defaultValue": "JSON", "unit": "—", "desc": "Output format. Currently only JSON is supported." },
+  { "name": "simplify_npoints", "group": "administrative", "defaultValue": "100", "unit": "—", "desc": "Target number of points retained for the simplified profile arrays in each snapshot. Clamped to ≥ 20." },
+
+  { "name": "log_level", "group": "logging", "defaultValue": "DEBUG", "unit": "—", "desc": "Logging verbosity: DEBUG, INFO, WARNING, ERROR, CRITICAL." },
+  { "name": "log_console", "group": "logging", "defaultValue": "False", "unit": "—", "desc": "Enable terminal output for log messages." },
+  { "name": "log_file", "group": "logging", "defaultValue": "True", "unit": "—", "desc": "Write log messages to {path2output}/trinity.log." },
+  { "name": "log_colors", "group": "logging", "defaultValue": "True", "unit": "—", "desc": "Color-code terminal output by severity level." },
+
+  { "name": "mCloud", "group": "physical", "defaultValue": "1e6", "unit": "M☉", "desc": "Total mass of the molecular cloud." },
+  { "name": "sfe", "group": "physical", "defaultValue": "0.01", "unit": "—", "desc": "Star formation efficiency (0 < sfe < 1). Fraction of cloud mass converted to stars." },
+  { "name": "ZCloud", "group": "physical", "defaultValue": "1", "unit": "Z☉", "desc": "Cloud metallicity. Currently only solar (1) is supported." },
+  { "name": "include_PHII", "group": "physical", "defaultValue": "True", "unit": "—", "desc": "Include HII pressure in P_drive. When False, P_HII is set to zero." },
+
+  { "name": "dens_profile", "group": "density", "defaultValue": "densPL", "unit": "—", "desc": "Density profile type: densPL (power-law) or densBE (Bonnor-Ebert)." },
+  { "name": "nCore", "group": "density", "defaultValue": "1e5", "unit": "cm⁻³", "desc": "Core number density. For homogeneous clouds (densPL_alpha=0), this is the average density." },
+  { "name": "nISM", "group": "density", "defaultValue": "1", "unit": "cm⁻³", "desc": "Ambient ISM number density." },
+  { "name": "rCore", "group": "density", "defaultValue": "0.01", "unit": "pc", "desc": "Core radius. Not used for homogeneous clouds." },
+  { "name": "densPL_alpha", "group": "density", "defaultValue": "0", "unit": "—", "desc": "Power-law exponent (−2 ≤ α ≤ 0). 0 = homogeneous, −2 = isothermal sphere." },
+  { "name": "densBE_Omega", "group": "density", "defaultValue": "14.1", "unit": "—", "desc": "Density contrast Ω = ρ_center / ρ_edge. Values > 14.1 indicate gravitational instability." },
+
+  { "name": "allowShellDissolution", "group": "termination", "defaultValue": "True", "unit": "—", "desc": "Allow shell dissolution to terminate the simulation. If False, the dissolution check is disabled." },
+  { "name": "stop_t_diss", "group": "termination", "defaultValue": "1", "unit": "Myr", "desc": "Duration shell_nMax must remain below nISM before dissolution is triggered." },
+  { "name": "stop_r", "group": "termination", "defaultValue": "500", "unit": "pc", "desc": "Maximum shell radius. Exceeding this triggers termination. Set to None to disable." },
+  { "name": "stop_v", "group": "termination", "defaultValue": "-1e4", "unit": "km/s", "desc": "Velocity threshold for numerical instability detection." },
+  { "name": "stop_t", "group": "termination", "defaultValue": "15", "unit": "Myr", "desc": "Maximum simulation duration. Set to None to disable." },
+  { "name": "stop_at_rCloud_nSnap", "group": "termination", "defaultValue": "None", "unit": "—", "desc": "Terminate after the shell crosses the cloud edge. None disables; 0 stops at the edge; N > 0 lets the implicit phase advance for N more snapshots before terminating." },
+  { "name": "coll_r", "group": "termination", "defaultValue": "1", "unit": "pc", "desc": "Radius below which the cloud is considered completely collapsed." },
+
+  { "name": "SB99_mass", "group": "starburst99", "defaultValue": "1e6", "unit": "M☉", "desc": "Reference cluster mass used in SB99 files. Used for scaling." },
+  { "name": "SB99_rotation", "group": "starburst99", "defaultValue": "1", "unit": "—", "desc": "Include stellar rotation (1=yes, 0=no). Rotation extends lifetimes via internal mixing." },
+  { "name": "SB99_BHCUT", "group": "starburst99", "defaultValue": "120", "unit": "M☉", "desc": "Black hole formation threshold. Stars above this ZAMS mass collapse directly to BH without SN." },
+
+  { "name": "FB_mColdWindFrac", "group": "feedback", "defaultValue": "0", "unit": "—", "desc": "Fraction of cold material swept up by protostellar winds." },
+  { "name": "FB_mColdSNFrac", "group": "feedback", "defaultValue": "0", "unit": "—", "desc": "Fraction of cold ejecta from supernovae." },
+  { "name": "FB_thermCoeffWind", "group": "feedback", "defaultValue": "1", "unit": "—", "desc": "Thermalization efficiency for stellar wind kinetic energy." },
+  { "name": "FB_thermCoeffSN", "group": "feedback", "defaultValue": "1", "unit": "—", "desc": "Thermalization efficiency for supernova ejecta." },
+  { "name": "FB_vSN", "group": "feedback", "defaultValue": "1e4", "unit": "km/s", "desc": "Supernova ejecta velocity." },
+
+  { "name": "adiabaticOnlyInCore", "group": "phase control", "defaultValue": "False", "unit": "—", "desc": "Restrict adiabatic (energy-driven) phase to within core radius." },
+  { "name": "immediate_leak", "group": "phase control", "defaultValue": "True", "unit": "—", "desc": "Transition immediately to momentum-driven phase when bubble bursts." },
+  { "name": "phaseSwitch_LlossLgain", "group": "phase control", "defaultValue": "0.05", "unit": "—", "desc": "Threshold for (L_gain − L_loss) / L_gain to trigger phase transition." },
+  { "name": "use_adaptive_solver", "group": "phase control", "defaultValue": "True", "unit": "—", "desc": "Use the adaptive ODE solver for the energy-driven phase. If False, falls back to the original solver." },
+
+  { "name": "cool_alpha", "group": "cooling", "defaultValue": "0.6", "unit": "—", "desc": "Cooling parameter α = v_2 · t_now / R_2." },
+  { "name": "cool_beta", "group": "cooling", "defaultValue": "0.8", "unit": "—", "desc": "Cooling parameter β = −dP_b/dt." },
+  { "name": "cool_delta", "group": "cooling", "defaultValue": "-6/35", "unit": "—", "desc": "Cooling parameter δ = dT/dt." },
+
+  { "name": "path_cooling_CIE", "group": "paths", "defaultValue": "3", "unit": "—", "desc": "Cooling curve for CIE (T > 10^5.5 K). Presets: 1=CLOUDY HII, 2=CLOUDY+grains, 3=Gnat & Ferland 2012, 4=Sutherland & Dopita 0.15Z." },
+  { "name": "path_cooling_nonCIE", "group": "paths", "defaultValue": "def_dir", "unit": "path", "desc": "Path to non-CIE cooling curves (T < 10^5.5 K)." },
+  { "name": "path_sps", "group": "paths", "defaultValue": "def_dir", "unit": "path", "desc": "Path to Starburst99 stellar population files." },
+
+  { "name": "mu_atom", "group": "constants", "defaultValue": "1.273", "unit": "—", "desc": "Mean molecular weight of neutral atomic gas (HI + He). μ = 14/11." },
+  { "name": "mu_ion", "group": "constants", "defaultValue": "0.609", "unit": "—", "desc": "Mean molecular weight of fully ionized gas (H+ + He++). μ = 14/23." },
+  { "name": "mu_mol", "group": "constants", "defaultValue": "2.333", "unit": "—", "desc": "Mean molecular weight of molecular gas (H2 + He). μ = 14/6." },
+  { "name": "mu_convert", "group": "constants", "defaultValue": "1.4", "unit": "—", "desc": "Mass density conversion factor (n to ρ)." },
+  { "name": "TShell_neu", "group": "constants", "defaultValue": "1e2", "unit": "K", "desc": "Neutral shell temperature." },
+  { "name": "TShell_ion", "group": "constants", "defaultValue": "1e4", "unit": "K", "desc": "Ionized shell temperature." },
+  { "name": "dust_sigma", "group": "constants", "defaultValue": "1.5e-21", "unit": "cm²", "desc": "Dust cross-section at solar metallicity." },
+  { "name": "dust_noZ", "group": "constants", "defaultValue": "0.05", "unit": "Z☉", "desc": "Metallicity below which dust is negligible." },
+  { "name": "dust_KappaIR", "group": "constants", "defaultValue": "4", "unit": "cm²/g", "desc": "Rosseland mean dust opacity κ_IR." },
+  { "name": "gamma_adia", "group": "constants", "defaultValue": "5/3", "unit": "—", "desc": "Adiabatic index." },
+  { "name": "caseB_alpha", "group": "constants", "defaultValue": "2.59e-13", "unit": "cm³/s", "desc": "Case B recombination coefficient." },
+  { "name": "C_thermal", "group": "constants", "defaultValue": "6e-7", "unit": "erg/(s cm K^(7/2))", "desc": "Thermal conduction coefficient." },
+  { "name": "c_light", "group": "constants", "defaultValue": "2.998e10", "unit": "cm/s", "desc": "Speed of light." },
+  { "name": "G", "group": "constants", "defaultValue": "6.674e-8", "unit": "cm³/(g s²)", "desc": "Gravitational constant." },
+  { "name": "k_B", "group": "constants", "defaultValue": "1.381e-16", "unit": "erg/K", "desc": "Boltzmann constant." },
+  { "name": "PISM", "group": "constants", "defaultValue": "0", "unit": "K cm⁻³", "desc": "ISM pressure P/k_B." },
+  { "name": "bubble_xi_Tb", "group": "constants", "defaultValue": "0.98", "unit": "—", "desc": "Relative radius ξ = r/R_2 for measuring bubble temperature." }
+]

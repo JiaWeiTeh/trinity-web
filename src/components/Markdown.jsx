@@ -4,12 +4,30 @@ import remarkGfm from 'remark-gfm'
 import remarkMath from 'remark-math'
 import rehypeKatex from 'rehype-katex'
 import rehypeSlug from 'rehype-slug'
+import ParameterTable from './ParameterTable'
+
+/* Fenced code blocks with a recognised language slot become custom
+   interactive blocks. The marker is the language tag on a ``` fence,
+   e.g. ```parameter-table to mount the parameter reference. */
+const CUSTOM_BLOCKS = {
+  'language-parameter-table': () => <ParameterTable />,
+}
+
+function getCodeClass(children) {
+  const first = Array.isArray(children) ? children[0] : children
+  return first?.props?.className ?? ''
+}
 
 function CodeBlock(props) {
   const preRef = useRef(null)
   const [copied, setCopied] = useState(false)
   const { children, ...rest } = props
   delete rest.node
+
+  const codeClass = getCodeClass(children)
+  for (const [marker, render] of Object.entries(CUSTOM_BLOCKS)) {
+    if (codeClass.includes(marker)) return render()
+  }
 
   const copy = async () => {
     const text = preRef.current?.textContent ?? ''
