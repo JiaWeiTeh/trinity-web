@@ -48,12 +48,15 @@ function searchableText(p) {
     defaultValue: normalise(p.defaultValue),
     desc: normalise(p.desc),
     aliases: normalise((p.aliases || []).join(' ')),
+    acceptedValues: normalise((p.acceptedValues || []).join(' ')),
+    notes: normalise(p.notes || ''),
   }
 }
 
 /* Weighted scoring. Higher weights for matches at more specific surfaces:
-   the exact parameter name beats the description; an alias beats the
-   group label; the group label beats unit/default. */
+   exact name beats name-prefix; alias beats accepted-value; accepted-value
+   beats description; description beats notes; notes beat group; group
+   beats unit/default. */
 function scoreParam(p, query) {
   if (!query.trim()) return { score: 1, reason: '' }
   const terms = expandQuery(query)
@@ -69,8 +72,12 @@ function scoreParam(p, query) {
       score += 80; note('parameter name')
     } else if (text.aliases.split(' ').some((w) => w === term) || text.aliases.includes(term)) {
       score += 70; note('alias')
+    } else if (text.acceptedValues.split(' ').some((w) => w === term) || text.acceptedValues.includes(term)) {
+      score += 50; note('accepted value')
     } else if (text.desc.includes(term)) {
       score += 35; note('description')
+    } else if (text.notes.includes(term)) {
+      score += 25; note('notes')
     } else if (text.group.includes(term)) {
       score += 20; note('group')
     } else if (text.unit.includes(term) || text.defaultValue.includes(term)) {
