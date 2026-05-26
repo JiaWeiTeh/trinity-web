@@ -15,20 +15,17 @@ export default function TimeScrubber({ time, onTimeChange }) {
           className="w-full slider"
           aria-label="Simulation time"
         />
-        {/* Phase boundary ticks at t=2 (40%) and t=4 (80%) of the 0–5 Myr range */}
+        {/* Phase boundary ticks at t=0.5 (10%) and t=1.2 (24%) of the 0–5 Myr range */}
         <div className="absolute left-0 right-0 top-0 h-0 pointer-events-none">
-          <div className="absolute" style={{ left: '40%', top: -2, width: 1, height: 8, background: 'var(--color-border-card)' }} />
-          <div className="absolute" style={{ left: '80%', top: -2, width: 1, height: 8, background: 'var(--color-border-card)' }} />
+          <div className="absolute" style={{ left: '10%', top: -2, width: 1, height: 8, background: 'var(--color-border-card)' }} />
+          <div className="absolute" style={{ left: '24%', top: -2, width: 1, height: 8, background: 'var(--color-border-card)' }} />
         </div>
       </div>
 
-      <div className="mt-2 relative h-5 text-[10px] text-ink-tertiary"
+      <div className="mt-2 flex justify-between text-[10px] text-ink-tertiary"
            style={{ fontFamily: 'var(--font-ui)' }}>
-        <span className="absolute left-0">0</span>
-        <span className="absolute left-[20%] -translate-x-1/2 tracking-[0.08em]">Energy</span>
-        <span className="absolute left-[60%] -translate-x-1/2 tracking-[0.08em]">Transition</span>
-        <span className="absolute left-[90%] -translate-x-1/2 tracking-[0.08em]">Momentum</span>
-        <span className="absolute right-0">5</span>
+        <span>0</span>
+        <span>5</span>
       </div>
     </div>
   )
