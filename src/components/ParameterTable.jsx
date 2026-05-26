@@ -55,17 +55,38 @@ function searchableText(p) {
   }
 }
 
-/* Weighted scoring. Higher weights for matches at more specific surfaces:
-   exact name beats name-prefix; alias beats accepted-value; accepted-value
-   beats description; description beats notes; notes beat group; group
-   beats unit/default. */
+/* Surface tier — lower is higher priority. Used as the primary sort
+   key so a name-matched result always beats a description-matched
+   result, regardless of cumulative term score. The point score within
+   each surface is the tiebreaker. */
+const SURFACE_TIER = {
+  'exact name': 1,
+  'parameter name': 2,
+  'alias': 3,
+  'accepted value': 4,
+  'description': 5,
+  'notes': 6,
+  'docs': 6,
+  'schema comment': 6,
+  'group': 7,
+  'unit/default': 8,
+}
+
+/* Weighted scoring. The point weight controls ranking within a tier;
+   the surface controls the tier itself. */
 function scoreParam(p, query) {
-  if (!query.trim()) return { score: 1, reason: '' }
+  if (!query.trim()) return { score: 1, reason: '', tier: 0 }
   const terms = expandQuery(query)
   const text = searchableText(p)
   let score = 0
   let reason = ''
-  const note = (r) => { reason = reason || r }
+  let tier = Infinity
+  // Always reflect the *highest-priority* surface that matched any term,
+  // both for sort and for the visible "matched on …" annotation.
+  const note = (r) => {
+    const t = SURFACE_TIER[r] ?? 99
+    if (t < tier) { tier = t; reason = r }
+  }
   for (const term of terms) {
     if (!term) continue
     if (text.name === term) {
@@ -90,7 +111,7 @@ function scoreParam(p, query) {
       score += 10; note('unit/default')
     }
   }
-  return { score, reason }
+  return { score, reason, tier }
 }
 
 export default function ParameterTable() {
@@ -105,15 +126,21 @@ export default function ParameterTable() {
   const results = useMemo(() => {
     return paramsData
       .map((p) => {
-        const { score, reason } = scoreParam(p, query)
-        return { ...p, _score: score, _reason: reason }
+        const { score, reason, tier } = scoreParam(p, query)
+        return { ...p, _score: score, _reason: reason, _tier: tier }
       })
       .filter((p) => {
         const matchesQuery = !query.trim() || p._score > 0
         const matchesGroup = group === 'all' || p.group === group
         return matchesQuery && matchesGroup
       })
-      .sort((a, b) => b._score - a._score || a.name.localeCompare(b.name))
+      // Sort primarily by surface tier (name beats alias beats description …),
+      // then by cumulative term score within the tier, then alphabetically.
+      .sort((a, b) =>
+        a._tier - b._tier ||
+        b._score - a._score ||
+        a.name.localeCompare(b.name)
+      )
   }, [query, group])
 
   const hasQuery = query.trim().length > 0
