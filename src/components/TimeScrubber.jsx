@@ -1,19 +1,8 @@
 export default function TimeScrubber({ time, onTimeChange }) {
-  const phase = time < 2 ? 'energy' : time < 4 ? 'transition' : 'momentum'
-  const narrative = {
-    energy: 'Energy-driven: hot bubble pressure inflates the shell.',
-    transition: 'Transition: thermal energy radiates away.',
-    momentum: 'Momentum-driven: photoionised gas pressure and ram pressure sustain expansion.',
-  }[phase]
-
   return (
     <div className="w-full">
-      <p style={{ fontFamily: 'var(--font-display)' }}
-         className="italic text-[17px] text-ink-secondary leading-snug min-h-[48px]">
-        {narrative}
-      </p>
       <p style={{ fontFamily: 'var(--font-ui)' }}
-         className="mt-1 text-[11px] uppercase tracking-[0.16em] text-ink-tertiary">
+         className="text-[11px] uppercase tracking-[0.16em] text-ink-tertiary">
         <span style={{ fontStyle: 'italic' }}>t</span>{' = '}{time.toFixed(2)}{' Myr'}
       </p>
 
