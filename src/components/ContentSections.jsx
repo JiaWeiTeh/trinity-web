@@ -216,12 +216,7 @@ function Abstract() {
           {/* Status line */}
           <p style={{ fontFamily: 'var(--font-ui)' }}
              className="text-[11px] text-ink-tertiary mt-2 italic">
-            <a href="https://arxiv.org/abs/2605.27517"
-               target="_blank" rel="noopener noreferrer"
-               className="text-teal underline underline-offset-[3px] decoration-1 not-italic">
-              Paper I
-            </a>
-            {' '}on arXiv · Code version 1.0
+            Code version 1.0
           </p>
         </div>
       </div>

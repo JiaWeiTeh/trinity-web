@@ -30,12 +30,7 @@ export default function TitleBlock({ onViewChange }) {
         {/* Metadata line */}
         <p style={{ fontFamily: 'var(--font-ui)' }}
            className="text-[12px] text-ink-tertiary mb-6">
-          Methods code ·{' '}
-          <a href="https://arxiv.org/abs/2605.27517"
-             target="_blank" rel="noopener noreferrer"
-             className="text-teal underline underline-offset-[3px] decoration-1">
-            Paper I on arXiv
-          </a>
+          Methods code
         </p>
 
         {/* Links */}
