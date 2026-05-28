@@ -18,13 +18,15 @@ export default function TitleBlock({ onViewChange }) {
         {/* Author line */}
         <p style={{ fontFamily: 'var(--font-display)' }}
            className="text-[14px] text-ink-primary mb-1">
-          Jia Wei Teh<sup>1</sup>, Ralf S. Klessen<sup>1</sup>, Simon C. O. Glover<sup>1</sup>, Kathryn Kreckel<sup>2</sup>
+          Jia Wei Teh (郑家伟)<sup>1*</sup>, Ralf S. Klessen<sup>1,2</sup>, Simon C. O. Glover<sup>1</sup>, and Kathryn Kreckel<sup>3</sup>
         </p>
 
         {/* Affiliations */}
         <p style={{ fontFamily: 'var(--font-ui)' }}
            className="text-[12px] text-ink-tertiary mb-4 leading-relaxed">
-          <sup>1</sup> ITA/ZAH, Universität Heidelberg &nbsp;&nbsp; <sup>2</sup> ARI/ZAH, Universität Heidelberg
+          <sup>1</sup> Institut für Theoretische Astrophysik (ITA), Zentrum für Astronomie, Universität Heidelberg<br />
+          <sup>2</sup> Interdisziplinäres Zentrum für Wissenschaftliches Rechnen (IWR), Universität Heidelberg<br />
+          <sup>3</sup> Astronomisches Rechen-Institut (ARI), Zentrum für Astronomie, Universität Heidelberg
         </p>
 
         {/* Metadata line */}
