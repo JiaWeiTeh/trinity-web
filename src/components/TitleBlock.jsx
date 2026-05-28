@@ -33,6 +33,17 @@ export default function TitleBlock({ onViewChange }) {
           <sup>1</sup> ITA/ZAH, Universität Heidelberg &nbsp;&nbsp; <sup>2</sup> ARI/ZAH, Universität Heidelberg
         </p>
 
+        {/* Metadata line */}
+        <p style={{ fontFamily: 'var(--font-ui)' }}
+           className="text-[12px] text-ink-tertiary mb-6">
+          Methods code ·{' '}
+          <a href="https://arxiv.org/abs/2605.27517"
+             target="_blank" rel="noopener noreferrer"
+             className="text-teal underline underline-offset-[3px] decoration-1">
+            Paper I on arXiv
+          </a>
+        </p>
+
         {/* Links */}
         <div className="flex justify-center gap-5">
           <button
@@ -42,7 +53,8 @@ export default function TitleBlock({ onViewChange }) {
             className="text-[13px] text-teal underline underline-offset-[3px] decoration-1">
             Get started →
           </button>
-          <a href="#papers"
+          <a href="https://arxiv.org/abs/2605.27517"
+             target="_blank" rel="noopener noreferrer"
              style={{ fontFamily: 'var(--font-ui)' }}
              className="text-[13px] text-teal underline underline-offset-[3px] decoration-1">
             View Paper I →

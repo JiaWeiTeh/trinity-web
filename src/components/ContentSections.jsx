@@ -216,7 +216,12 @@ function Abstract() {
           {/* Status line */}
           <p style={{ fontFamily: 'var(--font-ui)' }}
              className="text-[11px] text-ink-tertiary mt-2 italic">
-            Paper I · Code version 1.0
+            <a href="https://arxiv.org/abs/2605.27517"
+               target="_blank" rel="noopener noreferrer"
+               className="text-teal underline underline-offset-[3px] decoration-1 not-italic">
+              Paper I
+            </a>
+            {' '}on arXiv · Code version 1.0
           </p>
         </div>
       </div>
@@ -362,7 +367,7 @@ function Section2Model({ time, setTime }) {
 
 function Section3Papers() {
   const papers = [
-    { num: 'Paper I', title: 'Code & Methods', status: 'Teh et al.' },
+    { num: 'Paper I', title: 'Code & Methods', status: 'Teh et al. (2026), arXiv:2605.27517', href: 'https://arxiv.org/abs/2605.27517' },
     { num: 'Paper II', title: '', status: '(upcoming)' },
   ]
 
@@ -379,7 +384,12 @@ function Section3Papers() {
             <div key={i} className="py-3 border-b border-border-rule flex items-baseline gap-3 last:border-b-0">
               <span style={{ fontFamily: 'var(--font-ui)' }}
                     className="text-[12px] font-medium text-teal w-[56px] shrink-0">
-                {p.num}
+                {p.href ? (
+                  <a href={p.href} target="_blank" rel="noopener noreferrer"
+                     className="underline underline-offset-[3px] decoration-1">
+                    {p.num}
+                  </a>
+                ) : p.num}
               </span>
               {p.title && (
                 <span style={{ fontFamily: 'var(--font-display)' }}
@@ -389,7 +399,13 @@ function Section3Papers() {
               )}
               <span style={{ fontFamily: 'var(--font-ui)' }}
                     className="text-[12px] text-ink-tertiary">
-                {p.title ? '— ' : ''}{p.status}
+                {p.title ? '— ' : ''}
+                {p.href ? (
+                  <a href={p.href} target="_blank" rel="noopener noreferrer"
+                     className="text-teal underline underline-offset-[3px] decoration-1">
+                    {p.status}
+                  </a>
+                ) : p.status}
               </span>
             </div>
           ))}
