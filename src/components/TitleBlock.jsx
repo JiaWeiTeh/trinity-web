@@ -1,17 +1,23 @@
 export default function TitleBlock({ onViewChange }) {
   return (
     <section className="pb-8">
-      <div className="max-w-[680px] mx-auto text-center">
+      <div className="max-w-[720px] mx-auto text-center">
+
+        {/* Kicker — same style as the Docs / Start headers */}
+        <p style={{ fontFamily: 'var(--font-ui)' }}
+           className="text-[11px] uppercase tracking-[0.28em] text-ink-tertiary mb-6">
+          Methods code · Paper I
+        </p>
 
         {/* Title */}
         <h1 style={{ fontFamily: 'var(--font-display)' }}
-            className="text-4xl md:text-5xl font-semibold text-ink-primary tracking-wide mb-3">
+            className="text-5xl md:text-6xl font-semibold text-ink-primary tracking-[0.01em] leading-tight mb-4">
           TRINITY
         </h1>
 
         {/* Subtitle */}
         <p style={{ fontFamily: 'var(--font-display)' }}
-           className="text-[17px] text-ink-secondary leading-relaxed mb-5">
+           className="text-[17px] md:text-[20px] text-ink-secondary leading-[1.55] mb-6">
           Feedback-driven bubble evolution in molecular clouds
         </p>
 
@@ -23,7 +29,7 @@ export default function TitleBlock({ onViewChange }) {
 
         {/* Affiliations */}
         <p style={{ fontFamily: 'var(--font-ui)' }}
-           className="text-[12px] text-ink-tertiary mb-4 leading-relaxed">
+           className="text-[12px] text-ink-tertiary mb-6 leading-relaxed">
           <sup>1</sup> ITA/ZAH, Universität Heidelberg &nbsp;&nbsp; <sup>2</sup> ARI/ZAH, Universität Heidelberg
         </p>
 
