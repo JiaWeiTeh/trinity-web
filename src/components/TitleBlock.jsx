@@ -40,7 +40,7 @@ export default function TitleBlock({ onViewChange }) {
             type="button"
             onClick={() => onViewChange?.('start')}
             style={{ fontFamily: 'var(--font-ui)' }}
-            className="text-[13px] text-teal underline underline-offset-[3px] decoration-1">
+            className="text-[13px] text-teal underline underline-offset-[3px] decoration-1 cursor-pointer">
             Get started →
           </button>
           <a href="https://arxiv.org/abs/2605.27517"
