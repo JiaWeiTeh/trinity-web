@@ -203,6 +203,44 @@ function Prose({ children }) {
   )
 }
 
+/* Figures live in /public/media as both a rasterised PNG (shown inline) and
+   the original PDF (linked from the caption). BASE_URL resolves the Vite
+   /trinity-web/ deploy prefix. */
+const MEDIA = `${import.meta.env.BASE_URL}media/`
+
+function PaperFigure({ src, pdf, alt, maxH = 460 }) {
+  return (
+    <a
+      href={`${MEDIA}${pdf}`}
+      target="_blank"
+      rel="noopener noreferrer"
+      title="Open the full figure (PDF)"
+      className="block bg-white"
+    >
+      <img
+        src={`${MEDIA}${src}`}
+        alt={alt}
+        loading="lazy"
+        className="mx-auto block w-auto max-w-full"
+        style={{ maxHeight: maxH }}
+      />
+    </a>
+  )
+}
+
+function FigureSource({ pdf, children }) {
+  return (
+    <p style={{ fontFamily: 'var(--font-ui)' }}
+       className="text-[11px] text-ink-tertiary mt-3">
+      {children}{' '}
+      <a href={`${MEDIA}${pdf}`} target="_blank" rel="noopener noreferrer"
+         className="text-teal underline underline-offset-[3px] decoration-1">
+        view PDF →
+      </a>
+    </p>
+  )
+}
+
 /* ── Sections ────────────────────────────────────────────────── */
 
 function Abstract() {
@@ -384,6 +422,9 @@ function Section2Model({ time, setTime }) {
                   the slider to evolve the bubble and hover a label to isolate a
                   zone. Sizes are schematic, not to scale.
                 </p>
+                <FigureSource pdf="paper_schematic.pdf">
+                  Adapted from Fig. 1 of Paper I.
+                </FigureSource>
               </div>
             </div>
           </div>
@@ -397,23 +438,30 @@ function Section2Model({ time, setTime }) {
   )
 }
 
-function ResultCard({ index, title, children }) {
+function ResultCard({ index, title, figure, children }) {
   return (
-    <div className="figure-card p-6 md:p-7">
-      <div className="flex items-baseline gap-3">
-        <span style={{ fontFamily: 'var(--font-display)' }}
-              className="text-[22px] font-semibold text-ink-tertiary leading-none shrink-0">
-          {index}
-        </span>
-        <h3 style={{ fontFamily: 'var(--font-display)' }}
-            className="text-[17px] font-semibold text-ink-primary leading-snug">
-          {title}
-        </h3>
+    <div className="figure-card overflow-hidden">
+      {figure && (
+        <div className="border-b border-border-card p-4 bg-white">
+          {figure}
+        </div>
+      )}
+      <div className="p-6 md:p-7">
+        <div className="flex items-baseline gap-3">
+          <span style={{ fontFamily: 'var(--font-display)' }}
+                className="text-[22px] font-semibold text-ink-tertiary leading-none shrink-0">
+            {index}
+          </span>
+          <h3 style={{ fontFamily: 'var(--font-display)' }}
+              className="text-[17px] font-semibold text-ink-primary leading-snug">
+            {title}
+          </h3>
+        </div>
+        <p style={{ fontFamily: 'var(--font-display)' }}
+           className="mt-3 text-[15px] leading-7 text-ink-secondary">
+          {children}
+        </p>
       </div>
-      <p style={{ fontFamily: 'var(--font-display)' }}
-         className="mt-3 text-[15px] leading-7 text-ink-secondary">
-        {children}
-      </p>
     </div>
   )
 }
@@ -428,28 +476,107 @@ function Section3Results() {
             Paper I validates the code against analytic wind, photoionisation,
             and momentum limits, then explores clouds of mass 10<sup>5</sup>–10<sup>6.5</sup>{' '}
             M<sub>☉</sub> at a range of densities and star-formation
-            efficiencies. Three findings stand out.
+            efficiencies. A single run returns the shell dynamics, the force
+            budget, and the ionising-photon budget on one time grid — so
+            TRINITY separates two clocks: <em>when feedback clears the cloud</em>{' '}
+            and <em>when Lyman-continuum photons start to leak out</em>.
           </p>
         </Prose>
 
-        <div className="mt-6 grid gap-4 md:grid-cols-1">
-          <ResultCard index={1} title="Photoionised gas is not a bystander">
+        {/* Fig. 2 — diagnostic showcase */}
+        <div className="mt-6">
+          <p style={{ fontFamily: 'var(--font-ui)' }}
+             className="text-[12px] font-medium text-teal mb-1">
+            Fig. 2
+          </p>
+          <p style={{ fontFamily: 'var(--font-display)' }}
+             className="text-[15px] font-semibold text-ink-primary mb-3">
+            One run, three diagnostics
+          </p>
+          <div className="figure-card overflow-hidden p-4 bg-white">
+            <PaperFigure
+              src="teaser_fiducial.png"
+              pdf="teaser_fiducial.pdf"
+              alt="Three stacked panels versus time: shell radius and velocity; the fractional force budget split into gravity, drive, radiation and external pressure with wind/H II/SN sub-channels; and the ionising-photon budget split into gas absorption, dust absorption and LyC escape."
+              maxH={560}
+            />
+          </div>
+          <p style={{ fontFamily: 'var(--font-display)' }}
+             className="text-[13px] leading-6 text-ink-secondary mt-3">
+            A fiducial run (M<sub>cloud</sub> = 10<sup>6</sup> M<sub>☉</sub>,
+            ε = 0.10). <em>Top:</em> shell radius and velocity, with the energy,
+            transition, and momentum phases marked. <em>Middle:</em> the force
+            budget — photoionised gas (H II) keeps a measurable share even after
+            the transition, while radiation pressure stays sub-dominant.
+            <em> Bottom:</em> the ionising-photon budget, where the LyC escape
+            fraction rises as the shell becomes density-bounded.
+          </p>
+          <FigureSource pdf="teaser_fiducial.pdf">
+            Fig. 4 of Paper I.
+          </FigureSource>
+        </div>
+
+        <p style={{ fontFamily: 'var(--font-display)' }}
+           className="text-[17px] text-ink-secondary leading-[1.65] mt-10 mb-5">
+          Across the parameter survey, three findings stand out.
+        </p>
+
+        <div className="grid gap-5 md:grid-cols-1">
+          <ResultCard
+            index={1}
+            title="Photoionised gas is not a bystander"
+            figure={
+              <PaperFigure
+                src="radiusComparison_M1e6_sfe001_n1e3.png"
+                pdf="radiusComparison_M1e6_sfe001_n1e3.pdf"
+                alt="Bubble radius versus time. The TRINITY curve sits above a WARPFIELD-equivalent run with photoionised-gas pressure switched off, and between the pure-energy and pure-photoionised analytic limits."
+                maxH={360}
+              />
+            }
+          >
             Switching P<sub>H II</sub> on grows the shell by about 17% at
             10 Myr compared with a WARPFIELD-equivalent run, and the gap keeps
-            widening as the cooled bubble loses its push.
+            widening as the cooled bubble loses its push. The full trajectory
+            sits between the pure-energy and pure-photoionised limits — neither
+            channel wins on its own.
           </ResultCard>
-          <ResultCard index={2} title="Cloud structure picks the winner">
+
+          <ResultCard
+            index={2}
+            title="Cloud structure picks the winner"
+            figure={
+              <PaperFigure
+                src="densityProfile_paper.png"
+                pdf="densityProfile_paper.pdf"
+                alt="Top: four cloud density profiles and their enclosed mass. Bottom: bubble radius versus time — only the steep r-to-the-minus-two cloud keeps expanding; the uniform, r-to-the-minus-one, and Bonnor–Ebert clouds turn over and re-collapse."
+                maxH={520}
+              />
+            }
+          >
             At identical cloud mass, central density, and star-formation
             efficiency, uniform and shallow clouds stall and re-collapse, while
             a steep ρ ∝ r<sup>−2</sup> cloud keeps expanding. The minimum
             efficiency for dispersal is therefore not a single number — it
             depends on how the cloud&rsquo;s mass is arranged.
           </ResultCard>
-          <ResultCard index={3} title="Two clocks, not one">
-            TRINITY tracks dynamical clearing and Lyman-continuum photon escape
-            separately. Dispersal times land at 0.3–3 Myr — before the first
-            supernovae — and Bonnor–Ebert clouds disperse roughly 55% later than
-            uniform clouds of the same mass.
+
+          <ResultCard
+            index={3}
+            title="Emergence timing depends on cloud structure"
+            figure={
+              <PaperFigure
+                src="pedrini_emergence_timescales_merge.png"
+                pdf="pedrini_emergence_timescales_merge.pdf"
+                alt="Dispersal timescale versus cluster mass for Bonnor–Ebert clouds (left) and homogeneous clouds (right); at matched mass and efficiency the Bonnor–Ebert clouds disperse later."
+                maxH={300}
+              />
+            }
+          >
+            Even when every cloud disperses, Bonnor–Ebert clouds clear roughly
+            55% later than uniform clouds of the same mass, because they spread
+            that mass over a larger radius. Dispersal times land at 0.3–3 Myr —
+            before the first supernovae — so pre-supernova feedback decides the
+            outcome.
           </ResultCard>
         </div>
       </div>
