@@ -65,15 +65,18 @@ function Labels({ radii, bubbleOpacity, hoveredZone, groupOpacity }) {
   const showHII = !showBubble
   const ionisedInner = Math.max(radii.R_b, radii.R_w)
 
+  /* Each label carries its physical-zone name plus, where it applies, the
+     boundary radius drawn at that circle in the paper's notation
+     (R_ts < R_b < R_if < R_sh). */
   const labelDefs = [
-    { key: 'cloud', zone: 'cloud', text: 'CLOUD', sub: null, dotY: 42, labelY: 42, r: (radii.R_cloud + radii.R_sh) / 2 },
-    { key: 'shell', zone: 'shell', text: 'SHELL', sub: 'neutral', dotY: 62, labelY: 62, r: (radii.R_sh + radii.R_if) / 2 },
-    { key: 'ionised-shell', zone: 'ionised', text: 'SHELL', sub: 'ionised', dotY: 86, labelY: 86, r: (radii.R_if + ionisedInner) / 2 },
+    { key: 'cloud', zone: 'cloud', text: 'CLOUD', desc: null, radius: null, dotY: 42, labelY: 42, r: (radii.R_cloud + radii.R_sh) / 2 },
+    { key: 'shell', zone: 'shell', text: 'SHELL', desc: 'neutral', radius: 'sh', dotY: 62, labelY: 62, r: (radii.R_sh + radii.R_if) / 2 },
+    { key: 'ionised-shell', zone: 'ionised', text: 'SHELL', desc: 'ionised', radius: 'if', dotY: 86, labelY: 86, r: (radii.R_if + ionisedInner) / 2 },
     ...(showBubble
-      ? [{ key: 'bubble', zone: 'bubble', text: 'BUBBLE', sub: null, dotY: 140, labelY: 140, r: (radii.R_b + radii.R_w) / 2, opacity: bubbleOpacity }]
+      ? [{ key: 'bubble', zone: 'bubble', text: 'BUBBLE', desc: null, radius: 'b', dotY: 140, labelY: 140, r: (radii.R_b + radii.R_w) / 2, opacity: bubbleOpacity }]
       : []),
-    ...(showHII ? [{ key: 'hii-label', zone: 'ionised', text: 'H\u2009II', sub: null, dotY: 120, labelY: 120, r: (radii.R_if + radii.R_w) / 2 }] : []),
-    { key: 'winds', zone: 'winds', text: 'WINDS', sub: null, dotY: CY, labelY: CY, r: (radii.R_w + 8) / 2 },
+    ...(showHII ? [{ key: 'hii-label', zone: 'ionised', text: 'H\u2009II', desc: null, radius: 'if', dotY: 120, labelY: 120, r: (radii.R_if + radii.R_w) / 2 }] : []),
+    { key: 'winds', zone: 'winds', text: 'WINDS', desc: null, radius: 'ts', dotY: CY, labelY: CY, r: (radii.R_w + 8) / 2 },
   ]
 
   return (
@@ -84,24 +87,31 @@ function Labels({ radii, bubbleOpacity, hoveredZone, groupOpacity }) {
         const dimmed = hoveredZone && hoveredZone !== l.zone
         const highlighted = hoveredZone === l.zone
         const op = dimmed ? baseOpacity * 0.28 : baseOpacity
+        const hasSub = l.desc || l.radius
 
         return (
           <g key={l.key} style={{ opacity: op, transition: 'opacity 300ms ease' }}>
             <circle cx={dX} cy={l.dotY} r={highlighted ? 2.2 : 1.5} fill={highlighted ? '#1E2430' : '#97948C'} />
             <line x1={dX + 2} y1={l.dotY} x2={LEADER_END} y2={l.labelY}
               stroke={highlighted ? '#1E2430' : '#97948C'} strokeWidth={highlighted ? 0.9 : 0.5} />
-            <text x={LABEL_X} y={l.sub ? l.labelY - 1 : l.labelY}
+            <text x={LABEL_X} y={hasSub ? l.labelY - 1 : l.labelY}
               fill={highlighted ? '#1E2430' : '#5E6776'} fontSize={10} fontWeight={highlighted ? 600 : 500}
               dominantBaseline="central"
               style={{ fontFamily: 'var(--font-ui)' }}>
               {l.text}
             </text>
-            {l.sub && (
+            {hasSub && (
               <text x={LABEL_X} y={l.labelY + 12}
                 fill={highlighted ? '#5E6776' : '#97948C'} fontSize={8} fontWeight={400} fontStyle="italic"
                 dominantBaseline="central"
                 style={{ fontFamily: 'var(--font-ui)' }}>
-                {l.sub}
+                {l.desc && <tspan>{l.desc}{l.radius ? '  ' : ''}</tspan>}
+                {l.radius && (
+                  <>
+                    <tspan>R</tspan>
+                    <tspan fontSize={6} dy={1.5}>{l.radius}</tspan>
+                  </>
+                )}
               </text>
             )}
           </g>

@@ -2,9 +2,10 @@ import { useState, useEffect } from 'react'
 
 const navLinks = [
   { label: 'Abstract', href: '#abstract' },
-  { label: '1. Overview', href: '#overview' },
+  { label: '1. Setup', href: '#setup' },
   { label: '2. Model', href: '#model' },
-  { label: '3. Papers', href: '#papers' },
+  { label: '3. Results', href: '#results' },
+  { label: '4. Papers', href: '#papers' },
 ]
 
 const viewLinks = [
