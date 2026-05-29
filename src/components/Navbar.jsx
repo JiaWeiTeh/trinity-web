@@ -100,7 +100,7 @@ export default function Navbar({ view = 'paper', onViewChange }) {
               <button
                 type="button"
                 onClick={() => switchView('paper')}
-                className="text-ink-secondary text-sm hover:text-ink-primary transition-colors"
+                className="text-ink-secondary text-sm hover:text-ink-primary transition-colors cursor-pointer"
                 style={{ fontFamily: 'var(--font-ui)' }}
               >
                 ← Back to paper
@@ -110,7 +110,7 @@ export default function Navbar({ view = 'paper', onViewChange }) {
 
           {/* Hamburger button (mobile) */}
           <button
-            className="sm:hidden text-ink-primary hover:text-ink-primary transition-colors p-1"
+            className="sm:hidden text-ink-primary hover:text-ink-primary transition-colors p-1 cursor-pointer"
             onClick={() => setMenuOpen(!menuOpen)}
             aria-label={menuOpen ? 'Close menu' : 'Open menu'}
           >
@@ -153,7 +153,7 @@ export default function Navbar({ view = 'paper', onViewChange }) {
                 key={v.key}
                 type="button"
                 onClick={() => switchView(v.key)}
-                className="text-teal text-xl hover:text-teal/80 transition-colors"
+                className="text-teal text-xl hover:text-teal/80 transition-colors cursor-pointer"
               >
                 {v.label}
               </button>
