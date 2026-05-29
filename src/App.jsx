@@ -28,6 +28,29 @@ const docsFallback = (
   </div>
 )
 
+/* The browser's behavior:"smooth" picks its own duration (often
+   300-500ms) which can feel rushed when the view content changes too.
+   This helper animates the scroll over a fixed duration with an
+   ease-out curve, and bails to an instant jump when the user has
+   prefers-reduced-motion set. */
+function smoothScrollToTop(duration = 700) {
+  if (typeof window === 'undefined') return
+  if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) {
+    window.scrollTo(0, 0)
+    return
+  }
+  const start = window.scrollY
+  if (start === 0) return
+  const startTime = performance.now()
+  const step = (now) => {
+    const t = Math.min((now - startTime) / duration, 1)
+    const eased = 1 - Math.pow(1 - t, 3)
+    window.scrollTo(0, start * (1 - eased))
+    if (t < 1) requestAnimationFrame(step)
+  }
+  requestAnimationFrame(step)
+}
+
 export default function App() {
   const [{ view, page }, setLocation] = useState(readLocation)
 
@@ -39,7 +62,7 @@ export default function App() {
     url.searchParams.delete('page')
     url.hash = ''
     history.pushState(null, '', url.toString())
-    window.scrollTo({ top: 0, behavior: 'instant' })
+    smoothScrollToTop()
   }, [])
 
   const changePage = useCallback((nextPage) => {
@@ -49,7 +72,7 @@ export default function App() {
     url.searchParams.set('page', nextPage)
     url.hash = ''
     history.pushState(null, '', url.toString())
-    window.scrollTo({ top: 0, behavior: 'instant' })
+    smoothScrollToTop()
   }, [])
 
   const navigateTo = useCallback((href) => {
