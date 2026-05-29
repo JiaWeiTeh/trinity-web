@@ -33,11 +33,12 @@ export default function TitleBlock({ onViewChange }) {
           <sup>1</sup> ITA/ZAH, Universität Heidelberg &nbsp;&nbsp; <sup>2</sup> ARI/ZAH, Universität Heidelberg
         </p>
 
-        {/* Metadata line */}
-        <p style={{ fontFamily: 'var(--font-ui)' }}
-           className="text-[12px] text-ink-tertiary mb-6">
-          Methods code
-        </p>
+        {/* Construction notice — intentionally feels like a taped-on note */}
+        <div style={{ fontFamily: 'var(--font-ui)' }}
+             className="inline-block border border-dashed border-ink-tertiary bg-amber-50/60 px-4 py-2 text-[12px] text-ink-secondary mb-6 max-w-[520px] text-left leading-relaxed">
+          <span className="font-medium italic">Notice. </span>
+          The documentation is under active construction; the website and code are expected to stabilise by mid-2026.
+        </div>
 
         {/* Links */}
         <div className="flex justify-center gap-5">
