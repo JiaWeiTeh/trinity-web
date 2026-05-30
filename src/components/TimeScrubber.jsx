@@ -1,10 +1,25 @@
+/* Phase boundaries match the bubble-diagram interpolation and the ticks
+   drawn on the track: energy-driven up to 0.5 Myr, transition to 1.2 Myr,
+   momentum-driven thereafter. */
+function phaseFor(time) {
+  if (time <= 0.5) return 'Energy-driven'
+  if (time <= 1.2) return 'Transition'
+  return 'Momentum-driven'
+}
+
 export default function TimeScrubber({ time, onTimeChange }) {
   return (
     <div className="w-full">
-      <p style={{ fontFamily: 'var(--font-ui)' }}
-         className="text-[11px] uppercase tracking-[0.16em] text-ink-tertiary">
-        <span style={{ fontStyle: 'italic' }}>t</span>{' = '}{time.toFixed(2)}{' Myr'}
-      </p>
+      <div className="flex items-baseline justify-between gap-3">
+        <p style={{ fontFamily: 'var(--font-ui)' }}
+           className="text-[11px] uppercase tracking-[0.16em] text-ink-tertiary">
+          <span style={{ fontStyle: 'italic' }}>t</span>{' = '}{time.toFixed(2)}{' Myr'}
+        </p>
+        <p style={{ fontFamily: 'var(--font-ui)' }}
+           className="text-[11px] uppercase tracking-[0.16em] text-teal font-medium">
+          {phaseFor(time)}
+        </p>
+      </div>
 
       <div className="mt-4 relative">
         <input

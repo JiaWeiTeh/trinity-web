@@ -6,7 +6,7 @@ export default function TitleBlock({ onViewChange }) {
         {/* Kicker — same style as the Docs / Start headers */}
         <p style={{ fontFamily: 'var(--font-ui)' }}
            className="text-[11px] uppercase tracking-[0.28em] text-ink-tertiary mb-6">
-          Methods code · Paper I
+          Paper I · A short tour
         </p>
 
         {/* Title */}
