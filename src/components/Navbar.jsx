@@ -5,7 +5,8 @@ const navLinks = [
   { label: '1. Setup', href: '#setup' },
   { label: '2. Model', href: '#model' },
   { label: '3. Results', href: '#results' },
-  { label: '4. Papers', href: '#papers' },
+  { label: '4. Caveats', href: '#caveats' },
+  { label: '5. Papers', href: '#papers' },
 ]
 
 const viewLinks = [

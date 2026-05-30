@@ -127,10 +127,10 @@ function NotationTerm({ label, definition }) {
   )
 }
 
-function formatFirstThreeAuthors(authors) {
+function formatAuthors(authors) {
   const parts = authors.split(', ')
-  const firstThree = parts.slice(0, 6).join(', ')
-  return parts.length > 6 ? `${firstThree} et al.` : firstThree
+  const shown = parts.slice(0, 6).join(', ')
+  return parts.length > 6 ? `${shown} et al.` : shown
 }
 
 function Cite({ authors, year, journal, volume, page, bare = false }) {
@@ -140,7 +140,7 @@ function Cite({ authors, year, journal, volume, page, bare = false }) {
 
   const surname = authors.split(',')[0].split('.').pop().trim()
   const label = `${surname} et al. ${year}`
-  const authorRow = formatFirstThreeAuthors(authors)
+  const authorRow = formatAuthors(authors)
   const journalRow = `${journal} ${volume}, ${page} (${year})`
 
   useEffect(() => {
@@ -241,6 +241,23 @@ function FigureSource({ pdf, children }) {
   )
 }
 
+/* Teal kicker + serif title, shared by the interactive figure and the
+   embedded paper figures. */
+function FigureHeader({ kicker, title }) {
+  return (
+    <>
+      <p style={{ fontFamily: 'var(--font-ui)' }}
+         className="text-[12px] font-medium text-teal mb-1">
+        {kicker}
+      </p>
+      <p style={{ fontFamily: 'var(--font-display)' }}
+         className="text-[15px] font-semibold text-ink-primary mb-4">
+        {title}
+      </p>
+    </>
+  )
+}
+
 /* ── Sections ────────────────────────────────────────────────── */
 
 function Abstract() {
@@ -269,7 +286,7 @@ function Abstract() {
           <p style={{ fontFamily: 'var(--font-ui)' }}
              className="text-[12px] text-ink-tertiary mt-4">
             <span className="font-medium" style={{ fontStyle: 'italic' }}>Key words. </span>
-            methods: numerical — ISM: bubbles — ISM: clouds — H{' '}II regions — ISM: kinematics and dynamics — stars: formation
+            methods: numerical — ISM: bubbles — ISM: clouds — ISM: H{' '}II regions — ISM: kinematics and dynamics — stars: formation
           </p>
 
           {/* Status line */}
@@ -389,14 +406,10 @@ function Section2Model({ time, setTime }) {
       </div>
 
       <div id="fig1" className="max-w-[680px] mx-auto">
-        <p style={{ fontFamily: 'var(--font-ui)' }}
-           className="text-[12px] font-medium text-teal mb-1">
-          Interactive Fig. 1
-        </p>
-        <p style={{ fontFamily: 'var(--font-display)' }}
-           className="text-[15px] font-semibold text-ink-primary mb-4">
-          Shell structure across evolutionary phases
-        </p>
+        <FigureHeader
+          kicker="Interactive Fig. 1"
+          title="Shell structure across evolutionary phases"
+        />
 
         <div className="flex flex-col items-center gap-4">
           <div className="figure-card w-full">
@@ -438,7 +451,7 @@ function Section2Model({ time, setTime }) {
   )
 }
 
-function ResultCard({ index, title, figure, children }) {
+function ResultCard({ index, title, figure, sourcePdf, sourceLabel, children }) {
   return (
     <div className="figure-card overflow-hidden">
       {figure && (
@@ -461,6 +474,7 @@ function ResultCard({ index, title, figure, children }) {
            className="mt-3 text-[15px] leading-7 text-ink-secondary">
           {children}
         </p>
+        {sourcePdf && <FigureSource pdf={sourcePdf}>{sourceLabel}</FigureSource>}
       </div>
     </div>
   )
@@ -483,16 +497,9 @@ function Section3Results() {
           </p>
         </Prose>
 
-        {/* Fig. 2 — diagnostic showcase */}
+        {/* Diagnostic showcase — Fig. 3 of Paper I */}
         <div className="mt-6">
-          <p style={{ fontFamily: 'var(--font-ui)' }}
-             className="text-[12px] font-medium text-teal mb-1">
-            Fig. 2
-          </p>
-          <p style={{ fontFamily: 'var(--font-display)' }}
-             className="text-[15px] font-semibold text-ink-primary mb-3">
-            One run, three diagnostics
-          </p>
+          <FigureHeader kicker="Diagnostic suite" title="One run, three diagnostics" />
           <div className="figure-card overflow-hidden p-4 bg-white">
             <PaperFigure
               src="teaser_fiducial.png"
@@ -512,7 +519,7 @@ function Section3Results() {
             fraction rises as the shell becomes density-bounded.
           </p>
           <FigureSource pdf="teaser_fiducial.pdf">
-            Fig. 4 of Paper I.
+            Fig. 3 of Paper I.
           </FigureSource>
         </div>
 
@@ -525,6 +532,8 @@ function Section3Results() {
           <ResultCard
             index={1}
             title="Photoionised gas is not a bystander"
+            sourcePdf="radiusComparison_M1e6_sfe001_n1e3.pdf"
+            sourceLabel="Fig. 2 of Paper I."
             figure={
               <PaperFigure
                 src="radiusComparison_M1e6_sfe001_n1e3.png"
@@ -544,6 +553,8 @@ function Section3Results() {
           <ResultCard
             index={2}
             title="Cloud structure picks the winner"
+            sourcePdf="densityProfile_paper.pdf"
+            sourceLabel="Fig. 4 of Paper I."
             figure={
               <PaperFigure
                 src="densityProfile_paper.png"
@@ -563,6 +574,8 @@ function Section3Results() {
           <ResultCard
             index={3}
             title="Emergence timing depends on cloud structure"
+            sourcePdf="pedrini_emergence_timescales_merge.pdf"
+            sourceLabel="Fig. 6 of Paper I."
             figure={
               <PaperFigure
                 src="pedrini_emergence_timescales_merge.png"
