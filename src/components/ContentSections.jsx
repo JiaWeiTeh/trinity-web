@@ -267,19 +267,20 @@ function Abstract() {
         <div className="border-l-4 border-border-card pl-5 py-1">
           <p style={{ fontFamily: 'var(--font-display)' }}
              className="text-[15px] text-ink-secondary leading-[1.7]">
-            Giant molecular clouds are torn apart within a few million years of
-            forming their first massive stars — and the demolition is mostly
-            finished before any of those stars explode as supernovae. The work is
-            done by <em>pre-supernova</em> feedback: stellar winds, radiation
-            pressure, and the thermal pressure of photoionised gas. TRINITY is a
-            1D spherical thin-shell code that follows all of these channels at
-            once, evolving a single swept-up shell from the first wind-blown
-            bubble through to its late coasting expansion. It succeeds WARPFIELD
-            {' '}<CiteList refs={[REFS.rahner17, REFS.rahner19]} />, adding two
-            things: photoionised-gas pressure that drives the shell explicitly
-            through a phase-aware rule, and flexible cloud profiles — uniform,
-            power-law, or Bonnor–Ebert. This page is a short tour of the model
-            and its first results; the full account is in Paper I.
+            A giant molecular cloud is usually dispersed within a few million
+            years of forming its first massive stars, before any of them explode
+            as supernovae. The clearing is therefore done by pre-supernova
+            feedback: stellar winds, radiation pressure, and the pressure of
+            photoionised gas. TRINITY follows these processes in a single
+            calculation. It is a 1D spherical thin-shell code that tracks one
+            swept-up shell from the early wind-blown bubble to its late
+            expansion, and it succeeds WARPFIELD
+            {' '}<CiteList refs={[REFS.rahner17, REFS.rahner19]} />. The two main
+            additions are photoionised-gas pressure that drives the shell
+            directly, switched with the evolutionary phase, and a choice of
+            cloud profile (uniform, power-law, or Bonnor–Ebert). This page
+            summarises the model and its first results; the details are in
+            Paper I.
           </p>
 
           {/* Keywords */}
@@ -307,37 +308,36 @@ function Section1Setup() {
         <SectionHeading number={1} title="The setup" />
         <Prose>
           <p>
-            Across nearby galaxies, molecular clouds disperse within roughly
+            Across nearby galaxies, molecular clouds disperse within about
             1–5 Myr of their first massive stars appearing {' '}
             <Cite {...REFS.chevance20} />. The first core-collapse supernovae
-            only arrive after about 3–4 Myr, so the clouds are already being
-            cleared before supernovae can help.
+            arrive only after roughly 3–4 Myr, so the clouds are cleared before
+            supernovae contribute.
             <Sidenote>
-              Surveys such as PHANGS time this by matching the molecular gas,
+              Surveys such as PHANGS measure this by matching the molecular gas,
               exposed young clusters, dust, and ionised gas of the same regions
               at cloud-scale resolution.
             </Sidenote>
-            {' '}Whatever takes the clouds apart must therefore be{' '}
-            <em>pre-supernova</em> feedback.
+            {' '}The clearing is therefore set by pre-supernova feedback.
           </p>
           <p>
-            That leaves a sharp question: of the pre-supernova channels — winds,
-            direct and dust-reprocessed radiation pressure, and the thermal
-            pressure of photoionised gas (P<sub>H II</sub>) — which one
-            dominates, when, and for which clouds?
+            This raises the question the code is built to address: among the
+            pre-supernova channels (winds, direct and dust-reprocessed radiation
+            pressure, and the pressure of photoionised gas, P<sub>H II</sub>),
+            which one dominates, when, and for which clouds?
             <Sidenote>
               WARPFIELD (Rahner et al. 2017, 2019) is the predecessor 1D code.
               TRINITY keeps its efficiency and adds explicit P<sub>H II</sub>{' '}
-              driving and flexible cloud profiles.
+              driving and a choice of cloud profile.
             </Sidenote>
             {' '}The answer depends on cloud mass, density profile, cluster mass,
-            and metallicity — a parameter space far too large to sweep with full
+            and metallicity. That parameter space is too large to cover with full
             3D simulations.
           </p>
           <p>
-            TRINITY is built to map that space cheaply while producing outputs
-            that line up with what telescopes actually measure: shell sizes,
-            the balance of forces, and how many ionising photons leak out.
+            TRINITY is designed to survey it at low cost, and to return
+            quantities that can be compared with observations: shell sizes, the
+            balance of forces, and the fraction of ionising photons that escape.
           </p>
         </Prose>
       </div>
@@ -353,9 +353,9 @@ function Section2Model({ time, setTime }) {
         <Prose>
           <p>
             TRINITY treats the swept-up shell as a single mass element and
-            integrates one equation of motion for it. The driving pressure,
-            radiation force, and ram pressure push outward; gravity and any
-            confining ambient pressure pull in:
+            integrates one equation of motion for it. The driving pressure and
+            radiation force push outward; gravity and any confining ambient
+            pressure act inward:
           </p>
         </Prose>
 
@@ -367,20 +367,21 @@ function Section2Model({ time, setTime }) {
 
         <Prose>
           <p>
-            The driving pressure is the heart of the model. A wind-blown bubble
-            lives through three phases: an early <em>energy-driven</em> phase in
-            which a hot shocked-wind bubble inflates the shell{' '}
-            (<Cite {...REFS.weaver77} />), a <em>transition</em> as radiative
-            cooling drains that bubble, and a late <em>momentum-driven</em>{' '}
-            phase in which the shell coasts. TRINITY picks the driving term to
-            match the phase, which avoids counting the same pressure twice:
+            The form of the driving pressure depends on the evolutionary phase.
+            A wind-blown bubble passes through three: an early{' '}
+            <em>energy-driven</em> phase in which a hot shocked-wind bubble
+            inflates the shell (<Cite {...REFS.weaver77} />), a{' '}
+            <em>transition</em> as radiative cooling drains that bubble, and a
+            late <em>momentum-driven</em> phase in which the shell coasts. The
+            driving term is selected to match the phase so that the same
+            pressure is not counted twice:
             <Sidenote>
               In the energy-driven phase the bubble pressure {' '}
               <NotationTerm label={<>P<sub>b</sub></>} definition="Thermal pressure inside the hot shocked-wind bubble." />
               {' '}and the photoionised-gas pressure {' '}
               <NotationTerm label={<>P<sub>H II</sub></>} definition="Thermal pressure of the ionised layer at ~10⁴ K." />
               {' '}describe competing equilibria for the cavity gas, so the
-              driving term is the larger of the two — not their sum {' '}
+              larger of the two is used rather than their sum {' '}
               (<Cite {...REFS.lancaster25} />).
             </Sidenote>
           </p>
@@ -394,13 +395,13 @@ function Section2Model({ time, setTime }) {
 
         <Prose>
           <p>
-            What is new relative to WARPFIELD: P<sub>H II</sub> now appears
-            explicitly in the equation of motion (<Ref target="eq2">Eq. 2</Ref>),
-            and the initial cloud is no longer restricted to a uniform sphere —
-            it can be uniform, a power law, or a Bonnor–Ebert sphere. A single
-            run finishes in about 30 minutes on one core, fast enough for
-            systematic surveys. <Ref target="fig1">Interactive Fig. 1</Ref>{' '}
-            shows how the shell structure changes across the three phases.
+            Two changes relative to WARPFIELD follow from this. P<sub>H II</sub>{' '}
+            now enters the equation of motion explicitly (<Ref target="eq2">Eq. 2</Ref>),
+            and the initial cloud is not restricted to a uniform sphere: it can
+            be uniform, a power law, or a Bonnor–Ebert sphere. A single run
+            takes about 30 minutes on one core, which makes systematic surveys
+            practical. <Ref target="fig1">Interactive Fig. 1</Ref> shows how the
+            shell structure changes across the three phases.
           </p>
         </Prose>
       </div>
@@ -426,14 +427,14 @@ function Section2Model({ time, setTime }) {
                 </p>
                 <p style={{ fontFamily: 'var(--font-display)' }}
                    className="mt-3 text-[15px] leading-7 text-ink-secondary">
-                  Idealised 1D shell structure across the three phases. The
-                  central cluster drives free-streaming winds out to the
-                  termination shock R<sub>ts</sub>; shocked wind fills the hot
-                  bubble to R<sub>b</sub>; outside it sit an ionised layer (to
-                  the ionisation front R<sub>if</sub>) and a neutral swept-up
-                  layer (to R<sub>sh</sub>), embedded in the natal cloud. Drag
-                  the slider to evolve the bubble and hover a label to isolate a
-                  zone. Sizes are schematic, not to scale.
+                  1D shell structure across the three phases. The central
+                  cluster drives free-streaming winds out to the termination
+                  shock R<sub>ts</sub>; shocked wind fills the hot bubble to
+                  R<sub>b</sub>; outside it sit an ionised layer (to the
+                  ionisation front R<sub>if</sub>) and a neutral swept-up layer
+                  (to R<sub>sh</sub>), embedded in the natal cloud. Drag the
+                  slider to evolve the bubble, or hover a label to isolate a
+                  zone. The radii are schematic and not to scale.
                 </p>
                 <FigureSource pdf="paper_schematic.pdf">
                   Adapted from Fig. 1 of Paper I.
@@ -489,11 +490,11 @@ function Section3Results() {
           <p>
             Paper I validates the code against analytic wind, photoionisation,
             and momentum limits, then explores clouds of mass 10<sup>5</sup>–10<sup>6.5</sup>{' '}
-            M<sub>☉</sub> at a range of densities and star-formation
+            M<sub>☉</sub> across a range of densities and star-formation
             efficiencies. A single run returns the shell dynamics, the force
-            budget, and the ionising-photon budget on one time grid — so
-            TRINITY separates two clocks: <em>when feedback clears the cloud</em>{' '}
-            and <em>when Lyman-continuum photons start to leak out</em>.
+            budget, and the ionising-photon budget on one time grid. This
+            distinguishes two timescales: when feedback clears the cloud, and
+            when Lyman-continuum photons begin to escape.
           </p>
         </Prose>
 
@@ -513,10 +514,10 @@ function Section3Results() {
             A fiducial run (M<sub>cloud</sub> = 10<sup>6</sup> M<sub>☉</sub>,
             ε = 0.10). <em>Top:</em> shell radius and velocity, with the energy,
             transition, and momentum phases marked. <em>Middle:</em> the force
-            budget — photoionised gas (H II) keeps a measurable share even after
-            the transition, while radiation pressure stays sub-dominant.
-            <em> Bottom:</em> the ionising-photon budget, where the LyC escape
-            fraction rises as the shell becomes density-bounded.
+            budget. Photoionised gas (H II) retains a measurable share after the
+            transition, and radiation pressure remains sub-dominant.
+            <em> Bottom:</em> the ionising-photon budget. The LyC escape fraction
+            rises as the shell becomes density-bounded.
           </p>
           <FigureSource pdf="teaser_fiducial.pdf">
             Fig. 3 of Paper I.
@@ -525,13 +526,13 @@ function Section3Results() {
 
         <p style={{ fontFamily: 'var(--font-display)' }}
            className="text-[17px] text-ink-secondary leading-[1.65] mt-10 mb-5">
-          Across the parameter survey, three findings stand out.
+          Three results from the parameter survey are worth highlighting.
         </p>
 
         <div className="grid gap-5 md:grid-cols-1">
           <ResultCard
             index={1}
-            title="Photoionised gas is not a bystander"
+            title="Photoionised gas affects the dynamics"
             sourcePdf="radiusComparison_M1e6_sfe001_n1e3.pdf"
             sourceLabel="Fig. 2 of Paper I."
             figure={
@@ -543,16 +544,16 @@ function Section3Results() {
               />
             }
           >
-            Switching P<sub>H II</sub> on grows the shell by about 17% at
-            10 Myr compared with a WARPFIELD-equivalent run, and the gap keeps
-            widening as the cooled bubble loses its push. The full trajectory
-            sits between the pure-energy and pure-photoionised limits — neither
-            channel wins on its own.
+            Including P<sub>H II</sub> increases the shell radius by about 17% at
+            10 Myr relative to a WARPFIELD-equivalent run, and the difference
+            grows at later times as the cooled bubble loses its driving pressure.
+            The full trajectory lies between the pure-energy and pure-photoionised
+            limits, so neither channel dominates on its own at this efficiency.
           </ResultCard>
 
           <ResultCard
             index={2}
-            title="Cloud structure picks the winner"
+            title="Cloud structure sets the outcome"
             sourcePdf="densityProfile_paper.pdf"
             sourceLabel="Fig. 4 of Paper I."
             figure={
@@ -564,11 +565,11 @@ function Section3Results() {
               />
             }
           >
-            At identical cloud mass, central density, and star-formation
-            efficiency, uniform and shallow clouds stall and re-collapse, while
-            a steep ρ ∝ r<sup>−2</sup> cloud keeps expanding. The minimum
-            efficiency for dispersal is therefore not a single number — it
-            depends on how the cloud&rsquo;s mass is arranged.
+            At fixed cloud mass, central density, and star-formation efficiency,
+            uniform and shallow clouds stall and re-collapse, while a steep
+            ρ ∝ r<sup>−2</sup> cloud continues to expand. The minimum efficiency
+            required for dispersal is therefore not a single value; it depends on
+            how the cloud&rsquo;s mass is distributed.
           </ResultCard>
 
           <ResultCard
@@ -585,11 +586,11 @@ function Section3Results() {
               />
             }
           >
-            Even when every cloud disperses, Bonnor–Ebert clouds clear roughly
-            55% later than uniform clouds of the same mass, because they spread
-            that mass over a larger radius. Dispersal times land at 0.3–3 Myr —
-            before the first supernovae — so pre-supernova feedback decides the
-            outcome.
+            Even when every cloud disperses, Bonnor–Ebert clouds clear about
+            55% later than uniform clouds of the same mass, because the mass is
+            spread over a larger radius. Dispersal times fall in the range
+            0.3–3 Myr, before the first supernovae, so the outcome is set by
+            pre-supernova feedback.
           </ResultCard>
         </div>
       </div>
@@ -606,16 +607,16 @@ function Section4Caveats() {
           <p>
             TRINITY is one-dimensional, so it averages over champagne flows,
             blister breakouts, and the corrugated bubble interface that
-            instabilities carve in real clouds. Its photoionised-gas treatment
-            keeps a single radius for the bubble and ionisation front — an
-            intermediate choice between simpler shell models and fully coupled
+            instabilities produce in real clouds. Its photoionised-gas treatment
+            keeps a single radius for the bubble and the ionisation front, which
+            is intermediate between simpler shell models and fully coupled
             two-radius models. The shell is assumed closed, and magnetic,
-            cosmic-ray, and turbulent pressures are left out of the dynamics.
+            cosmic-ray, and turbulent pressures are not included in the dynamics.
           </p>
           <p>
-            The roadmap follows directly: an evolving shell covering fraction,
-            non-zero ambient pressure, a two-radius treatment of the bubble and
-            ionisation front, and the full parameter-space survey in{' '}
+            Planned extensions address these points: an evolving shell covering
+            fraction, non-zero ambient pressure, a two-radius treatment of the
+            bubble and ionisation front, and the full parameter-space survey in{' '}
             <Ref target="papers">Paper II</Ref>.
           </p>
         </Prose>
@@ -636,7 +637,7 @@ function Section5Papers() {
         <SectionHeading number={5} title="Papers" />
         <p style={{ fontFamily: 'var(--font-display)' }}
            className="text-[17px] text-ink-secondary leading-[1.65] mb-6">
-          TRINITY is developed across a series of methods and science papers.
+          TRINITY is described in a series of methods and science papers.
         </p>
         <div>
           {papers.map((p, i) => (
