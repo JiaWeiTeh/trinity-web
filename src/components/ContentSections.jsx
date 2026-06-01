@@ -360,7 +360,6 @@ function Section2Model({ time, setTime }) {
 function Section3Papers() {
   const papers = [
     { num: 'Paper I', title: 'Code & Methods', status: 'Teh et al. (2026), arXiv:2605.27517', href: 'https://arxiv.org/abs/2605.27517' },
-    { num: 'Paper II', title: '', status: '(upcoming)' },
   ]
 
   return (
