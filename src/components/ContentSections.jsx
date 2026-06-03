@@ -628,7 +628,6 @@ function Section4Caveats() {
 function Section5Papers() {
   const papers = [
     { num: 'Paper I', title: 'Code & Methods', status: 'Teh et al. (2026), arXiv:2605.27517', href: 'https://arxiv.org/abs/2605.27517' },
-    { num: 'Paper II', title: 'Mapping feedback dominance', status: '(upcoming)' },
   ]
 
   return (
