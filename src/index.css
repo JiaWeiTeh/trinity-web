@@ -1,9 +1,9 @@
 @import "tailwindcss";
 
 @theme {
-  --color-desk: #EDECE8;
-  --color-paper: #FFFFFF;
-  --color-card: #F5F4F0;
+  --color-desk: #E7E3DA;
+  --color-paper: #FFFEFA;
+  --color-card: #F7F4EE;
   --color-navy: #0D1B2A;
   --color-ink-primary: #1E2430;
   --color-ink-secondary: #5E6776;
@@ -11,8 +11,8 @@
   --color-ink-line: #2A3442;
   --color-teal: #0EA5C8;
   --color-teal-wash: #E6F7FA;
-  --color-border-card: #D3D1C7;
-  --color-border-rule: #E5E3DC;
+  --color-border-card: #D8D2C6;
+  --color-border-rule: #E7E1D7;
   --font-display: 'Source Serif 4', Georgia, serif;
   --font-ui: 'Inter', sans-serif;
 }
@@ -24,7 +24,7 @@ html {
 
 body {
   margin: 0;
-  background: #EDECE8;
+  background: #E7E3DA;
   color: #1E2430;
   font-family: 'Source Serif 4', Georgia, serif;
   -webkit-font-smoothing: antialiased;
@@ -81,6 +81,24 @@ sup {
   scroll-margin-top: 64px;
 }
 
+/* Wrapper that gives an interactive figure the same visual weight as a
+   paper figure: soft cream surface, light warm border, gentle shadow.
+   The image cell carries the subtle teal radial highlight; the caption
+   cell stays on the plain surface. */
+.figure-card {
+  background: #FBFAF6;
+  border: 1px solid var(--color-border-card);
+  border-radius: 18px;
+  box-shadow: 0 16px 45px rgba(55, 48, 39, 0.08);
+  overflow: hidden;
+}
+
+.figure-card-image {
+  background:
+    radial-gradient(circle at 50% 45%, rgba(14, 165, 200, 0.08), transparent 36%),
+    linear-gradient(180deg, #FFFEFA, #F7F4EE);
+}
+
 .figure-pulse {
   animation: figurePulse 900ms ease-out;
 }
@@ -135,28 +153,6 @@ sup {
   transform: translateY(0);
 }
 
-.appendix-card {
-  border: 1px solid var(--color-border-card);
-  border-radius: 8px;
-  background: var(--color-card);
-  padding: 10px 12px;
-}
-
-.appendix-card summary {
-  font-family: var(--font-ui);
-  font-size: 13px;
-  color: var(--color-ink-primary);
-  cursor: pointer;
-}
-
-.appendix-card p {
-  font-family: var(--font-ui);
-  font-size: 12px;
-  color: var(--color-ink-secondary);
-  margin: 8px 0 2px;
-  line-height: 1.6;
-}
-
 /* Sidenotes */
 .sidenote {
   font-family: var(--font-ui);
@@ -175,7 +171,7 @@ sup {
 
 /* Paper container — article page resting on desk */
 .paper-container {
-  background: #FFFFFF;
+  background: var(--color-paper);
   max-width: 1060px;
   margin-top: calc(48px + 32px);
   margin-bottom: 40px;
@@ -183,9 +179,9 @@ sup {
   margin-right: auto;
   padding: 48px 56px 56px;
   box-shadow:
-    0 1px 3px rgba(180, 170, 155, 0.12),
-    0 4px 14px rgba(180, 170, 155, 0.07);
-  border: 0.5px solid #D3D1C7;
+    0 1px 2px rgba(55, 48, 39, 0.06),
+    0 18px 48px rgba(55, 48, 39, 0.12);
+  border: 0.5px solid var(--color-border-card);
   border-radius: 2px;
   position: relative;
   overflow: hidden;
@@ -219,8 +215,8 @@ sup {
     margin-right: 8px;
     padding: 32px 24px 40px;
     box-shadow:
-      0 1px 2px rgba(180, 170, 155, 0.1),
-      0 2px 8px rgba(180, 170, 155, 0.05);
+      0 1px 2px rgba(55, 48, 39, 0.06),
+      0 8px 24px rgba(55, 48, 39, 0.10);
   }
 }
 
@@ -322,66 +318,45 @@ sup {
 
 /* ─── Documentation view ──────────────────────────────────────── */
 
+/* Single-column by default; at xl the article keeps its column and the
+   "On this page" rail appears to the right. */
 .docs-layout {
   display: grid;
-  grid-template-columns: 200px minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr);
   gap: 48px;
   align-items: start;
+}
+
+@media (min-width: 1280px) {
+  .docs-layout {
+    grid-template-columns: minmax(0, 1fr) 190px;
+  }
 }
 
 .docs-index {
   position: sticky;
   top: 80px;
   align-self: start;
-  padding-right: 12px;
-  border-right: 1px solid var(--color-border-rule);
+  padding-left: 24px;
+  border-left: 1px solid var(--color-border-rule);
   max-height: calc(100vh - 120px);
   overflow-y: auto;
 }
 
-.docs-index-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
+@media (max-width: 1279px) {
+  .docs-index {
+    display: none;
+  }
 }
 
-.docs-index-link {
-  font-family: var(--font-ui);
-  font-size: 13px;
-  color: var(--color-ink-secondary);
-  background: transparent;
-  border: none;
-  padding: 4px 8px;
-  border-radius: 4px;
-  cursor: pointer;
-  text-align: left;
-  width: 100%;
-  line-height: 1.4;
-  transition: color 120ms ease, background 120ms ease;
-}
-
-.docs-index-link:hover {
-  color: var(--color-ink-primary);
-  background: var(--color-card);
-}
-
-.docs-index-link.is-active {
-  color: var(--color-teal);
-  background: var(--color-teal-wash);
-}
-
-/* Nested section nav (## headings of the active page) */
+/* "On this page" — H2 section list inside the docs-index rail */
 .docs-section-list {
   list-style: none;
   margin: 4px 0 8px;
-  padding: 0 0 0 10px;
-  border-left: 1px solid var(--color-border-rule);
+  padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 1px;
+  gap: 2px;
 }
 
 .docs-section-link {
@@ -406,19 +381,6 @@ sup {
 
 .docs-section-link.is-active {
   color: var(--color-teal);
-}
-
-.docs-index-select {
-  display: none;
-  width: 100%;
-  font-family: var(--font-ui);
-  font-size: 13px;
-  color: var(--color-ink-primary);
-  background: var(--color-paper);
-  border: 1px solid var(--color-border-card);
-  border-radius: 6px;
-  padding: 8px 10px;
-  cursor: pointer;
 }
 
 .docs-body {
@@ -603,26 +565,3 @@ sup {
   overflow-y: hidden;
 }
 
-@media (max-width: 900px) {
-  .docs-layout {
-    grid-template-columns: 1fr;
-    gap: 16px;
-  }
-  .docs-index {
-    position: static;
-    border-right: none;
-    border-bottom: 1px solid var(--color-border-rule);
-    padding-right: 0;
-    padding-bottom: 12px;
-    max-height: none;
-    overflow-y: visible;
-  }
-  /* Swap the page list for a dropdown — a list of clickable page titles
-     is awkward to navigate on a phone. */
-  .docs-index-list {
-    display: none;
-  }
-  .docs-index-select {
-    display: block;
-  }
-}

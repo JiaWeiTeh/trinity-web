@@ -7,6 +7,23 @@ const rawDocs = import.meta.glob('../docs/*.md', {
   eager: true,
 })
 
+/* Per-page card metadata. Pages not listed here fall back to a generic
+   "Page" kicker and an empty description. */
+const PAGE_META = {
+  running: {
+    kicker: 'Guide',
+    description: 'Commands, sweep modes, outputs.',
+  },
+  parameters: {
+    kicker: 'Reference',
+    description: 'Every recognised keyword, grouped by role.',
+  },
+  license: {
+    kicker: 'Legal',
+    description: 'License terms and citation.',
+  },
+}
+
 function deriveTitle(path, content) {
   const h1 = content.match(/^\s*#\s+(.+?)\s*$/m)
   if (h1) return h1[1].trim()
@@ -22,11 +39,72 @@ function deriveKey(path) {
 function buildDocs() {
   return Object.entries(rawDocs)
     .sort(([a], [b]) => a.localeCompare(b))
-    .map(([path, content]) => ({
-      key: deriveKey(path),
-      title: deriveTitle(path, content),
-      content,
-    }))
+    .map(([path, content]) => {
+      const key = deriveKey(path)
+      const meta = PAGE_META[key] ?? {}
+      return {
+        key,
+        title: deriveTitle(path, content),
+        kicker: meta.kicker ?? 'Page',
+        description: meta.description ?? '',
+        content,
+      }
+    })
+}
+
+function DocsHeader({ docs, active, onPageChange }) {
+  return (
+    <header className="mb-12 max-w-[760px]">
+      <p style={{ fontFamily: 'var(--font-ui)' }}
+         className="text-[11px] uppercase tracking-[0.28em] text-ink-tertiary">
+        Manual pages
+      </p>
+      <h1 style={{ fontFamily: 'var(--font-display)' }}
+          className="mt-5 text-[34px] sm:text-[42px] font-semibold leading-tight tracking-[-0.015em] text-ink-primary">
+        Documentation
+      </h1>
+      <p style={{ fontFamily: 'var(--font-display)' }}
+         className="mt-5 max-w-[680px] text-[17px] sm:text-[20px] leading-[1.55] text-ink-secondary">
+        A compact reference for running TRINITY simulations and configuring parameter files.
+      </p>
+
+      <div className="mt-8 grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+        {docs.map((d) => {
+          const isActive = active.key === d.key
+          return (
+            <button
+              key={d.key}
+              type="button"
+              onClick={() => onPageChange(d.key)}
+              aria-current={isActive ? 'page' : undefined}
+              className={`group min-h-[124px] rounded-[14px] border p-5 text-left transition duration-200 ${
+                isActive
+                  ? 'border-teal bg-paper shadow-[0_18px_45px_rgba(14,165,200,0.10)]'
+                  : 'border-border-card bg-paper/60 shadow-sm hover:-translate-y-[2px] hover:bg-paper hover:shadow-[0_12px_30px_rgba(55,48,39,0.07)]'
+              }`}
+            >
+              <p
+                style={{ fontFamily: 'var(--font-ui)' }}
+                className={`text-[11px] uppercase tracking-[0.26em] ${isActive ? 'text-teal' : 'text-ink-tertiary'}`}
+              >
+                {d.kicker}
+              </p>
+              <h2 style={{ fontFamily: 'var(--font-display)' }}
+                  className="mt-4 text-[20px] font-semibold leading-tight text-ink-primary">
+                {d.title}
+              </h2>
+              {d.description && (
+                <p style={{ fontFamily: 'var(--font-ui)' }}
+                   className="mt-2 text-[13px] text-ink-secondary">
+                  {d.description}
+                </p>
+              )}
+            </button>
+          )
+        })}
+      </div>
+    </header>
+  )
 }
 
 export default function DocsView({ page, onPageChange, onNavigate }) {
@@ -75,59 +153,39 @@ export default function DocsView({ page, onPageChange, onNavigate }) {
   }
 
   return (
-    <div className="docs-layout">
-      <aside className="docs-index" aria-label="Documentation contents">
-        <p style={{ fontFamily: 'var(--font-ui)' }}
-           className="text-[11px] uppercase tracking-widest text-ink-tertiary mb-3">
-          Contents
-        </p>
+    <section>
+      <DocsHeader docs={docs} active={active} onPageChange={onPageChange} />
 
-        <ol className="docs-index-list">
-          {docs.map((d) => (
-            <li key={d.key}>
-              <button
-                onClick={() => onPageChange(d.key)}
-                aria-current={active.key === d.key ? 'page' : undefined}
-                className={`docs-index-link ${active.key === d.key ? 'is-active' : ''}`}
-              >
-                {d.title}
-              </button>
+      <div className="docs-layout">
+        <div className="docs-body">
+          <article className="docs-article" ref={articleRef}>
+            <Markdown content={active.content} onNavigate={onNavigate} />
+          </article>
+        </div>
 
-              {active.key === d.key && sections.length > 0 && (
-                <ul className="docs-section-list">
-                  {sections.map((s) => (
-                    <li key={s.id}>
-                      <button
-                        onClick={() => scrollToSection(s.id)}
-                        className={`docs-section-link ${activeSection === s.id ? 'is-active' : ''}`}
-                      >
-                        {s.text}
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </li>
-          ))}
-        </ol>
-
-        <select
-          className="docs-index-select"
-          aria-label="Select documentation page"
-          value={active.key}
-          onChange={(e) => onPageChange(e.target.value)}
-        >
-          {docs.map((d) => (
-            <option key={d.key} value={d.key}>{d.title}</option>
-          ))}
-        </select>
-      </aside>
-
-      <div className="docs-body">
-        <article className="docs-article" ref={articleRef}>
-          <Markdown content={active.content} onNavigate={onNavigate} />
-        </article>
+        <aside className="docs-index" aria-label="On this page">
+          {sections.length > 0 && (
+            <>
+              <p style={{ fontFamily: 'var(--font-ui)' }}
+                 className="text-[11px] uppercase tracking-[0.18em] text-ink-tertiary mb-3">
+                On this page
+              </p>
+              <ul className="docs-section-list">
+                {sections.map((s) => (
+                  <li key={s.id}>
+                    <button
+                      onClick={() => scrollToSection(s.id)}
+                      className={`docs-section-link ${activeSection === s.id ? 'is-active' : ''}`}
+                    >
+                      {s.text}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </>
+          )}
+        </aside>
       </div>
-    </div>
+    </section>
   )
 }

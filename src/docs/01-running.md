@@ -2,29 +2,28 @@
 
 ## Running a simulation
 
-A TRINITY run is fully specified by one plain-text parameter file, and
-there is a single command — from the repository root:
+A TRINITY run is fully specified by one plain-text parameter file. From
+the repository root:
 
 ```bash
 python run.py param/simple_cluster.param
 ```
 
-The path may be absolute or relative to the repository root. `run.py`
-scans the file and dispatches automatically: if the file contains list
-(`[...]`) or `tuple(...)` syntax it runs a parameter sweep across a
-parallel worker pool, otherwise it runs a single simulation. There is no
-separate command or flag for sweeps.
+`run.py` reads the file and dispatches automatically: list (`[...]`) or
+`tuple(...)` values trigger a parameter sweep across a parallel worker
+pool; anything else runs a single simulation. There is no separate
+command for sweeps. To scale a sweep across an HPC cluster, emit a SLURM
+job array with `--emit-jobs` (see *Running on a cluster* below).
 
-Output is written to the directory named by the `path2output` parameter;
-the sentinel `def_dir` (the default) means the current working
-directory. See *Outputs* below for the file layout.
+Output goes to the `path2output` directory. The default, `def_dir`,
+resolves to `outputs/<model_name>/` under the working directory — see
+*Outputs* below for the layout.
 
 ## Parameter-file formats
 
-A parameter file lists one `keyword    value` entry per line (see the
-[Parameter Specifications](?view=docs&page=parameters) for the full
-keyword list). The *value* syntax alone decides whether the file is a
-single run or a sweep:
+A parameter file lists one `keyword    value` per line (the
+[Parameter Specifications](?view=docs&page=parameters) cover every
+keyword). The *value* syntax alone decides single run vs. sweep:
 
 **`param/sweep_hybrid_example.param`**
 
@@ -41,40 +40,90 @@ tuple(mCloud, sfe)    [1e5, 0.01] [1e7, 0.10]
 nCore    [1e3, 1e4]
 ```
 
-The file above mixes all three value forms. How many simulations a file
-generates depends only on which forms it uses:
+How many simulations a file generates depends only on the value forms it
+uses:
 
 | Value syntax | Mode | Runs generated |
 | --- | --- | --- |
 | no `[ ]`, no `tuple()` | single | 1 |
-| `key [a, b, c]` | Cartesian | every combination (e.g. `mCloud` × `sfe` = 3 × 2 = 6) |
-| `tuple(x, y) [..] [..]` | tuple | only the listed points, no expansion |
-| tuple **and** list together | hybrid | tuple points × list combinations |
+| `key [a, b, c]` | Cartesian | every combination (`mCloud` × `sfe` = 3 × 2 = 6) |
+| `tuple(x, y) [..] [..]` | tuple | only the listed points |
+| tuple **and** list | hybrid | tuple points × list combinations |
 
-The hybrid example therefore runs 2 tuple pairs × 2 `nCore` values = 4
-simulations. Single-purpose worked examples ship as
-`param/sweep_example.param` (Cartesian),
-`param/sweep_tuple_example.param` (tuple), and
+The hybrid example above runs 2 tuple pairs × 2 `nCore` values = 4
+simulations. Worked examples ship as `param/sweep_example.param`
+(Cartesian), `param/sweep_tuple_example.param` (tuple), and
 `param/sweep_hybrid_example.param` (hybrid).
 
 ## Command-line flags
 
-All flags are optional and take effect when the file triggers sweep mode
-(they are ignored for single runs):
-
 | Flag | Description |
 | --- | --- |
-| `--dry-run`, `-n` | Preview all combinations (with any GMC warnings) without running. |
-| `--workers N`, `-w` | Number of parallel workers. Default `max(1, CPU count // 2 - 1)` — conservative so a laptop stays responsive; raise it on HPC nodes. |
-| `--yes`, `-y` | Skip the interactive confirmation prompt. |
+| `--dry-run`, `-n` | Preview every combination (with GMC warnings) without running. |
+| `--workers N`, `-w` | Parallel workers for the sweep pool — or the array cap with `--emit-jobs`. |
+| `--yes`, `-y` | Skip the confirmation prompt. |
 | `--verbose`, `-v` | DEBUG-level logs and the full base-parameter list. |
+| `--emit-jobs DIR` | Emit a SLURM job-array bundle in `DIR` instead of running locally. |
+| `--collect-report DIR` | Aggregate a finished `--emit-jobs` bundle into a sweep report. |
 
-Before launching, `run.py` runs a GMC-parameter plausibility check
-(cloud mass vs. core/ISM density, cloud radius, …) on every combination;
-invalid ones are listed up front so you can abort rather than waste
-compute. Press `Ctrl+C` — or send `SIGTERM`, e.g. from SLURM `scancel` —
-to cancel cleanly: in-flight workers are stopped and a report of
-completed / failed / cancelled runs is written to the output directory.
+> **Note** — Most flags apply only to sweeps. For a single run,
+> `--dry-run` prints the resolved parameter file and exits, while
+> `--workers` and `--yes` are ignored.
+
+The default worker count adapts to the machine: the full allocation
+inside a SLURM job (`SLURM_CPUS_PER_TASK`), or `max(1, CPU count // 2 - 1)`
+on a laptop. It must be ≥ 1 and never exceeds the cores available to the
+process. `--emit-jobs` and `--collect-report` are mutually exclusive.
+
+Before launching, `run.py` runs a plausibility check on every
+combination (cloud mass vs. core/ISM density, cloud radius, …) and lists
+any invalid ones up front, so you can abort before wasting compute.
+`Ctrl+C` or `SIGTERM` (e.g. from SLURM `scancel`) cancels cleanly:
+in-flight workers stop and a completed / failed / cancelled report is
+written to the output directory.
+
+## Running on a cluster
+
+A sweep runs in-process on a laptop or single node, sized by
+`--workers`. To spread it across nodes on an HPC cluster (e.g.
+bwForCluster Helix), emit a SLURM **job array** instead — one task per
+combination, packed across nodes and restarted independently on failure:
+
+```bash
+python run.py param/sweep_example.param --emit-jobs jobs/
+# edit jobs/submit_sweep.sbatch: --account, --partition, --time, --mem
+sbatch jobs/submit_sweep.sbatch
+python run.py --collect-report jobs/      # after the array finishes
+```
+
+`--emit-jobs DIR` writes a self-contained, submittable bundle:
+
+```text
+jobs/
+├── params/<run_name>.param   # one per combination, absolute path2output
+├── runs.tsv                  # param_path <TAB> output_dir; line N = task N
+├── manifest.json             # index: names, params, output dirs
+├── submit_sweep.sbatch       # #SBATCH --array=1-N[%K]; one sim per task
+└── logs/                     # %A_%a.out per task
+```
+
+Each task runs one simulation on one CPU, with math-library threads
+pinned to one (`OMP_NUM_THREADS=1`, `MPLBACKEND=Agg`) — parallelism comes
+from many tasks, not threading. `--workers K` at emit time caps
+concurrency as `--array=1-N%K`.
+
+When the array finishes, `--collect-report DIR` reads each task's exit
+code and duration, writes the same `sweep_report.txt` / `.json` as a
+local sweep, and prints a ready
+`sbatch --array=<failed ids> jobs/submit_sweep.sbatch` to rerun only the
+failures.
+
+> **Note** — Bundled inputs (SPS, cooling tables, `lib/default/`) resolve
+> relative to the package, so the clone location does not matter. Only
+> `path2output` follows the launch directory — point it at an absolute
+> work/scratch path for cluster runs. Running the in-process pool on a
+> *login* node is discouraged; `run.py` warns when SLURM is detected
+> without an active job.
 
 ## Outputs
 
@@ -85,18 +134,20 @@ A single run writes three files into `path2output`:
 ```text
 path2output/
 ├── dictionary.jsonl            # simulation state, one JSON object per snapshot
-├── {model_name}_summary.txt    # human-readable parameter summary
+├── metadata.json               # run constants + termination + final state
 └── trinity.log                 # log file (written when log_file = True)
 ```
 
-A sweep writes those same three files into one subdirectory per
-combination, plus two top-level reports:
+A sweep writes those same files into one subdirectory per combination,
+adds a fully-resolved `.param` sidecar to each, and two top-level
+reports:
 
 ```text
 outputs/my_sweep/
 ├── 1e5_sfe001_n1e3/
+│   ├── 1e5_sfe001_n1e3.param   # full resolved params for this run
 │   ├── dictionary.jsonl
-│   ├── 1e5_sfe001_n1e3_summary.txt
+│   ├── metadata.json
 │   └── trinity.log
 ├── 1e5_sfe001_n1e4/
 │   └── ...
@@ -104,108 +155,135 @@ outputs/my_sweep/
 └── sweep_report.json           # machine-readable sweep summary
 ```
 
-### Auto-generated run names
+### Run names
 
 Each sweep combination is named automatically:
 
 ```text
-{mCloud}_sfe{sfe*100:03d}_n{nCore}[_density-profile][_PHII]
+{mCloud}_sfe{sfe*100:03d}_n{nCore}[_density-profile][_PHII][_other-swept-keys]
 ```
 
-The optional suffixes appear only when the relevant parameter is set
-explicitly in the sweep file (not when left at its `default.param`
-value):
+Suffixes appear only when a parameter is set explicitly in the sweep file
+(not when left at its `default.param` value):
 
 - `_PL{alpha}` for `dens_profile = densPL` (e.g. `_PL0`, `_PL-2`), or
   `_BE{Omega}` for `densBE` (e.g. `_BE14`).
-- `_yesPHII` / `_noPHII` when `include_PHII` is set — useful when
-  sweeping the flag to compare runs with and without HII pressure.
+- `_yesPHII` / `_noPHII` when `include_PHII` is set.
+- `_{key}{value}` for any other swept key, so distinct combinations never
+  share a folder. snake_case becomes camelCase, decimal points become
+  `p`, and minus signs are kept — `ZCloud = [0.5, 1.0]` gives `_ZCloud0p5`
+  / `_ZCloud1p0`. Multiple suffixes follow sorted-key order.
 
-For example, `1e7_sfe010_n1e4_noPHII` is `mCloud=1e7, sfe=0.10,
-nCore=1e4` with `include_PHII = False`.
+Generic values are checked for filesystem safety:
 
-### Snapshot data model
+| Check | Trigger | Effect |
+| --- | --- | --- |
+| Hard-reject | `/`, `\`, `..`, control chars | `ValueError`, no runs — so filepath params can't be swept |
+| Sanitise | anything outside `[A-Za-z0-9.+-]` | replaced with `-`; the sweep still runs |
+| Length cap | run name over 200 characters | sweep aborts with a clear error |
 
-Each simulation writes its full state to `dictionary.jsonl` as a stream
-of newline-delimited JSON objects, one per snapshot. Writes are
-append-only, so the file remains readable after a crash — the last line
-may be partial but every prior line is a complete snapshot.
+For example, `1e7_sfe010_n1e4_noPHII` is `mCloud=1e7, sfe=0.10, nCore=1e4`
+with `include_PHII = False`.
 
-Snapshot keys group into a handful of categories:
+> **Note** — The folder name is only a readable handle. Every run also
+> writes its full resolved parameters to a per-run `.param` file (and the
+> sweep-wide `sweep_report.json`), so keys left at their default are still
+> recorded. Scripts comparing across sweeps should read those sidecars
+> rather than parse the folder name.
+
+## Output data model
+
+### dictionary.jsonl
+
+Each simulation streams its full state to `dictionary.jsonl` as
+newline-delimited JSON, one object per snapshot. Writes are append-only
+and crash-safe — buffered snapshots flush on a clean exit, `Ctrl+C`, or
+`SIGTERM`, so the file always parses (a trailing partial line aside).
+Each snapshot is saved before its ODE step, so all its values share one
+`t_now`.
+
+Snapshot keys fall into a few categories:
 
 | Category | Example keys |
 | --- | --- |
-| Administrative | `path2output`, `model_name`, `current_phase`, `SimulationEndReason` |
-| Cloud setup | `mCloud`, `sfe`, `mCluster`, `rCloud`, `initial_cloud_r_arr`, `initial_cloud_n_arr`, `initial_cloud_m_arr` |
+| Administrative | `model_name`, `current_phase`, `SimulationEndReason` |
+| Cloud setup | `mCloud`, `mCluster`, `rCloud`, `nEdge` |
 | Dynamical state | `t_now`, `R2`, `v2`, `Eb`, `T0`, `R1`, `Pb` |
-| Feedback (SB99) | `Lmech_W`, `Lmech_SN`, `Qi`, `Lbol`, `pdot` |
-| Forces | `F_grav`, `F_ram`, `F_ram_wind`, `F_ram_SN`, `F_ion_out`, `F_HII_St`, `F_rad` |
-| Bubble profile | `log_bubble_T_arr` + `bubble_T_arr_r_arr`, `log_bubble_n_arr` + `bubble_n_arr_r_arr`, `bubble_v_arr` + `bubble_v_arr_r_arr` |
-| Shell profile | `log_shell_n_arr` + `shell_r_arr`, `shell_grav_force_m` + `shell_grav_r` |
+| Feedback (SPS) | `Lmech_W`, `Lmech_SN`, `Qi`, `Lbol`, `pdot_total` |
+| Pressures | `P_drive`, `P_HII`, `P_ram` |
+| Forces | `F_grav`, `F_ram`, `F_ram_wind`, `F_ram_SN`, `F_HII`, `F_rad` |
+| Bubble / shell profiles | `log_bubble_T_arr` + `bubble_T_arr_r_arr`, `bubble_v_arr` + `bubble_v_arr_r_arr`, `log_shell_n_arr` + `shell_r_arr` |
 
-A single snapshot row looks like:
+Long 1-D profiles are downsampled before serialisation. Each simplified
+array carries its own abscissa (`*_r_arr`) and, when values span many
+decades, is stored in $\log_{10}$ space (`log_*`); the point budget is
+set by `simplify_npoints`. To recover a profile, interpolate the abscissa
+against the (possibly log-space) values.
 
-```json
-{
-  "snap_id": 42,
-  "t_now": 1.523e-01,
-  "current_phase": "energy",
-  "R2": 2.48, "v2": 15.7, "Eb": 9.21e+06, "T0": 7.4e+06,
-  "R1": 0.31, "Pb": 3.1e+04,
-  "Lmech_W": 1.22e+11, "Lmech_SN": 0.0, "Qi": 4.5e+50, "Lbol": 1.1e+40,
-  "F_grav": 9.3e+02, "F_ram": 1.6e+03, "F_rad": 7.2e+02,
-  "log_shell_n_arr": [3.1, 3.2, ...], "shell_r_arr":  [2.48, 2.49, ...]
-}
+> **Note** — To read the file, use the TRINITY reader API: it hides the
+> JSONL layout, the per-key units, and the legacy `.json` format behind a
+> small set of classes.
+
+### metadata.json
+
+Run constants and end-of-run summaries live in a sibling `metadata.json`
+(schema version 4) instead of being repeated in every snapshot. The
+reader folds the constants back into each snapshot on load, so you rarely
+read this file directly — but it is small and human-readable. Its blocks:
+
+| Block | Contents |
+| --- | --- |
+| run constants | Inputs and set-once derived values fixed after phase 0 (`mCloud`, `sfe`, `dens_profile`, …), drawn from the ParamSpec registry. |
+| `termination` | `{exit_code, outcome, detail, timestamp, model_name}` — how the run ended. |
+| `final_state` | Every scalar / bool / string at run end, in internal units (pc, Myr, pc⁻³). |
+| `termination_debug` | Last-snapshot diff, a NaN/Inf inventory, and sanity checks for post-mortems. |
+
+All writes are atomic, so an interrupted write never corrupts the file.
+
+### show_run
+
+For a quick human-readable view of a finished run — context, termination
+reason, and final state — without writing any plotting code:
+
+```bash
+python -m trinity._output.show_run path2output/
 ```
 
-For analysis, load snapshots through the TRINITY reader, which wraps
-`dictionary.jsonl` with a `TrinityOutput` container and exposes
-time-series extraction, snapshot interpolation, phase and time-range
-filtering, pandas conversion, and batch helpers for sweep outputs. The
-in-memory `DescribedDict` and the buffer→flush pipeline that produce the
-file are documented under *Snapshot Persistence* in the Architecture
-reference.
+It reads `metadata.json` and pretty-prints a curated subset. Pass
+`--json` for the full dump, or `--quiet` for a scriptable exit code
+(handy in batch loops over a sweep tree).
 
 ## Logging
 
 The [Parameter Specifications](?view=docs&page=parameters) list the four
-logging parameters (`log_level`, `log_console`, `log_file`,
-`log_colors`) and their defaults. This
-section covers the conceptual ladder of log levels and an example of the
-output.
-
-### Log levels
-
-Each level includes itself and all more severe levels:
-`CRITICAL > ERROR > WARNING > INFO > DEBUG`. Setting `log_level = INFO`
-emits `INFO`, `WARNING`, `ERROR`, and `CRITICAL` messages.
+logging parameters (`log_level`, `log_console`, `log_file`, `log_colors`)
+and their defaults. Each level includes itself and every more severe one
+— `CRITICAL > ERROR > WARNING > INFO > DEBUG` — so `log_level = INFO`
+emits `INFO` and above.
 
 | Level | Typical messages | When to use |
 | --- | --- | --- |
-| `DEBUG` | Variable values, loop iterations, intermediate calculations, function entry/exit. | Development; debugging specific issues (default). |
-| `INFO` | Phase transitions, major events (bubble burst, cloud edge reached), initialisation and completion markers. | Normal simulation runs. |
-| `WARNING` | Values clamped to limits, fallback behaviour, unusual but non-critical conditions. | Production runs where only potential problems matter. |
-| `ERROR` | Calculation failures, recoverable errors. | Silent runs where only actual errors matter. |
-| `CRITICAL` | Unrecoverable failures, fatal errors. | When only simulation-stopping errors should print. |
+| `DEBUG` | Variable values, loop iterations, function entry/exit. | Development and debugging (default). |
+| `INFO` | Phase transitions, major events, init and completion markers. | Normal runs. |
+| `WARNING` | Clamped values, fallbacks, unusual but non-critical conditions. | Production, when only problems matter. |
+| `ERROR` | Calculation failures, recoverable errors. | Runs where only real errors matter. |
+| `CRITICAL` | Unrecoverable, fatal errors. | When only stopping errors should print. |
 
-### Example output
-
-With `log_level = INFO`:
+With `log_level = INFO`, console output looks like:
 
 ```text
-2026-01-08 15:30:00 | INFO     | src.main | === TRINITY Simulation Starting ===
-2026-01-08 15:30:00 | INFO     | src.main | Model: test_simulation
-2026-01-08 15:30:01 | INFO     | src.sb99.read_SB99 | SB99 data loaded: 201 time points
-2026-01-08 15:30:03 | INFO     | src.phase1_energy | Entering energy-driven phase
-2026-01-08 15:30:15 | WARNING  | src.cooling | Temperature below minimum, clamping to 1e4 K
-2026-01-08 15:30:45 | INFO     | src.phase1_energy | Energy phase complete: 150 timesteps
-2026-01-08 15:35:00 | INFO     | src.main | === Simulation Finished ===
+2026-01-08 15:30:00 | INFO     | trinity.main | === TRINITY Simulation Starting ===
+2026-01-08 15:30:00 | INFO     | trinity.main | Model: test_simulation
+2026-01-08 15:30:01 | INFO     | trinity.sps.read_sps | SPS data processed
+2026-01-08 15:30:03 | INFO     | trinity.phase1_energy | Entering energy-driven phase
+2026-01-08 15:30:45 | INFO     | trinity.main | === TRINITY Simulation Complete ===
 ```
 
 ## Troubleshooting
 
-Most parameter errors are typos against the schema; the authoritative
-list of valid keywords and defaults is `src/_input/default.param`,
-mirrored in the [Parameter Specifications](?view=docs&page=parameters).
-For issues and feature requests,
-see [github.com/JiaWeiTeh/trinity/issues](https://github.com/JiaWeiTeh/trinity/issues).
+Most parameter errors are typos against the schema. The authoritative
+list of keywords and defaults is the ParamSpec registry
+(`trinity/_input/registry.py`), which generates `trinity/_input/default.param`
+and the [Parameter Specifications](?view=docs&page=parameters). For issues
+and feature requests, see
+[github.com/JiaWeiTeh/trinity/issues](https://github.com/JiaWeiTeh/trinity/issues).

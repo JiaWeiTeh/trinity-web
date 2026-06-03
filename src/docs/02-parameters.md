@@ -1,32 +1,29 @@
 # Parameter Specifications
 
-Every TRINITY simulation is driven by a plain-text parameter file. This
-page describes how such files are formatted and enumerates every keyword
-that TRINITY recognises, grouped by physical role: cloud and
-environment, stellar feedback, numerical solver, output, and a handful
-of sweep-mode directives. For each keyword the default value, unit, and
-short description are given. The same information can be inspected at run
-time through the `DescribedItem` objects attached to every entry in the
-output state dictionary (see [Running TRINITY](?view=docs&page=running),
-*Snapshot data model*).
+Every parameter TRINITY recognises is listed below, with its default,
+unit, and a short description. Use the search box to find a keyword by
+name, group, default, unit, or description, and the group dropdown to
+narrow by category.
+
+```parameter-table
+```
 
 ## File format
 
 The canonical parameter schema — the authoritative, fully-commented list
-of keys and defaults — lives at `src/_input/default.param`; the keywords
-below mirror it. Worked example files live under `param/` (see
-`param/simple_cluster.param` or `param/cloud_example_PL.param`) and
+of keys and defaults — lives at `trinity/_input/default.param`; the
+reference above mirrors it. Worked example files live under `param/`
+(see `param/simple_cluster.param` or `param/cloud_example_PL.param`) and
 override those defaults.
 
 A parameter file contains one `keyword    value` entry per line. A `#`
 starts a comment, either as a whole line or after a value. Keyword names
 are case-sensitive and may appear in any order.
 
-Keywords with a default (listed below) are optional; those without a
-default are required. A value written as a bracketed list
-(`mCloud [1e5, 1e6]`) or through a `tuple(...)` directive turns the file
-into a sweep — see [Running TRINITY](?view=docs&page=running) for the
-sweep syntax.
+Keywords with a default are optional; those without a default are
+required. A value written as a bracketed list (`mCloud [1e5, 1e6]`) or
+through a `tuple(...)` directive turns the file into a sweep — see
+[Running TRINITY](?view=docs&page=running) for the sweep syntax.
 
 ### Supported value types
 
@@ -55,65 +52,12 @@ works in `[Msun, pc, Myr]`; conversion is automatic, driven by the
 # UNIT: [erg * s**-1 * cm**-1 * K**(-7/2)]
 ```
 
-## Parameter reference
-
-### Administrative parameters
-
-These parameters control simulation naming and output.
-
-| Parameter | Default | Description |
-| --- | --- | --- |
-| `model_name` | `default` | Prefix for all output filenames. Use alphanumeric characters and underscores only. |
-| `path2output` | `def_dir` | Output directory path. `def_dir` uses the current working directory. |
-| `output_format` | `JSON` | Output format. Currently only JSON is supported. |
-| `simplify_npoints` | `100` | Target number of points retained for the simplified profile arrays written into each snapshot (`bubble_T_arr`, `bubble_n_arr`, `bubble_dTdr_arr`, `bubble_v_arr`, `shell_grav_force_m`, `shell_n_arr`). Larger values give higher-fidelity snapshots at the cost of larger output files. Clamped to `>= 20` (matches the coverage-skeleton chunk count); the first two simplify calls per implicit-phase snapshot log their reconstruction $R^2$ at `INFO` level so you can verify the chosen budget is faithful. |
-
-### Logging parameters
-
-Configure how TRINITY reports progress and diagnostics.
-
-| Parameter | Default | Description |
-| --- | --- | --- |
-| `log_level` | `DEBUG` | Logging verbosity: `DEBUG`, `INFO`, `WARNING`, `ERROR`, `CRITICAL`. See [Running TRINITY](?view=docs&page=running) for details. |
-| `log_console` | `False` | Enable terminal output for log messages. |
-| `log_file` | `True` | Write log messages to `{path2output}/trinity.log`. |
-| `log_colors` | `True` | Color-code terminal output by severity level. |
-
-### Physical parameters
-
-Core parameters defining the molecular cloud and star formation.
-
-| Parameter | Default | Unit | Description |
-| --- | --- | --- | --- |
-| `mCloud` | `1e6` | $M_\odot$ | Total mass of the molecular cloud. |
-| `sfe` | `0.01` | -- | Star formation efficiency (0 < sfe < 1). Fraction of cloud mass converted to stars. |
-| `ZCloud` | `1` | $Z_\odot$ | Cloud metallicity. **Currently only solar (1) is supported.** |
-| `include_PHII` | `True` | -- | Include HII pressure (from Strömgren ionization balance in the shell) in $P_{\rm drive}$. When `False`, $P_{\rm HII}$ is set to zero. |
-
-**Derived quantities:**
+## Derived quantities
 
 - Cluster mass: $M_{\rm cluster} = M_{\rm cloud} \times {\rm sfe}$
 - Remaining cloud mass: $M_{\rm cloud,after} = M_{\rm cloud} - M_{\rm cluster}$
 
-### Density profile parameters
-
-Define the radial density structure of the molecular cloud.
-
-**Profile selection:**
-
-| Parameter | Default | Description |
-| --- | --- | --- |
-| `dens_profile` | `densPL` | Density profile type: `densPL` (power-law) or `densBE` (Bonnor-Ebert) |
-
-**Common parameters:**
-
-| Parameter | Default | Unit | Description |
-| --- | --- | --- | --- |
-| `nCore` | `1e5` | cm$^{-3}$ | Core number density. For homogeneous clouds (`densPL_alpha=0`), this is the average density. |
-| `nISM` | `1` | cm$^{-3}$ | Ambient ISM number density. |
-| `rCore` | `0.01` | pc | Core radius. Not used for homogeneous clouds. |
-
-#### Power-law profile (densPL)
+## Density profiles
 
 When `dens_profile = densPL`, the density follows:
 
@@ -125,134 +69,19 @@ $$
 \end{cases}
 $$
 
-| Parameter | Default | Description |
-| --- | --- | --- |
-| `densPL_alpha` | `0` | Power-law exponent ($-2 \leq \alpha \leq 0$). Special cases: `0` = homogeneous, `-2` = isothermal sphere. |
+When `dens_profile = densBE`, TRINITY implements a Bonnor-Ebert sphere
+([Ebert 1955](https://ui.adsabs.harvard.edu/abs/1955ZA.....37..217E/abstract);
+[Bonnor 1956](https://ui.adsabs.harvard.edu/abs/1956MNRAS.116..351B/abstract)).
 
-#### Bonnor-Ebert profile (densBE)
+> **Note** — `densPL_alpha` is ignored when using `densBE`, and
+> `densBE_Omega` is ignored when using `densPL`.
 
-When `dens_profile = densBE`, implements a Bonnor-Ebert sphere ([Ebert 1955](https://ui.adsabs.harvard.edu/abs/1955ZA.....37..217E/abstract); [Bonnor 1956](https://ui.adsabs.harvard.edu/abs/1956MNRAS.116..351B/abstract)).
+## Termination semantics
 
-| Parameter | Default | Description |
-| --- | --- | --- |
-| `densBE_Omega` | `14.1` | Density contrast $\Omega = \rho_{\rm center}/\rho_{\rm edge}$. Values > 14.1 indicate gravitational instability. |
-
-> **Note** — Conditional parameters: `densPL_alpha` is ignored when using `densBE`, and `densBE_Omega` is ignored when using `densPL`.
-
-### Termination parameters
-
-Conditions that end the simulation.
-
-| Parameter | Default | Unit | Description |
-| --- | --- | --- | --- |
-| `allowShellDissolution` | `True` | -- | Allow shell dissolution to terminate the simulation. If `False`, the dissolution check is disabled. |
-| `stop_t_diss` | `1` | Myr | Duration `shell_nMax` must remain below `nISM` before dissolution is triggered. |
-| `stop_r` | `500` | pc | Maximum shell radius. Exceeding this triggers termination. Set to `None` to disable this condition. |
-| `stop_v` | `-1e4` | km/s | Velocity threshold for numerical instability detection. |
-| `stop_t` | `15` | Myr | Maximum simulation duration. Set to `None` to disable this condition. |
-| `stop_at_rCloud_nSnap` | `None` | -- | Terminate after the shell crosses the cloud edge (R2 > rCloud). `None` disables. `0` stops at the edge (only the energy-phase reconciliation snapshot at R2 = rCloud is recorded). `N > 0` lets the implicit phase advance for `N` more segment-loop snapshots past the crossing before terminating; the implicit phase's end-of-phase reconciliation snapshot adds one extra past-rCloud sample, so the total snapshots with R2 ≥ rCloud is roughly `N + 2` (1 at-edge + `N` in-loop + 1 reconciliation). |
-| `coll_r` | `1` | pc | Radius below which the cloud is considered completely collapsed. |
-
-> **Note** — Setting `stop_r`, `stop_t`, or `stop_at_rCloud_nSnap` to `None` disables that termination condition, allowing the simulation to continue until other conditions are met (e.g., shell dissolution, collapse, or cloud boundary).
-
-### Starburst99 parameters
-
-Configure the stellar population synthesis model for feedback calculations.
-
-| Parameter | Default | Unit | Description |
-| --- | --- | --- | --- |
-| `SB99_mass` | `1e6` | $M_\odot$ | Reference cluster mass used in SB99 files. Used for scaling. |
-| `SB99_rotation` | `1` | -- | Include stellar rotation (1=yes, 0=no). Rotation extends lifetimes via internal mixing. |
-| `SB99_BHCUT` | `120` | $M_\odot$ | Black hole formation threshold. Stars above this ZAMS mass collapse directly to BH without SN. |
-
-### Feedback parameters
-
-Control mass injection and energy thermalization from stellar feedback.
-
-| Parameter | Default | Unit | Description |
-| --- | --- | --- | --- |
-| `FB_mColdWindFrac` | `0` | -- | Fraction of cold material swept up by protostellar winds. |
-| `FB_mColdSNFrac` | `0` | -- | Fraction of cold ejecta from supernovae. |
-| `FB_thermCoeffWind` | `1` | -- | Thermalization efficiency for stellar wind kinetic energy. |
-| `FB_thermCoeffSN` | `1` | -- | Thermalization efficiency for supernova ejecta. |
-| `FB_vSN` | `1e4` | km/s | Supernova ejecta velocity. |
-
-### Phase control parameters
-
-Control transitions between simulation phases.
-
-| Parameter | Default | Description |
-| --- | --- | --- |
-| `adiabaticOnlyInCore` | `False` | Restrict adiabatic (energy-driven) phase to within core radius. |
-| `immediate_leak` | `True` | Transition immediately to momentum-driven phase when bubble bursts. |
-| `phaseSwitch_LlossLgain` | `0.05` | Threshold for $(L_{\rm gain} - L_{\rm loss})/L_{\rm gain}$ to trigger phase transition. |
-| `use_adaptive_solver` | `True` | Use the adaptive ODE solver for the energy-driven phase (`run_energy_phase_modified.py`). If `False`, falls back to the original solver (`run_energy_phase.py`). |
-
-### Cooling parameters
-
-Parameters for radiative cooling calculations.
-
-| Parameter | Default | Description |
-| --- | --- | --- |
-| `cool_alpha` | `0.6` | Cooling parameter: $\alpha = v_2 \cdot t_{\rm now} / R_2$ |
-| `cool_beta` | `0.8` | Cooling parameter: $\beta = -dP_b/dt$ |
-| `cool_delta` | `-6/35` | Cooling parameter: $\delta = dT/dt$ |
-
-### Path configuration
-
-Specify paths to external data files.
-
-| Parameter | Default | Description |
-| --- | --- | --- |
-| `path_cooling_CIE` | `3` | Cooling curve for CIE (T > $10^{5.5}$ K). Integer presets: 1=CLOUDY HII, 2=CLOUDY+grains, 3=Gnat & Ferland 2012, 4=Sutherland & Dopita 0.15Z. |
-| `path_cooling_nonCIE` | `def_dir` | Path to non-CIE cooling curves (T < $10^{5.5}$ K). |
-| `path_sps` | `def_dir` | Path to Starburst99 stellar population files. |
-
-### Physical constants
-
-Standard physical constants. Typically not modified.
-
-**Mean molecular weights:**
-
-| Parameter | Default | Description |
-| --- | --- | --- |
-| `mu_atom` | `1.273` | Neutral atomic gas (HI + He). $\mu = 14/11$ |
-| `mu_ion` | `0.609` | Fully ionized gas (H+ + He++). $\mu = 14/23$ |
-| `mu_mol` | `2.333` | Molecular gas (H2 + He). $\mu = 14/6$ |
-| `mu_convert` | `1.4` | Mass density conversion factor (n to $\rho$). |
-
-**Temperature constants:**
-
-| Parameter | Default | Unit | Description |
-| --- | --- | --- | --- |
-| `TShell_neu` | `1e2` | K | Neutral shell temperature. |
-| `TShell_ion` | `1e4` | K | Ionized shell temperature. |
-
-**Dust parameters:**
-
-| Parameter | Default | Unit | Description |
-| --- | --- | --- | --- |
-| `dust_sigma` | `1.5e-21` | cm$^2$ | Dust cross-section at solar metallicity. |
-| `dust_noZ` | `0.05` | $Z_\odot$ | Metallicity below which dust is negligible. |
-| `dust_KappaIR` | `4` | cm$^2$/g | Rosseland mean dust opacity $\kappa_{\rm IR}$. |
-
-**Fundamental constants:**
-
-| Parameter | Default | Unit | Description |
-| --- | --- | --- | --- |
-| `gamma_adia` | `5/3` | -- | Adiabatic index. |
-| `caseB_alpha` | `2.59e-13` | cm$^3$/s | Case B recombination coefficient. |
-| `C_thermal` | `6e-7` | erg/(s cm K$^{7/2}$) | Thermal conduction coefficient. |
-| `c_light` | `2.998e10` | cm/s | Speed of light. |
-| `G` | `6.674e-8` | cm$^3$/(g s$^2$) | Gravitational constant. |
-| `k_B` | `1.381e-16` | erg/K | Boltzmann constant. |
-| `PISM` | `0` | K cm$^{-3}$ | ISM pressure $P/k_B$. |
-
-**Bubble structure:**
-
-| Parameter | Default | Description |
-| --- | --- | --- |
-| `bubble_xi_Tb` | `0.98` | Relative radius $\xi = r/R_2$ for measuring bubble temperature. |
+Setting `stop_r`, `stop_t`, or `stop_at_rCloud_nSnap` to `None` disables
+that termination condition, allowing the simulation to continue until
+other conditions are met (shell dissolution, collapse, or cloud
+boundary).
 
 ## Examples
 

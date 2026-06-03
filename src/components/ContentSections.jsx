@@ -30,13 +30,13 @@ const REFS = {
     volume: '483',
     page: '2547',
   },
-  lancaster21: {
-    authors: 'Lancaster, L., Ostriker, E. C., Kim, J.-G., Kim, C.-G.',
-    year: '2021',
-    title: 'Efficiently Cooled Stellar Wind Bubbles in Turbulent Clouds. I.',
-    journal: 'ApJ',
-    volume: '914',
-    page: '89',
+  chevance20: {
+    authors: 'Chevance, M., Kruijssen, J. M. D., Hygate, A. P. S., et al.',
+    year: '2020',
+    title: 'The lifecycle of molecular clouds in nearby star-forming disc galaxies',
+    journal: 'MNRAS',
+    volume: '493',
+    page: '2872',
   },
   lancaster25: {
     authors: 'Lancaster, L., Ostriker, E. C., Kim, J.-G., Kim, C.-G.',
@@ -127,10 +127,10 @@ function NotationTerm({ label, definition }) {
   )
 }
 
-function formatFirstThreeAuthors(authors) {
+function formatAuthors(authors) {
   const parts = authors.split(', ')
-  const firstThree = parts.slice(0, 6).join(', ')
-  return parts.length > 6 ? `${firstThree} et al.` : firstThree
+  const shown = parts.slice(0, 6).join(', ')
+  return parts.length > 6 ? `${shown} et al.` : shown
 }
 
 function Cite({ authors, year, journal, volume, page, bare = false }) {
@@ -140,7 +140,7 @@ function Cite({ authors, year, journal, volume, page, bare = false }) {
 
   const surname = authors.split(',')[0].split('.').pop().trim()
   const label = `${surname} et al. ${year}`
-  const authorRow = formatFirstThreeAuthors(authors)
+  const authorRow = formatAuthors(authors)
   const journalRow = `${journal} ${volume}, ${page} (${year})`
 
   useEffect(() => {
@@ -193,6 +193,71 @@ function CiteList({ refs }) {
   )
 }
 
+/* Shared prose block — one place to tune the body type for all sections. */
+function Prose({ children }) {
+  return (
+    <div style={{ fontFamily: 'var(--font-display)' }}
+         className="text-[17px] text-ink-secondary leading-[1.65] space-y-4">
+      {children}
+    </div>
+  )
+}
+
+/* Figures live in /public/media as both a rasterised PNG (shown inline) and
+   the original PDF (linked from the caption). BASE_URL resolves the Vite
+   /trinity-web/ deploy prefix. */
+const MEDIA = `${import.meta.env.BASE_URL}media/`
+
+function PaperFigure({ src, pdf, alt, maxH = 460 }) {
+  return (
+    <a
+      href={`${MEDIA}${pdf}`}
+      target="_blank"
+      rel="noopener noreferrer"
+      title="Open the full figure (PDF)"
+      className="block bg-white"
+    >
+      <img
+        src={`${MEDIA}${src}`}
+        alt={alt}
+        loading="lazy"
+        className="mx-auto block w-auto max-w-full"
+        style={{ maxHeight: maxH }}
+      />
+    </a>
+  )
+}
+
+function FigureSource({ pdf, children }) {
+  return (
+    <p style={{ fontFamily: 'var(--font-ui)' }}
+       className="text-[11px] text-ink-tertiary mt-3">
+      {children}{' '}
+      <a href={`${MEDIA}${pdf}`} target="_blank" rel="noopener noreferrer"
+         className="text-teal underline underline-offset-[3px] decoration-1">
+        view PDF →
+      </a>
+    </p>
+  )
+}
+
+/* Teal kicker + serif title, shared by the interactive figure and the
+   embedded paper figures. */
+function FigureHeader({ kicker, title }) {
+  return (
+    <>
+      <p style={{ fontFamily: 'var(--font-ui)' }}
+         className="text-[12px] font-medium text-teal mb-1">
+        {kicker}
+      </p>
+      <p style={{ fontFamily: 'var(--font-display)' }}
+         className="text-[15px] font-semibold text-ink-primary mb-4">
+        {title}
+      </p>
+    </>
+  )
+}
+
 /* ── Sections ────────────────────────────────────────────────── */
 
 function Abstract() {
@@ -202,21 +267,33 @@ function Abstract() {
         <div className="border-l-4 border-border-card pl-5 py-1">
           <p style={{ fontFamily: 'var(--font-display)' }}
              className="text-[15px] text-ink-secondary leading-[1.7]">
-            TRINITY is a 1D spherical thin-shell code that self-consistently evolves stellar wind bubbles, photoionised regions, and swept-up shells in giant molecular clouds. The code couples stellar winds, supernovae, radiation pressure, photoionised-gas thermal pressure, and gravity across energy-driven, transition, and momentum-driven phases. It succeeds WARPFIELD {' '}
-            <CiteList refs={[REFS.rahner17, REFS.rahner19]} /> with a phase-aware treatment of the energy-to-momentum transition, flexible density profiles, and ionisation-front tracking within the shell. This site presents the code, its physical model, and an interactive diagnostic of the shell structure across evolutionary phases.
+            A giant molecular cloud is usually dispersed within a few million
+            years of forming its first massive stars, before any of them explode
+            as supernovae. The clearing is therefore done by pre-supernova
+            feedback: stellar winds, radiation pressure, and the pressure of
+            photoionised gas. TRINITY follows these processes in a single
+            calculation. It is a 1D spherical thin-shell code that tracks one
+            swept-up shell from the early wind-blown bubble to its late
+            expansion, and it succeeds WARPFIELD
+            {' '}<CiteList refs={[REFS.rahner17, REFS.rahner19]} />. The two main
+            additions are photoionised-gas pressure that drives the shell
+            directly, switched with the evolutionary phase, and a choice of
+            cloud profile (uniform, power-law, or Bonnor–Ebert). This page
+            summarises the model and its first results; the details are in
+            Paper I.
           </p>
 
           {/* Keywords */}
           <p style={{ fontFamily: 'var(--font-ui)' }}
              className="text-[12px] text-ink-tertiary mt-4">
             <span className="font-medium" style={{ fontStyle: 'italic' }}>Key words. </span>
-            ISM: bubbles — H{' '}II regions — stars: winds, outflows — methods: numerical — stars: formation
+            methods: numerical — ISM: bubbles — ISM: clouds — ISM: H{' '}II regions — ISM: kinematics and dynamics — stars: formation
           </p>
 
           {/* Status line */}
           <p style={{ fontFamily: 'var(--font-ui)' }}
              className="text-[11px] text-ink-tertiary mt-2 italic">
-            Code version 1.0
+            Code version 1.0 · Paper I, Teh et al. (2026)
           </p>
         </div>
       </div>
@@ -224,140 +301,331 @@ function Abstract() {
   )
 }
 
-function Section1Overview() {
+function Section1Setup() {
   return (
-    <section id="overview" className="py-12">
+    <section id="setup" className="py-12">
       <div className="max-w-[680px] mx-auto">
-        <SectionHeading number={1} title="Overview" />
-        <div style={{ fontFamily: 'var(--font-display)' }}
-             className="text-[17px] text-ink-secondary leading-[1.65] space-y-4">
+        <SectionHeading number={1} title="The setup" />
+        <Prose>
           <p>
-            Massive stars reshape their natal molecular clouds through stellar winds, supernovae, radiation pressure, and the thermal pressure of photoionised gas.
+            Across nearby galaxies, molecular clouds disperse within about
+            1–5 Myr of their first massive stars appearing {' '}
+            <Cite {...REFS.chevance20} />. The first core-collapse supernovae
+            arrive only after roughly 3–4 Myr, so the clouds are cleared before
+            supernovae contribute.
             <Sidenote>
-              In the energy-driven phase, the hot shocked wind at T ~ 10⁶–10⁷ K provides the dominant pressure. This is the classical <span className="whitespace-nowrap">Weaver et al. (1977)</span> regime.
+              Surveys such as PHANGS measure this by matching the molecular gas,
+              exposed young clusters, dust, and ionised gas of the same regions
+              at cloud-scale resolution.
             </Sidenote>
-            {' '}The relative importance of these mechanisms — and how dominance shifts over time — controls cloud dispersal timescales, triggered star formation, and the momentum budget available to drive galactic outflows.
+            {' '}The clearing is therefore set by pre-supernova feedback.
           </p>
           <p>
-            Existing models typically treat these feedback channels in isolation or make simplifying assumptions about the transition from energy-driven to momentum-driven expansion. TRINITY evolves all five mechanisms self-consistently within a 1D spherical thin-shell framework, tracking the full dynamical sequence from initial wind-blown bubble through shell formation, radiative cooling, and late-time momentum-driven expansion.
+            This raises the question the code is built to address: among the
+            pre-supernova channels (winds, direct and dust-reprocessed radiation
+            pressure, and the pressure of photoionised gas, P<sub>H II</sub>),
+            which one dominates, when, and for which clouds?
             <Sidenote>
-              WARPFIELD (Rahner et al. 2017, 2019) is the predecessor 1D feedback code. TRINITY adds phase-aware driving, smooth transitions, and ionisation-front tracking.
+              WARPFIELD (Rahner et al. 2017, 2019) is the predecessor 1D code.
+              TRINITY keeps its efficiency and adds explicit P<sub>H II</sub>{' '}
+              driving and a choice of cloud profile.
             </Sidenote>
+            {' '}The answer depends on cloud mass, density profile, cluster mass,
+            and metallicity. That parameter space is too large to cover with full
+            3D simulations.
           </p>
           <p>
-            The dynamics of the swept-up shell are governed by a single equation of motion balancing the driving pressure and the radiation force against gravity:
+            TRINITY is designed to survey it at low cost, and to return
+            quantities that can be compared with observations: shell sizes, the
+            balance of forces, and the fraction of ionising photons that escape.
           </p>
-        </div>
-
-        <Equation
-          id="eq1"
-          number={1}
-          latex={String.raw`\frac{d}{dt}\!\left(M_{\rm sh}\,\dot{R}\right) = 4\pi R^2\,P_{\rm drive} + F_{\rm rad} - \frac{G\,M_{\rm sh}\,M_{\rm enc}}{R^2}`}
-        />
-
-        <div style={{ fontFamily: 'var(--font-display)' }}
-             className="text-[17px] text-ink-secondary leading-[1.65] space-y-4">
-          <p>
-            The Rosette Nebula illustrates the multi-zone structure that TRINITY captures: a central cluster driving a wind cavity, surrounded by a hot bubble, an ionised shell, a neutral swept-up shell, and the ambient molecular cloud.
-          </p>
-        </div>
+        </Prose>
       </div>
     </section>
   )
 }
 
 function Section2Model({ time, setTime }) {
-  const phase = time < 0.5 ? 'energy' : time < 1.2 ? 'transition' : 'momentum'
-
   return (
     <section id="model" className="py-12">
       <div className="max-w-[680px] mx-auto mb-8">
-        <SectionHeading number={2} title="Physical model" />
-        <div style={{ fontFamily: 'var(--font-display)' }}
-             className="text-[17px] text-ink-secondary leading-[1.65] space-y-4">
+        <SectionHeading number={2} title="What TRINITY does" />
+        <Prose>
           <p>
-            TRINITY divides the feedback-driven expansion into three dynamical phases. In the energy-driven phase, the hot shocked wind inflates a high-pressure bubble that drives a swept-up shell into the surrounding cloud (<Ref target="eq1">Eq. 1</Ref>).
-            <Sidenote>
-              <NotationTerm
-                label={<>P<sub>H II</sub></>}
-                definition="Thermal pressure of photoionised gas in the H II region."
-              /> is computed at T<sub>i</sub> ≈ 10⁴ K from a cavity-aware Strömgren integral.
-            </Sidenote>
-            {' '}In the classical solution <Cite {...REFS.weaver77} />, the bubble radius evolves as:
+            TRINITY treats the swept-up shell as a single mass element and
+            integrates one equation of motion for it. The driving pressure and
+            radiation force push outward; gravity and any confining ambient
+            pressure act inward:
           </p>
-        </div>
+        </Prose>
+
+        <Equation
+          id="eq1"
+          number={1}
+          latex={String.raw`\frac{d}{dt}\!\left(M_{\rm sh}\,\dot{R}\right) = 4\pi R^2\!\left(P_{\rm drive} - P_{\rm ext}\right) + F_{\rm rad} - F_{\rm grav}`}
+        />
+
+        <Prose>
+          <p>
+            The form of the driving pressure depends on the evolutionary phase.
+            A wind-blown bubble passes through three: an early{' '}
+            <em>energy-driven</em> phase in which a hot shocked-wind bubble
+            inflates the shell (<Cite {...REFS.weaver77} />), a{' '}
+            <em>transition</em> as radiative cooling drains that bubble, and a
+            late <em>momentum-driven</em> phase in which the shell coasts. The
+            driving term is selected to match the phase so that the same
+            pressure is not counted twice:
+            <Sidenote>
+              In the energy-driven phase the bubble pressure {' '}
+              <NotationTerm label={<>P<sub>b</sub></>} definition="Thermal pressure inside the hot shocked-wind bubble." />
+              {' '}and the photoionised-gas pressure {' '}
+              <NotationTerm label={<>P<sub>H II</sub></>} definition="Thermal pressure of the ionised layer at ~10⁴ K." />
+              {' '}describe competing equilibria for the cavity gas, so the
+              larger of the two is used rather than their sum {' '}
+              (<Cite {...REFS.lancaster25} />).
+            </Sidenote>
+          </p>
+        </Prose>
 
         <Equation
           id="eq2"
           number={2}
-          latex={String.raw`R(t) = \left(\frac{125}{154\pi}\right)^{\!1/5} L_{\rm w}^{1/5}\,\bar{\rho}^{-1/5}\,t^{3/5}`}
+          latex={String.raw`P_{\rm drive} = \begin{cases} \max\!\left(P_{\rm b},\; P_{\rm H\,{\scriptscriptstyle\rm II}}\right) & \text{energy-driven} \\[6pt] \max\!\left(P_{\rm b},\; P_{\rm H\,{\scriptscriptstyle\rm II}} + P_{\rm ram}\right) & \text{transition} \\[6pt] P_{\rm H\,{\scriptscriptstyle\rm II}} + P_{\rm ram} & \text{momentum-driven} \end{cases}`}
         />
 
-        <div style={{ fontFamily: 'var(--font-display)' }}
-             className="text-[17px] text-ink-secondary leading-[1.65] space-y-4">
+        <Prose>
           <p>
-            As radiative cooling drains thermal energy from the bubble interior, the system passes through a transition regime and into a momentum-driven regime where photoionised-gas pressure and wind ram pressure sustain the expansion. TRINITY switches the driving pressure formulation between phases:
+            Two changes relative to WARPFIELD follow from this. P<sub>H II</sub>{' '}
+            now enters the equation of motion explicitly (<Ref target="eq2">Eq. 2</Ref>),
+            and the initial cloud is not restricted to a uniform sphere: it can
+            be uniform, a power law, or a Bonnor–Ebert sphere. A single run
+            takes about 30 minutes on one core, which makes systematic surveys
+            practical. <Ref target="fig1">Interactive Fig. 1</Ref> shows how the
+            shell structure changes across the three phases.
           </p>
-        </div>
-
-        <Equation
-          id="eq3"
-          number={3}
-          latex={String.raw`P_{\rm drive} = \begin{cases} \max\!\left(P_{\rm b},\; P_{\rm H\,\scriptscriptstyle II}\right) & \text{energy-driven} \\[6pt] \max\!\left(P_{\rm b},\; P_{\rm H\,\scriptscriptstyle II} + P_{\rm ram}\right) & \text{transition} \\[6pt] P_{\rm H\,\scriptscriptstyle II} + P_{\rm ram} & \text{momentum-driven} \end{cases}`}
-        />
-
-        <div style={{ fontFamily: 'var(--font-display)' }}
-             className="text-[17px] text-ink-secondary leading-[1.65] space-y-4">
-          <p>
-            This phase-aware treatment (<Ref target="eq3">Eq. 3</Ref>) is one of the key differences from WARPFIELD, which does not include photoionised-gas pressure as a driving term (see <Ref target="fig1">Interactive Fig. 1</Ref> for the effect on shell structure).
-            <Sidenote>
-              In the max formulation, {' '}
-              <NotationTerm label={<>P<sub>b</sub></>} definition="Thermal pressure inside the hot shocked wind bubble." />
-              {' '}and{' '}
-              <NotationTerm label={<>P<sub>H II</sub></>} definition="Thermal pressure in ionised gas at approximately 10⁴ K." />
-              {' '}describe competing equilibria for the cavity gas — a hot wind-shock state vs. a photoionisation-equilibrium state — so the driving pressure is whichever equilibrium is set higher, not the sum.
-            </Sidenote>
-          </p>
-        </div>
+        </Prose>
       </div>
 
       <div id="fig1" className="max-w-[680px] mx-auto">
-        <p style={{ fontFamily: 'var(--font-ui)' }}
-           className="text-[12px] font-medium text-teal mb-1">
-          Interactive Fig. 1
-        </p>
-        <p style={{ fontFamily: 'var(--font-display)' }}
-           className="text-[15px] font-semibold text-ink-primary mb-4">
-          Shell structure across evolutionary phases
-        </p>
+        <FigureHeader
+          kicker="Interactive Fig. 1"
+          title="Shell structure across evolutionary phases"
+        />
 
         <div className="flex flex-col items-center gap-4">
-          <div className="w-full max-w-[380px]">
-            <BubbleDiagram time={time} />
+          <div className="figure-card w-full">
+            <div className="grid md:grid-cols-[1.3fr_1fr]">
+              <div className="figure-card-image flex items-center justify-center p-6 md:p-7 border-b border-border-card md:border-b-0 md:border-r">
+                <div className="w-full max-w-[380px]">
+                  <BubbleDiagram time={time} />
+                </div>
+              </div>
+              <div className="flex flex-col p-6 md:p-7">
+                <p style={{ fontFamily: 'var(--font-ui)' }}
+                   className="text-[11px] uppercase tracking-[0.18em] text-ink-tertiary">
+                  Figure caption
+                </p>
+                <p style={{ fontFamily: 'var(--font-display)' }}
+                   className="mt-3 text-[15px] leading-7 text-ink-secondary">
+                  1D shell structure across the three phases. The central
+                  cluster drives free-streaming winds out to the termination
+                  shock R<sub>ts</sub>; shocked wind fills the hot bubble to
+                  R<sub>b</sub>; outside it sit an ionised layer (to the
+                  ionisation front R<sub>if</sub>) and a neutral swept-up layer
+                  (to R<sub>sh</sub>), embedded in the natal cloud. Drag the
+                  slider to evolve the bubble, or hover a label to isolate a
+                  zone. The radii are schematic and not to scale.
+                </p>
+                <FigureSource pdf="paper_schematic.pdf">
+                  Adapted from Fig. 1 of Paper I.
+                </FigureSource>
+              </div>
+            </div>
           </div>
-
-          <p style={{ fontFamily: 'var(--font-display)' }}
-             className="text-[15px] italic text-ink-secondary text-center min-h-[48px] max-w-[520px]">
-            {phase === 'energy' && 'Energy-driven: hot bubble pressure inflates the shell.'}
-            {phase === 'transition' && 'Transition: thermal energy radiates away.'}
-            {phase === 'momentum' && 'Momentum-driven: photoionised gas pressure and ram pressure sustain expansion.'}
-          </p>
 
           <div className="w-full max-w-[520px]">
             <TimeScrubber time={time} onTimeChange={setTime} />
           </div>
         </div>
-
-        <p style={{ fontFamily: 'var(--font-ui)' }}
-           className="text-[12px] text-ink-tertiary mt-3 leading-relaxed max-w-[680px] mx-auto">
-          Interactive Fig. 1 — Idealised 1D shell structure in the energy-driven, transition, and momentum-driven regimes. Drag the time slider to evolve the bubble and hover layer labels to isolate each zone. Layer sizes are schematic and not to scale — shown for illustration only.
-        </p>
       </div>
     </section>
   )
 }
 
-function Section3Papers() {
+function ResultCard({ index, title, figure, sourcePdf, sourceLabel, children }) {
+  return (
+    <div className="figure-card overflow-hidden">
+      {figure && (
+        <div className="border-b border-border-card p-4 bg-white">
+          {figure}
+        </div>
+      )}
+      <div className="p-6 md:p-7">
+        <div className="flex items-baseline gap-3">
+          <span style={{ fontFamily: 'var(--font-display)' }}
+                className="text-[22px] font-semibold text-ink-tertiary leading-none shrink-0">
+            {index}
+          </span>
+          <h3 style={{ fontFamily: 'var(--font-display)' }}
+              className="text-[17px] font-semibold text-ink-primary leading-snug">
+            {title}
+          </h3>
+        </div>
+        <p style={{ fontFamily: 'var(--font-display)' }}
+           className="mt-3 text-[15px] leading-7 text-ink-secondary">
+          {children}
+        </p>
+        {sourcePdf && <FigureSource pdf={sourcePdf}>{sourceLabel}</FigureSource>}
+      </div>
+    </div>
+  )
+}
+
+function Section3Results() {
+  return (
+    <section id="results" className="py-12">
+      <div className="max-w-[680px] mx-auto">
+        <SectionHeading number={3} title="Key results" />
+        <Prose>
+          <p>
+            Paper I validates the code against analytic wind, photoionisation,
+            and momentum limits, then explores clouds of mass 10<sup>5</sup>–10<sup>6.5</sup>{' '}
+            M<sub>☉</sub> across a range of densities and star-formation
+            efficiencies. A single run returns the shell dynamics, the force
+            budget, and the ionising-photon budget on one time grid. This
+            distinguishes two timescales: when feedback clears the cloud, and
+            when Lyman-continuum photons begin to escape.
+          </p>
+        </Prose>
+
+        {/* Diagnostic showcase — Fig. 3 of Paper I */}
+        <div className="mt-6">
+          <FigureHeader kicker="Diagnostic suite" title="One run, three diagnostics" />
+          <div className="figure-card overflow-hidden p-4 bg-white">
+            <PaperFigure
+              src="teaser_fiducial.png"
+              pdf="teaser_fiducial.pdf"
+              alt="Three stacked panels versus time: shell radius and velocity; the fractional force budget split into gravity, drive, radiation and external pressure with wind/H II/SN sub-channels; and the ionising-photon budget split into gas absorption, dust absorption and LyC escape."
+              maxH={560}
+            />
+          </div>
+          <p style={{ fontFamily: 'var(--font-display)' }}
+             className="text-[13px] leading-6 text-ink-secondary mt-3">
+            A fiducial run (M<sub>cloud</sub> = 10<sup>6</sup> M<sub>☉</sub>,
+            ε = 0.10). <em>Top:</em> shell radius and velocity, with the energy,
+            transition, and momentum phases marked. <em>Middle:</em> the force
+            budget. Photoionised gas (H II) retains a measurable share after the
+            transition, and radiation pressure remains sub-dominant.
+            <em> Bottom:</em> the ionising-photon budget. The LyC escape fraction
+            rises as the shell becomes density-bounded.
+          </p>
+          <FigureSource pdf="teaser_fiducial.pdf">
+            Fig. 3 of Paper I.
+          </FigureSource>
+        </div>
+
+        <p style={{ fontFamily: 'var(--font-display)' }}
+           className="text-[17px] text-ink-secondary leading-[1.65] mt-10 mb-5">
+          Three results from the parameter survey are worth highlighting.
+        </p>
+
+        <div className="grid gap-5 md:grid-cols-1">
+          <ResultCard
+            index={1}
+            title="Photoionised gas affects the dynamics"
+            sourcePdf="radiusComparison_M1e6_sfe001_n1e3.pdf"
+            sourceLabel="Fig. 2 of Paper I."
+            figure={
+              <PaperFigure
+                src="radiusComparison_M1e6_sfe001_n1e3.png"
+                pdf="radiusComparison_M1e6_sfe001_n1e3.pdf"
+                alt="Bubble radius versus time. The TRINITY curve sits above a WARPFIELD-equivalent run with photoionised-gas pressure switched off, and between the pure-energy and pure-photoionised analytic limits."
+                maxH={360}
+              />
+            }
+          >
+            Including P<sub>H II</sub> increases the shell radius by about 17% at
+            10 Myr relative to a WARPFIELD-equivalent run, and the difference
+            grows at later times as the cooled bubble loses its driving pressure.
+            The full trajectory lies between the pure-energy and pure-photoionised
+            limits, so neither channel dominates on its own at this efficiency.
+          </ResultCard>
+
+          <ResultCard
+            index={2}
+            title="Cloud structure sets the outcome"
+            sourcePdf="densityProfile_paper.pdf"
+            sourceLabel="Fig. 4 of Paper I."
+            figure={
+              <PaperFigure
+                src="densityProfile_paper.png"
+                pdf="densityProfile_paper.pdf"
+                alt="Top: four cloud density profiles and their enclosed mass. Bottom: bubble radius versus time — only the steep r-to-the-minus-two cloud keeps expanding; the uniform, r-to-the-minus-one, and Bonnor–Ebert clouds turn over and re-collapse."
+                maxH={520}
+              />
+            }
+          >
+            At fixed cloud mass, central density, and star-formation efficiency,
+            uniform and shallow clouds stall and re-collapse, while a steep
+            ρ ∝ r<sup>−2</sup> cloud continues to expand. The minimum efficiency
+            required for dispersal is therefore not a single value; it depends on
+            how the cloud&rsquo;s mass is distributed.
+          </ResultCard>
+
+          <ResultCard
+            index={3}
+            title="Emergence timing depends on cloud structure"
+            sourcePdf="pedrini_emergence_timescales_merge.pdf"
+            sourceLabel="Fig. 6 of Paper I."
+            figure={
+              <PaperFigure
+                src="pedrini_emergence_timescales_merge.png"
+                pdf="pedrini_emergence_timescales_merge.pdf"
+                alt="Dispersal timescale versus cluster mass for Bonnor–Ebert clouds (left) and homogeneous clouds (right); at matched mass and efficiency the Bonnor–Ebert clouds disperse later."
+                maxH={300}
+              />
+            }
+          >
+            Even when every cloud disperses, Bonnor–Ebert clouds clear about
+            55% later than uniform clouds of the same mass, because the mass is
+            spread over a larger radius. Dispersal times fall in the range
+            0.3–3 Myr, before the first supernovae, so the outcome is set by
+            pre-supernova feedback.
+          </ResultCard>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+function Section4Caveats() {
+  return (
+    <section id="caveats" className="py-12">
+      <div className="max-w-[680px] mx-auto">
+        <SectionHeading number={4} title="Caveats & what's next" />
+        <Prose>
+          <p>
+            TRINITY is one-dimensional, so it averages over champagne flows,
+            blister breakouts, and the corrugated bubble interface that
+            instabilities produce in real clouds. Its photoionised-gas treatment
+            keeps a single radius for the bubble and the ionisation front, which
+            is intermediate between simpler shell models and fully coupled
+            two-radius models. The shell is assumed closed, and magnetic,
+            cosmic-ray, and turbulent pressures are not included in the dynamics.
+          </p>
+          <p>
+            Planned extensions address these points: an evolving shell covering
+            fraction, non-zero ambient pressure, a two-radius treatment of the
+            bubble and ionisation front, and the full parameter-space survey in{' '}
+            <Ref target="papers">Paper II</Ref>.
+          </p>
+        </Prose>
+      </div>
+    </section>
+  )
+}
+
+function Section5Papers() {
   const papers = [
     { num: 'Paper I', title: 'Code & Methods', status: 'Teh et al. (2026), arXiv:2605.27517', href: 'https://arxiv.org/abs/2605.27517' },
   ]
@@ -365,10 +633,10 @@ function Section3Papers() {
   return (
     <section id="papers" className="py-12">
       <div className="max-w-[680px] mx-auto">
-        <SectionHeading number={3} title="Papers" />
+        <SectionHeading number={5} title="Papers" />
         <p style={{ fontFamily: 'var(--font-display)' }}
            className="text-[17px] text-ink-secondary leading-[1.65] mb-6">
-          TRINITY is developed across a series of methods and science papers.
+          TRINITY is described in a series of methods and science papers.
         </p>
         <div>
           {papers.map((p, i) => (
@@ -408,18 +676,18 @@ function Section3Papers() {
 
 function Acknowledgements() {
   const messages = [
-    'JWT thanks the mass-to-light ratio for keeping things interesting, and coffee for keeping things moving.',
-    'JWT acknowledges the Sun for powering the H II regions, and espresso for powering the code.',
-    'JWT is grateful to the Rosette Nebula for looking exactly like a textbook figure, and to RSK for pointing out when the code does not.',
+    'JWT acknowledges the shell for not dissolving before the paper was written.',
     'JWT thanks the ODE solver for converging most of the time.',
+    'JWT thanks the mass-to-light ratio for keeping things interesting, and coffee for keeping things moving.',
+    'JWT acknowledges the Sun for powering the H II regions, and espresso for powering the code.',
+    'JWT is grateful to the Rosette Nebula for looking exactly like a textbook figure, and to RSK for pointing out when the code does not.',
     'JWT acknowledges gravity for providing the only restoring force in this problem, and in the chair.',
     'JWT thanks the interstellar medium for being compressible, and deadlines for being incompressible.',
     'JWT is grateful to Starburst99 for the stellar models, and to Heidelberg\'s bakeries for the fuel.',
     'JWT thanks the anonymous mass-loading parameter for absorbing all remaining uncertainties.',
-    'JWT acknowledges the shell for not dissolving before the paper was written.',
   ];
 
-  const [index, setIndex] = useState(() => Math.floor(Math.random() * messages.length));
+  const [index, setIndex] = useState(0);
   const [visible, setVisible] = useState(true);
 
   const advance = useCallback(() => {
@@ -487,18 +755,22 @@ function Contact() {
 
 /* ── Composition ─────────────────────────────────────────────── */
 
-export default function ContentSections({ onViewChange }) {
+export default function ContentSections() {
   const [time, setTime] = useState(0)
 
   return (
     <div>
       <Abstract />
       <SectionRule />
-      <Section1Overview />
+      <Section1Setup />
       <SectionRule />
       <Section2Model time={time} setTime={setTime} />
       <SectionRule />
-      <Section3Papers />
+      <Section3Results />
+      <SectionRule />
+      <Section4Caveats />
+      <SectionRule />
+      <Section5Papers />
       <SectionRule />
       <Acknowledgements />
       <SectionRule />
