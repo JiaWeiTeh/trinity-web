@@ -2,31 +2,28 @@
 
 ## Running a simulation
 
-A TRINITY run is fully specified by one plain-text parameter file, and
-there is a single command — from the repository root:
+A TRINITY run is fully specified by one plain-text parameter file. From
+the repository root:
 
 ```bash
 python run.py param/simple_cluster.param
 ```
 
-The path may be absolute or relative to the repository root. `run.py`
-scans the file and dispatches automatically: if the file contains list
-(`[...]`) or `tuple(...)` syntax it runs a parameter sweep across a
-parallel worker pool, otherwise it runs a single simulation. There is no
-separate command or flag for sweeps. On an HPC cluster you can instead
-generate a SLURM job array with `--emit-jobs` (see *Running on a cluster
-(SLURM)* below).
+`run.py` reads the file and dispatches automatically: list (`[...]`) or
+`tuple(...)` values trigger a parameter sweep across a parallel worker
+pool; anything else runs a single simulation. There is no separate
+command for sweeps. To scale a sweep across an HPC cluster, emit a SLURM
+job array with `--emit-jobs` (see *Running on a cluster* below).
 
-Output is written to the directory named by the `path2output` parameter;
-the default sentinel `def_dir` resolves to `outputs/<model_name>/` under
-the current working directory. See *Outputs* below for the file layout.
+Output goes to the `path2output` directory. The default, `def_dir`,
+resolves to `outputs/<model_name>/` under the working directory — see
+*Outputs* below for the layout.
 
 ## Parameter-file formats
 
-A parameter file lists one `keyword    value` entry per line (see the
-[Parameter Specifications](?view=docs&page=parameters) for the full
-keyword reference). The *value* syntax alone decides whether the file is
-a single run or a sweep:
+A parameter file lists one `keyword    value` per line (the
+[Parameter Specifications](?view=docs&page=parameters) cover every
+keyword). The *value* syntax alone decides single run vs. sweep:
 
 **`param/sweep_hybrid_example.param`**
 
@@ -43,51 +40,54 @@ tuple(mCloud, sfe)    [1e5, 0.01] [1e7, 0.10]
 nCore    [1e3, 1e4]
 ```
 
-The file above mixes all three value forms. How many simulations a file
-generates depends only on which forms it uses:
+How many simulations a file generates depends only on the value forms it
+uses:
 
 | Value syntax | Mode | Runs generated |
 | --- | --- | --- |
 | no `[ ]`, no `tuple()` | single | 1 |
-| `key [a, b, c]` | Cartesian | every combination (e.g. `mCloud` × `sfe` = 3 × 2 = 6) |
-| `tuple(x, y) [..] [..]` | tuple | only the listed points, no expansion |
-| tuple **and** list together | hybrid | tuple points × list combinations |
+| `key [a, b, c]` | Cartesian | every combination (`mCloud` × `sfe` = 3 × 2 = 6) |
+| `tuple(x, y) [..] [..]` | tuple | only the listed points |
+| tuple **and** list | hybrid | tuple points × list combinations |
 
-The hybrid example therefore runs 2 tuple pairs × 2 `nCore` values = 4
-simulations. Single-purpose worked examples ship as
-`param/sweep_example.param` (Cartesian),
-`param/sweep_tuple_example.param` (tuple), and
+The hybrid example above runs 2 tuple pairs × 2 `nCore` values = 4
+simulations. Worked examples ship as `param/sweep_example.param`
+(Cartesian), `param/sweep_tuple_example.param` (tuple), and
 `param/sweep_hybrid_example.param` (hybrid).
 
 ## Command-line flags
 
-All flags are optional. Most take effect only in sweep mode; for a
-single run, `--dry-run` prints the resolved file and exits without
-running, while `--workers` and `--yes` are ignored:
-
 | Flag | Description |
 | --- | --- |
-| `--dry-run`, `-n` | Preview all combinations (with any GMC warnings) without running. |
-| `--workers N`, `-w` | Parallel workers for the in-process sweep pool — or the array concurrency cap with `--emit-jobs`. Default inside a SLURM job: the full allocation (`SLURM_CPUS_PER_TASK`, else `SLURM_CPUS_ON_NODE` / CPU affinity); on a laptop: `max(1, CPU count // 2 - 1)`. Must be `>= 1`; refused if it exceeds the cores available to this process. |
-| `--yes`, `-y` | Skip the interactive confirmation prompt. |
+| `--dry-run`, `-n` | Preview every combination (with GMC warnings) without running. |
+| `--workers N`, `-w` | Parallel workers for the sweep pool — or the array cap with `--emit-jobs`. |
+| `--yes`, `-y` | Skip the confirmation prompt. |
 | `--verbose`, `-v` | DEBUG-level logs and the full base-parameter list. |
-| `--emit-jobs DIR` | Generate a SLURM job-array bundle in `DIR` (one task per combination) instead of running locally; requires a sweep file. Mutually exclusive with `--collect-report` (see below). |
-| `--collect-report DIR` | Aggregate a finished `--emit-jobs` bundle into `sweep_report.txt` / `.json`; needs no parameter file. |
+| `--emit-jobs DIR` | Emit a SLURM job-array bundle in `DIR` instead of running locally. |
+| `--collect-report DIR` | Aggregate a finished `--emit-jobs` bundle into a sweep report. |
 
-Before launching, `run.py` runs a GMC-parameter plausibility check
-(cloud mass vs. core/ISM density, cloud radius, …) on every combination;
-invalid ones are listed up front so you can abort rather than waste
-compute. Press `Ctrl+C` — or send `SIGTERM`, e.g. from SLURM `scancel` —
-to cancel cleanly: in-flight workers are stopped and a report of
-completed / failed / cancelled runs is written to the output directory.
+> **Note** — Most flags apply only to sweeps. For a single run,
+> `--dry-run` prints the resolved parameter file and exits, while
+> `--workers` and `--yes` are ignored.
 
-## Running on a cluster (SLURM)
+The default worker count adapts to the machine: the full allocation
+inside a SLURM job (`SLURM_CPUS_PER_TASK`), or `max(1, CPU count // 2 - 1)`
+on a laptop. It must be ≥ 1 and never exceeds the cores available to the
+process. `--emit-jobs` and `--collect-report` are mutually exclusive.
 
-On a laptop or a single multi-core node, a sweep runs across an
-in-process worker pool sized by `--workers`. To scale across nodes on an
-HPC cluster (e.g. bwForCluster Helix / bwUniCluster), generate a SLURM
-**job array** instead — one array task per combination, so the scheduler
-packs them across nodes and restarts failures independently:
+Before launching, `run.py` runs a plausibility check on every
+combination (cloud mass vs. core/ISM density, cloud radius, …) and lists
+any invalid ones up front, so you can abort before wasting compute.
+`Ctrl+C` or `SIGTERM` (e.g. from SLURM `scancel`) cancels cleanly:
+in-flight workers stop and a completed / failed / cancelled report is
+written to the output directory.
+
+## Running on a cluster
+
+A sweep runs in-process on a laptop or single node, sized by
+`--workers`. To spread it across nodes on an HPC cluster (e.g.
+bwForCluster Helix), emit a SLURM **job array** instead — one task per
+combination, packed across nodes and restarted independently on failure:
 
 ```bash
 python run.py param/sweep_example.param --emit-jobs jobs/
@@ -96,53 +96,50 @@ sbatch jobs/submit_sweep.sbatch
 python run.py --collect-report jobs/      # after the array finishes
 ```
 
-Running the in-process pool on a *login* node is discouraged; `run.py`
-prints a warning when SLURM is detected without an active job.
-
 `--emit-jobs DIR` writes a self-contained, submittable bundle:
 
 ```text
 jobs/
 ├── params/<run_name>.param   # one per combination, absolute path2output
-├── runs.tsv                  # param_path <TAB> output_dir; line N = array task N
+├── runs.tsv                  # param_path <TAB> output_dir; line N = task N
 ├── manifest.json             # index: names, params, output dirs
 ├── submit_sweep.sbatch       # #SBATCH --array=1-N[%K]; one sim per task
 └── logs/                     # %A_%a.out per task
 ```
 
-Each array task runs `python run.py <combo>.param` with one CPU and
-math-library threads pinned to one (`OMP_NUM_THREADS=1` …,
-`MPLBACKEND=Agg`); parallelism comes from running many tasks, not from
-threading one. Passing `--workers K` at emit time caps concurrency as
-`--array=1-N%K`.
+Each task runs one simulation on one CPU, with math-library threads
+pinned to one (`OMP_NUM_THREADS=1`, `MPLBACKEND=Agg`) — parallelism comes
+from many tasks, not threading. `--workers K` at emit time caps
+concurrency as `--array=1-N%K`.
 
-When the array finishes, `--collect-report DIR` reads each task's
-`.exit_code` / `.duration` sentinels and writes the same
-`sweep_report.txt` / `.json` as a local sweep, then prints a ready
+When the array finishes, `--collect-report DIR` reads each task's exit
+code and duration, writes the same `sweep_report.txt` / `.json` as a
+local sweep, and prints a ready
 `sbatch --array=<failed ids> jobs/submit_sweep.sbatch` to rerun only the
 failures.
 
-Outputs land in the same `path2output/<run_name>/` layout as a local
-sweep (see *Outputs* below). Bundled inputs (SPS, cooling tables,
-`lib/default/`) resolve relative to the package, so the clone location
-does not matter; only `path2output` follows the launch directory — set it
-to an absolute path on a work/scratch filesystem for cluster runs.
+> **Note** — Bundled inputs (SPS, cooling tables, `lib/default/`) resolve
+> relative to the package, so the clone location does not matter. Only
+> `path2output` follows the launch directory — point it at an absolute
+> work/scratch path for cluster runs. Running the in-process pool on a
+> *login* node is discouraged; `run.py` warns when SLURM is detected
+> without an active job.
 
 ## Outputs
 
 ### File layout
 
-A single run writes these files into `path2output`:
+A single run writes three files into `path2output`:
 
 ```text
 path2output/
 ├── dictionary.jsonl            # simulation state, one JSON object per snapshot
-├── metadata.json               # run constants + termination + final-state blocks
+├── metadata.json               # run constants + termination + final state
 └── trinity.log                 # log file (written when log_file = True)
 ```
 
 A sweep writes those same files into one subdirectory per combination,
-adds a fully-resolved `.param` sidecar to each, and writes two top-level
+adds a fully-resolved `.param` sidecar to each, and two top-level
 reports:
 
 ```text
@@ -158,7 +155,7 @@ outputs/my_sweep/
 └── sweep_report.json           # machine-readable sweep summary
 ```
 
-### Auto-generated run names
+### Run names
 
 Each sweep combination is named automatically:
 
@@ -166,61 +163,46 @@ Each sweep combination is named automatically:
 {mCloud}_sfe{sfe*100:03d}_n{nCore}[_density-profile][_PHII][_other-swept-keys]
 ```
 
-The optional suffixes appear only when the relevant parameter is set
-explicitly in the sweep file (not when left at its `default.param`
-value):
+Suffixes appear only when a parameter is set explicitly in the sweep file
+(not when left at its `default.param` value):
 
 - `_PL{alpha}` for `dens_profile = densPL` (e.g. `_PL0`, `_PL-2`), or
   `_BE{Omega}` for `densBE` (e.g. `_BE14`).
-- `_yesPHII` / `_noPHII` when `include_PHII` is set — useful when
-  sweeping the flag to compare runs with and without HII pressure.
-- Any *other* swept parameter without a curated slot above gets a generic
-  `_{key}{value}` suffix so distinct combinations never collapse onto the
-  same folder. snake_case keys become camelCase and decimal points in
-  floats become `p` (minus signs are kept, as in `_PL-2`). Examples:
-  sweeping `ZCloud = [0.5, 1.0]` yields `_ZCloud0p5` / `_ZCloud1p0`;
-  `coll_counter = [True, False]` yields `_collCounterTrue` /
-  `_collCounterFalse`. Multiple generic suffixes are emitted in
-  sorted-key order for stability.
+- `_yesPHII` / `_noPHII` when `include_PHII` is set.
+- `_{key}{value}` for any other swept key, so distinct combinations never
+  share a folder. snake_case becomes camelCase, decimal points become
+  `p`, and minus signs are kept — `ZCloud = [0.5, 1.0]` gives `_ZCloud0p5`
+  / `_ZCloud1p0`. Multiple suffixes follow sorted-key order.
 
-  Folder-name safety rules applied to generic values:
+Generic values are checked for filesystem safety:
 
-  - **Hard-rejected** with an immediate `ValueError` (no sweep runs):
-    values containing `/`, `\`, `..`, or any control character. This
-    means **filepath-typed parameters cannot be swept** — set them once
-    in your base param file. The check protects against silently nesting
-    directories or escaping the sweep root.
-  - **Sanitised** to `-`: any character outside `[A-Za-z0-9.+-]` (spaces,
-    brackets, shell wildcards, unicode, `=`, `:` …). The sweep still runs
-    but with a safe folder name.
-  - **Length-capped** at 200 characters for the full run name; the sweep
-    aborts with a clear error if you cross it (reserve room for sibling
-    filenames within the 255-byte filesystem cap).
+| Check | Trigger | Effect |
+| --- | --- | --- |
+| Hard-reject | `/`, `\`, `..`, control chars | `ValueError`, no runs — so filepath params can't be swept |
+| Sanitise | anything outside `[A-Za-z0-9.+-]` | replaced with `-`; the sweep still runs |
+| Length cap | run name over 200 characters | sweep aborts with a clear error |
 
-For example, `1e7_sfe010_n1e4_noPHII` is `mCloud=1e7, sfe=0.10,
-nCore=1e4` with `include_PHII = False`.
+For example, `1e7_sfe010_n1e4_noPHII` is `mCloud=1e7, sfe=0.10, nCore=1e4`
+with `include_PHII = False`.
 
-The folder name is only a unique human-readable handle: every sweep run
-also writes its full resolved parameter set to a per-run `.param` file
-(plus the sweep-wide `sweep_report.json`), so a run with *no* suffix for
-some key still has that key recorded — it just took the `default.param`
-value. Master plot scripts that compare across sweeps should read
-parameters from those sidecars rather than parse them out of the folder
-name.
+> **Note** — The folder name is only a readable handle. Every run also
+> writes its full resolved parameters to a per-run `.param` file (and the
+> sweep-wide `sweep_report.json`), so keys left at their default are still
+> recorded. Scripts comparing across sweeps should read those sidecars
+> rather than parse the folder name.
 
 ## Output data model
 
 ### dictionary.jsonl
 
-Each simulation writes its full state to `dictionary.jsonl` as a stream
-of newline-delimited JSON objects, one per snapshot. Writes are
-append-only and crash-safe (the run flushes buffered snapshots on a clean
-exit, `Ctrl+C`, or `SIGTERM`), so the file remains readable after a
-crash — the last line may be partial but every prior line is a complete
-snapshot. Snapshots are saved *before* each ODE step, so all values in
-one snapshot share a single `t_now`.
+Each simulation streams its full state to `dictionary.jsonl` as
+newline-delimited JSON, one object per snapshot. Writes are append-only
+and crash-safe — buffered snapshots flush on a clean exit, `Ctrl+C`, or
+`SIGTERM`, so the file always parses (a trailing partial line aside).
+Each snapshot is saved before its ODE step, so all its values share one
+`t_now`.
 
-Snapshot keys group into a handful of categories:
+Snapshot keys fall into a few categories:
 
 | Category | Example keys |
 | --- | --- |
@@ -232,68 +214,60 @@ Snapshot keys group into a handful of categories:
 | Forces | `F_grav`, `F_ram`, `F_ram_wind`, `F_ram_SN`, `F_HII`, `F_rad` |
 | Bubble / shell profiles | `log_bubble_T_arr` + `bubble_T_arr_r_arr`, `bubble_v_arr` + `bubble_v_arr_r_arr`, `log_shell_n_arr` + `shell_r_arr` |
 
-A handful of long 1-D profile arrays are downsampled before serialisation
-to keep snapshots manageable. Each simplified array is paired with its
-own abscissa (`*_r_arr`) and, where the values span many decades, stored
-in $\log_{10}$ space (`log_*`). The target point budget is set by
-`simplify_npoints` (see the
-[Parameter Specifications](?view=docs&page=parameters)). To recover a
-profile, linearly interpolate the paired abscissa against the (possibly
-log-space) values.
+Long 1-D profiles are downsampled before serialisation. Each simplified
+array carries its own abscissa (`*_r_arr`) and, when values span many
+decades, is stored in $\log_{10}$ space (`log_*`); the point budget is
+set by `simplify_npoints`. To recover a profile, interpolate the abscissa
+against the (possibly log-space) values.
 
-The recommended way to read the file is the TRINITY reader API, which
-hides the JSONL layout, the per-key unit metadata, and the legacy `.json`
-format behind a small set of classes.
+> **Note** — To read the file, use the TRINITY reader API: it hides the
+> JSONL layout, the per-key units, and the legacy `.json` format behind a
+> small set of classes.
 
 ### metadata.json
 
-Run-constant parameters and end-of-run summaries live in a sibling
-`metadata.json` (current schema version 4) rather than being repeated in
-every snapshot. The reader rehydrates the run constants into each
-snapshot on load, so consumers never have to read this file directly —
-but it is small and human-inspectable. Its top-level blocks are:
+Run constants and end-of-run summaries live in a sibling `metadata.json`
+(schema version 4) instead of being repeated in every snapshot. The
+reader folds the constants back into each snapshot on load, so you rarely
+read this file directly — but it is small and human-readable. Its blocks:
 
 | Block | Contents |
 | --- | --- |
-| run constants | Every input parameter / set-once derived value that does not change after phase 0 (`mCloud`, `sfe`, `dens_profile`, physical constants, …). Membership is derived from the ParamSpec registry (see the [Parameter Specifications](?view=docs&page=parameters)), so it always matches the schema. |
+| run constants | Inputs and set-once derived values fixed after phase 0 (`mCloud`, `sfe`, `dens_profile`, …), drawn from the ParamSpec registry. |
 | `termination` | `{exit_code, outcome, detail, timestamp, model_name}` — how the run ended. |
-| `final_state` | Every scalar / bool / string on the state dict at run end, in internal units (pc, Myr, pc⁻³). Long arrays are excluded — their final values are the last line of `dictionary.jsonl`. |
-| `termination_debug` | Last-two-snapshot diff, a NaN/Inf inventory, and physics sanity checks, for post-mortem debugging. |
+| `final_state` | Every scalar / bool / string at run end, in internal units (pc, Myr, pc⁻³). |
+| `termination_debug` | Last-snapshot diff, a NaN/Inf inventory, and sanity checks for post-mortems. |
 
-All writes go through an atomic helper, so an interrupted write can never
-leave a corrupt file.
+All writes are atomic, so an interrupted write never corrupts the file.
 
 ### show_run
 
-For a quick human-readable view of a finished run — run context,
-termination reason, and final state — without writing any plotting code:
+For a quick human-readable view of a finished run — context, termination
+reason, and final state — without writing any plotting code:
 
 ```bash
 python -m trinity._output.show_run path2output/
 ```
 
-It reads `metadata.json` and pretty-prints a curated subset; pass
-`--json` for the full dump or `--quiet` for a scriptable exit code
-(useful in batch loops over a sweep tree).
+It reads `metadata.json` and pretty-prints a curated subset. Pass
+`--json` for the full dump, or `--quiet` for a scriptable exit code
+(handy in batch loops over a sweep tree).
 
 ## Logging
 
 The [Parameter Specifications](?view=docs&page=parameters) list the four
 logging parameters (`log_level`, `log_console`, `log_file`, `log_colors`)
-and their defaults. This section covers the conceptual ladder of log
-levels.
-
-Each level includes itself and all more severe levels:
-`CRITICAL > ERROR > WARNING > INFO > DEBUG`. Setting `log_level = INFO`
-emits `INFO`, `WARNING`, `ERROR`, and `CRITICAL` messages.
+and their defaults. Each level includes itself and every more severe one
+— `CRITICAL > ERROR > WARNING > INFO > DEBUG` — so `log_level = INFO`
+emits `INFO` and above.
 
 | Level | Typical messages | When to use |
 | --- | --- | --- |
-| `DEBUG` | Variable values, loop iterations, intermediate calculations, function entry/exit. | Development; debugging specific issues (default). |
-| `INFO` | Phase transitions, major events (bubble burst, cloud edge reached), initialisation and completion markers. | Normal simulation runs. |
-| `WARNING` | Values clamped to limits, fallback behaviour, unusual but non-critical conditions. | Production runs where only potential problems matter. |
-| `ERROR` | Calculation failures, recoverable errors. | Silent runs where only actual errors matter. |
-| `CRITICAL` | Unrecoverable failures, fatal errors. | When only simulation-stopping errors should print. |
+| `DEBUG` | Variable values, loop iterations, function entry/exit. | Development and debugging (default). |
+| `INFO` | Phase transitions, major events, init and completion markers. | Normal runs. |
+| `WARNING` | Clamped values, fallbacks, unusual but non-critical conditions. | Production, when only problems matter. |
+| `ERROR` | Calculation failures, recoverable errors. | Runs where only real errors matter. |
+| `CRITICAL` | Unrecoverable, fatal errors. | When only stopping errors should print. |
 
 With `log_level = INFO`, console output looks like:
 
@@ -307,10 +281,9 @@ With `log_level = INFO`, console output looks like:
 
 ## Troubleshooting
 
-Most parameter errors are typos against the schema; the authoritative
-list of valid keywords and defaults is the ParamSpec registry
-(`trinity/_input/registry.py`), from which `trinity/_input/default.param`
-is generated and mirrored in the
-[Parameter Specifications](?view=docs&page=parameters). For issues and
-feature requests,
-see [github.com/JiaWeiTeh/trinity/issues](https://github.com/JiaWeiTeh/trinity/issues).
+Most parameter errors are typos against the schema. The authoritative
+list of keywords and defaults is the ParamSpec registry
+(`trinity/_input/registry.py`), which generates `trinity/_input/default.param`
+and the [Parameter Specifications](?view=docs&page=parameters). For issues
+and feature requests, see
+[github.com/JiaWeiTeh/trinity/issues](https://github.com/JiaWeiTeh/trinity/issues).
