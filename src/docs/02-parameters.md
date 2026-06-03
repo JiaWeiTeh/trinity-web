@@ -11,7 +11,7 @@ narrow by category.
 ## File format
 
 The canonical parameter schema — the authoritative, fully-commented list
-of keys and defaults — lives at `src/_input/default.param`; the
+of keys and defaults — lives at `trinity/_input/default.param`; the
 reference above mirrors it. Worked example files live under `param/`
 (see `param/simple_cluster.param` or `param/cloud_example_PL.param`) and
 override those defaults.
