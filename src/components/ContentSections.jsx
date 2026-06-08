@@ -616,8 +616,7 @@ function Section4Caveats() {
           <p>
             Planned extensions address these points: an evolving shell covering
             fraction, non-zero ambient pressure, a two-radius treatment of the
-            bubble and ionisation front, and the full parameter-space survey in{' '}
-            <Ref target="papers">Paper II</Ref>.
+            bubble and ionisation front, and a full parameter-space survey.
           </p>
         </Prose>
       </div>
