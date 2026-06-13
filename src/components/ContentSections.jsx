@@ -598,33 +598,7 @@ function Section3Results() {
   )
 }
 
-function Section4Caveats() {
-  return (
-    <section id="caveats" className="py-12">
-      <div className="max-w-[680px] mx-auto">
-        <SectionHeading number={4} title="Caveats & what's next" />
-        <Prose>
-          <p>
-            TRINITY is one-dimensional, so it averages over champagne flows,
-            blister breakouts, and the corrugated bubble interface that
-            instabilities produce in real clouds. Its photoionised-gas treatment
-            keeps a single radius for the bubble and the ionisation front, which
-            is intermediate between simpler shell models and fully coupled
-            two-radius models. The shell is assumed closed, and magnetic,
-            cosmic-ray, and turbulent pressures are not included in the dynamics.
-          </p>
-          <p>
-            Planned extensions address these points: an evolving shell covering
-            fraction, non-zero ambient pressure, a two-radius treatment of the
-            bubble and ionisation front, and a full parameter-space survey.
-          </p>
-        </Prose>
-      </div>
-    </section>
-  )
-}
-
-function Section5Papers() {
+function Section4Papers() {
   const papers = [
     { num: 'Paper I', title: 'Code & Methods', status: 'Teh et al. (2026), arXiv:2605.27517', href: 'https://arxiv.org/abs/2605.27517' },
   ]
@@ -632,7 +606,7 @@ function Section5Papers() {
   return (
     <section id="papers" className="py-12">
       <div className="max-w-[680px] mx-auto">
-        <SectionHeading number={5} title="Papers" />
+        <SectionHeading number={4} title="Papers" />
         <p style={{ fontFamily: 'var(--font-display)' }}
            className="text-[17px] text-ink-secondary leading-[1.65] mb-6">
           TRINITY is described in a series of methods and science papers.
@@ -767,9 +741,7 @@ export default function ContentSections() {
       <SectionRule />
       <Section3Results />
       <SectionRule />
-      <Section4Caveats />
-      <SectionRule />
-      <Section5Papers />
+      <Section4Papers />
       <SectionRule />
       <Acknowledgements />
       <SectionRule />
