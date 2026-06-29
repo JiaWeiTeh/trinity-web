@@ -20,7 +20,7 @@
 import fs from 'node:fs'
 import path from 'node:path'
 
-const UPSTREAM_URL = 'https://raw.githubusercontent.com/JiaWeiTeh/trinity/main/src/_input/default.param'
+const UPSTREAM_URL = 'https://raw.githubusercontent.com/JiaWeiTeh/trinity/main/trinity/_input/default.param'
 const PARAMS_JSON = 'src/docs/parameters.json'
 
 // Map raw upstream unit strings (LaTeX-ish) to the unicode form used on

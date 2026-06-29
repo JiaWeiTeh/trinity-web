@@ -30,5 +30,6 @@ syntax, sweep modes, CLI flags, and output layout.
 
 TRINITY is distributed under the [GNU GPL v3](?view=docs&page=license).
 For the physical model and results, see the [Paper](?view=paper). If
-you use it in published work, please see the publications page for the
-citation and acknowledgement.
+you use it in published work, please see the
+[publications page](?view=docs&page=publications) for the citation and
+acknowledgement.

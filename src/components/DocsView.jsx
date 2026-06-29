@@ -18,6 +18,10 @@ const PAGE_META = {
     kicker: 'Reference',
     description: 'Every recognised keyword, grouped by role.',
   },
+  publications: {
+    kicker: 'Citation',
+    description: 'How to cite TRINITY and the WARPFIELD lineage.',
+  },
   license: {
     kicker: 'Legal',
     description: 'License terms and citation.',

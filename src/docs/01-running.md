@@ -16,7 +16,8 @@ command for sweeps. To scale a sweep across an HPC cluster, emit a SLURM
 job array with `--emit-jobs` (see *Running on a cluster* below).
 
 Output goes to the `path2output` directory. The default, `def_dir`,
-resolves to `outputs/<model_name>/` under the working directory — see
+resolves to `outputs/<model_name>/` for a single run, or one
+`outputs/<run_name>/` subfolder per combination for a sweep — see
 *Outputs* below for the layout.
 
 ## Parameter-file formats
@@ -67,7 +68,7 @@ simulations. Worked examples ship as `param/sweep_example.param`
 | `--collect-report DIR` | Aggregate a finished `--emit-jobs` bundle into a sweep report. |
 
 > **Note** — Most flags apply only to sweeps. For a single run,
-> `--dry-run` prints the resolved parameter file and exits, while
+> `--dry-run` prints the parameter file and exits, while
 > `--workers` and `--yes` are ignored.
 
 The default worker count adapts to the machine: the full allocation
@@ -129,12 +130,13 @@ failures.
 
 ### File layout
 
-A single run writes three files into `path2output`:
+A single run writes four files into `path2output`:
 
 ```text
 path2output/
 ├── dictionary.jsonl            # simulation state, one JSON object per snapshot
 ├── metadata.json               # run constants + termination + final state
+├── metadata_humanreadable.txt  # pretty-printed show_run summary
 └── trinity.log                 # log file (written when log_file = True)
 ```
 
@@ -148,6 +150,7 @@ outputs/my_sweep/
 │   ├── 1e5_sfe001_n1e3.param   # full resolved params for this run
 │   ├── dictionary.jsonl
 │   ├── metadata.json
+│   ├── metadata_humanreadable.txt
 │   └── trinity.log
 ├── 1e5_sfe001_n1e4/
 │   └── ...
@@ -163,8 +166,9 @@ Each sweep combination is named automatically:
 {mCloud}_sfe{sfe*100:03d}_n{nCore}[_density-profile][_PHII][_other-swept-keys]
 ```
 
-Suffixes appear only when a parameter is set explicitly in the sweep file
-(not when left at its `default.param` value):
+Suffixes appear only for parameters set explicitly in the sweep file — a
+key you leave out gets no suffix (nothing is compared against
+`default.param`):
 
 - `_PL{alpha}` for `dens_profile = densPL` (e.g. `_PL0`, `_PL-2`), or
   `_BE{Omega}` for `densBE` (e.g. `_BE14`).
@@ -263,13 +267,14 @@ emits `INFO` and above.
 
 | Level | Typical messages | When to use |
 | --- | --- | --- |
-| `DEBUG` | Variable values, loop iterations, function entry/exit. | Development and debugging (default). |
-| `INFO` | Phase transitions, major events, init and completion markers. | Normal runs. |
+| `DEBUG` | Variable values, loop iterations, function entry/exit. | Development; opt-in for diagnostics (slower hot path). |
+| `INFO` | Phase transitions, major events, init and completion markers. | Normal runs (default). |
 | `WARNING` | Clamped values, fallbacks, unusual but non-critical conditions. | Production, when only problems matter. |
 | `ERROR` | Calculation failures, recoverable errors. | Runs where only real errors matter. |
 | `CRITICAL` | Unrecoverable, fatal errors. | When only stopping errors should print. |
 
-With `log_level = INFO`, console output looks like:
+Console logging is off by default (`log_console = False`); with it enabled
+at `log_level = INFO`, output looks like:
 
 ```text
 2026-01-08 15:30:00 | INFO     | trinity.main | === TRINITY Simulation Starting ===
