@@ -399,7 +399,7 @@ function Section2Model({ time, setTime }) {
             now enters the equation of motion explicitly (<Ref target="eq2">Eq. 2</Ref>),
             and the initial cloud is not restricted to a uniform sphere: it can
             be uniform, a power law, or a Bonnor–Ebert sphere. A single run
-            takes about 30 minutes on one core, which makes systematic surveys
+            takes tens of minutes on one core, which makes systematic surveys
             practical. <Ref target="fig1">Interactive Fig. 1</Ref> shows how the
             shell structure changes across the three phases.
           </p>
@@ -706,6 +706,13 @@ function Contact() {
         <p style={{ fontFamily: 'var(--font-ui)' }}
            className="text-[13px] text-ink-primary leading-relaxed">
           Jia Wei Teh
+        </p>
+        <p style={{ fontFamily: 'var(--font-ui)' }}
+           className="text-[12px] leading-relaxed mt-0.5">
+          <a href="mailto:jiaweiteh.astro@gmail.com"
+             className="text-teal underline underline-offset-[3px] decoration-1">
+            jiaweiteh.astro@gmail.com
+          </a>
         </p>
         <p style={{ fontFamily: 'var(--font-ui)' }}
            className="text-[12px] text-ink-secondary leading-relaxed mt-0.5">

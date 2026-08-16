@@ -71,10 +71,10 @@ simulations. Worked examples ship as `param/sweep_example.param`
 > `--dry-run` prints the parameter file and exits, while
 > `--workers` and `--yes` are ignored.
 
-The default worker count adapts to the machine: the full allocation
-inside a SLURM job (`SLURM_CPUS_PER_TASK`), or `max(1, CPU count // 2 - 1)`
-on a laptop. It must be ≥ 1 and never exceeds the cores available to the
-process. `--emit-jobs` and `--collect-report` are mutually exclusive.
+The default worker count adapts to the machine — the full allocation
+inside a SLURM job, a sensible fraction of the cores otherwise; `--help`
+has the details. `--emit-jobs` and `--collect-report` are mutually
+exclusive.
 
 Before launching, `run.py` runs a plausibility check on every
 combination (cloud mass vs. core/ISM density, cloud radius, …) and lists
@@ -160,34 +160,11 @@ outputs/my_sweep/
 
 ### Run names
 
-Each sweep combination is named automatically:
-
-```text
-{mCloud}_sfe{sfe*100:03d}_n{nCore}[_density-profile][_PHII][_other-swept-keys]
-```
-
-Suffixes appear only for parameters set explicitly in the sweep file — a
-key you leave out gets no suffix (nothing is compared against
-`default.param`):
-
-- `_PL{alpha}` for `dens_profile = densPL` (e.g. `_PL0`, `_PL-2`), or
-  `_BE{Omega}` for `densBE` (e.g. `_BE14`).
-- `_yesPHII` / `_noPHII` when `include_PHII` is set.
-- `_{key}{value}` for any other swept key, so distinct combinations never
-  share a folder. snake_case becomes camelCase, decimal points become
-  `p`, and minus signs are kept — `ZCloud = [0.5, 1.0]` gives `_ZCloud0p5`
-  / `_ZCloud1p0`. Multiple suffixes follow sorted-key order.
-
-Generic values are checked for filesystem safety:
-
-| Check | Trigger | Effect |
-| --- | --- | --- |
-| Hard-reject | `/`, `\`, `..`, control chars | `ValueError`, no runs — so filepath params can't be swept |
-| Sanitise | anything outside `[A-Za-z0-9.+-]` | replaced with `-`; the sweep still runs |
-| Length cap | run name over 200 characters | sweep aborts with a clear error |
-
-For example, `1e7_sfe010_n1e4_noPHII` is `mCloud=1e7, sfe=0.10, nCore=1e4`
-with `include_PHII = False`.
+Each sweep combination gets its own folder, named automatically from the
+parameters that vary — for example `1e7_sfe010_n1e4_noPHII` is
+`mCloud=1e7, sfe=0.10, nCore=1e4` with `include_PHII = False`. Values
+that would be unsafe in a path are sanitised, and an over-long name
+aborts the sweep with a clear error.
 
 > **Note** — The folder name is only a readable handle. Every run also
 > writes its full resolved parameters to a per-run `.param` file (and the
@@ -200,23 +177,11 @@ with `include_PHII = False`.
 ### dictionary.jsonl
 
 Each simulation streams its full state to `dictionary.jsonl` as
-newline-delimited JSON, one object per snapshot. Writes are append-only
-and crash-safe — buffered snapshots flush on a clean exit, `Ctrl+C`, or
-`SIGTERM`, so the file always parses (a trailing partial line aside).
-Each snapshot is saved before its ODE step, so all its values share one
-`t_now`.
-
-Snapshot keys fall into a few categories:
-
-| Category | Example keys |
-| --- | --- |
-| Administrative | `model_name`, `current_phase`, `SimulationEndReason` |
-| Cloud setup | `mCloud`, `mCluster`, `rCloud`, `nEdge` |
-| Dynamical state | `t_now`, `R2`, `v2`, `Eb`, `T0`, `R1`, `Pb` |
-| Feedback (SPS) | `Lmech_W`, `Lmech_SN`, `Qi`, `Lbol`, `pdot_total` |
-| Pressures | `P_drive`, `P_HII`, `P_ram` |
-| Forces | `F_grav`, `F_ram`, `F_ram_wind`, `F_ram_SN`, `F_HII`, `F_rad` |
-| Bubble / shell profiles | `log_bubble_T_arr` + `bubble_T_arr_r_arr`, `bubble_v_arr` + `bubble_v_arr_r_arr`, `log_shell_n_arr` + `shell_r_arr` |
+newline-delimited JSON, one object per snapshot — administrative fields,
+cloud setup, dynamical state, feedback rates, pressures, forces, and the
+1-D bubble and shell profiles. Writes are append-only and crash-safe, so
+the file always parses (a trailing partial line aside). Each snapshot is
+saved before its ODE step, so all its values share one `t_now`.
 
 Long 1-D profiles are downsampled before serialisation. Each simplified
 array carries its own abscissa (`*_r_arr`) and, when values span many
@@ -231,18 +196,12 @@ against the (possibly log-space) values.
 ### metadata.json
 
 Run constants and end-of-run summaries live in a sibling `metadata.json`
-(schema version 4) instead of being repeated in every snapshot. The
-reader folds the constants back into each snapshot on load, so you rarely
-read this file directly — but it is small and human-readable. Its blocks:
-
-| Block | Contents |
-| --- | --- |
-| run constants | Inputs and set-once derived values fixed after phase 0 (`mCloud`, `sfe`, `dens_profile`, …), drawn from the ParamSpec registry. |
-| `termination` | `{exit_code, outcome, detail, timestamp, model_name}` — how the run ended. |
-| `final_state` | Every scalar / bool / string at run end, in internal units (pc, Myr, pc⁻³). |
-| `termination_debug` | Last-snapshot diff, a NaN/Inf inventory, and sanity checks for post-mortems. |
-
-All writes are atomic, so an interrupted write never corrupts the file.
+instead of being repeated in every snapshot: the inputs and set-once
+derived values, how the run ended, the full final state, and a
+post-mortem block for diagnosing failures. The reader folds the constants
+back into each snapshot on load, so you rarely read this file directly —
+but it is small and human-readable. All writes are atomic, so an
+interrupted write never corrupts the file.
 
 ### show_run
 
@@ -261,28 +220,10 @@ It reads `metadata.json` and pretty-prints a curated subset. Pass
 
 The [Parameter Specifications](?view=docs&page=parameters) list the four
 logging parameters (`log_level`, `log_console`, `log_file`, `log_colors`)
-and their defaults. Each level includes itself and every more severe one
-— `CRITICAL > ERROR > WARNING > INFO > DEBUG` — so `log_level = INFO`
-emits `INFO` and above.
-
-| Level | Typical messages | When to use |
-| --- | --- | --- |
-| `DEBUG` | Variable values, loop iterations, function entry/exit. | Development; opt-in for diagnostics (slower hot path). |
-| `INFO` | Phase transitions, major events, init and completion markers. | Normal runs (default). |
-| `WARNING` | Clamped values, fallbacks, unusual but non-critical conditions. | Production, when only problems matter. |
-| `ERROR` | Calculation failures, recoverable errors. | Runs where only real errors matter. |
-| `CRITICAL` | Unrecoverable, fatal errors. | When only stopping errors should print. |
-
-Console logging is off by default (`log_console = False`); with it enabled
-at `log_level = INFO`, output looks like:
-
-```text
-2026-01-08 15:30:00 | INFO     | trinity.main | === TRINITY Simulation Starting ===
-2026-01-08 15:30:00 | INFO     | trinity.main | Model: test_simulation
-2026-01-08 15:30:01 | INFO     | trinity.sps.read_sps | SPS data processed
-2026-01-08 15:30:03 | INFO     | trinity.phase1_energy | Entering energy-driven phase
-2026-01-08 15:30:45 | INFO     | trinity.main | === TRINITY Simulation Complete ===
-```
+and their defaults. Levels follow the usual ladder — `DEBUG`, `INFO`,
+`WARNING`, `ERROR`, `CRITICAL` — and each includes every more severe one,
+so `log_level = INFO` emits `INFO` and above. Console logging is off by
+default; the log file is written.
 
 ## Troubleshooting
 

@@ -22,3 +22,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# staged for the maintainer to delete by hand; never published
+to-be-deleted/
