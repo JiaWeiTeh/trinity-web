@@ -14274,7 +14274,47 @@ a.anchor-link {
   }
   .jp-OutputArea-output pre { font-size: 0.82rem; line-height: 1.5; }
   .jp-OutputArea-output img { max-width: 100%; height: auto; }
+
+  /* Copy-to-clipboard button, shown on hover over a code cell. */
+  .jp-Cell-inputWrapper { position: relative; }
+  .copy-code {
+    position: absolute; top: 6px; right: 8px; z-index: 5;
+    font-family: 'Inter', sans-serif; font-size: 11px; line-height: 1;
+    padding: 5px 9px; border-radius: 5px; cursor: pointer;
+    color: #5E6776; background: #FFFEFA; border: 1px solid #D8D2C6;
+    opacity: 0; transition: opacity 120ms ease, color 120ms ease;
+  }
+  .jp-Cell-inputWrapper:hover .copy-code,
+  .copy-code:focus { opacity: 1; }
+  .copy-code:hover { color: #1E2430; }
+  .copy-code.copied { color: #096D84; border-color: #096D84; opacity: 1; }
 </style>
+<script>
+  // nbconvert ships no copy button, and a tutorial page is mostly there to be
+  // copied from. One button per input cell, revealed on hover.
+  document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.jp-Cell-inputWrapper').forEach(function (cell) {
+      var editor = cell.querySelector('.jp-InputArea-editor');
+      if (!editor) return;
+
+      var button = document.createElement('button');
+      button.className = 'copy-code';
+      button.type = 'button';
+      button.textContent = 'Copy';
+      button.addEventListener('click', function () {
+        navigator.clipboard.writeText(editor.innerText.replace(/\s+$/, '')).then(function () {
+          button.textContent = 'Copied';
+          button.classList.add('copied');
+          setTimeout(function () {
+            button.textContent = 'Copy';
+            button.classList.remove('copied');
+          }, 1500);
+        });
+      });
+      cell.appendChild(button);
+    });
+  });
+</script>
 </head>
 <body class="jp-Notebook" data-jp-theme-light="true" data-jp-theme-name="JupyterLab Light">
 <div class="jp-Cell-inputWrapper" tabindex="0"><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
