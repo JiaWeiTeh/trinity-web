@@ -84,7 +84,9 @@ function Anchor(props) {
     )
   }
 
-  const external = href && /^https?:\/\//.test(href)
+  // http(s) links leave the site; so do absolute paths, which point at static
+  // files served alongside it (the rendered notebook). Both open in a new tab.
+  const external = href && (/^https?:\/\//.test(href) || href.startsWith('/'))
   return (
     <a href={href} {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})} {...rest}>
       {children}

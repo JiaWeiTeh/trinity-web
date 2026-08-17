@@ -18,6 +18,10 @@ const PAGE_META = {
     kicker: 'Reference',
     description: 'Every recognised keyword, grouped by role.',
   },
+  notebook: {
+    kicker: 'Tutorial',
+    description: 'A worked notebook, with runs that ship with the code.',
+  },
   publications: {
     kicker: 'Citation',
     description: 'How to cite TRINITY and the WARPFIELD lineage.',

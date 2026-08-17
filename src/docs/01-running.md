@@ -216,6 +216,49 @@ It reads `metadata.json` and pretty-prints a curated subset. Pass
 `--json` for the full dump, or `--quiet` for a scriptable exit code
 (handy in batch loops over a sweep tree).
 
+## Reading a run
+
+The output is designed to be read back with the bundled reader rather than
+parsed by hand. It takes the `dictionary.jsonl` path and picks up
+`metadata.json` from the same folder, so point it at a run directory's file:
+
+```python
+from trinity._output.trinity_reader import TrinityOutput
+
+run = TrinityOutput.open('outputs/my_model/dictionary.jsonl')
+run.info()          # phases, how it ended, the final state of the bubble
+
+t  = run.get('t_now')     # every snapshot, as a numpy array
+R2 = run.get('R2')
+v2 = run.get('v2')
+```
+
+`get()` returns TRINITY's internal units — $M_\odot$, pc, Myr. You do not have
+to remember which applies to what:
+
+```python
+run.units('v2')                    # 'pc/Myr'
+run.quantity('v2').to('km/s')      # the same numbers, as an astropy Quantity
+```
+
+A few other things worth knowing:
+
+| Call | What it gives you |
+| --- | --- |
+| `run.get_at_time(2.0)` | the state at any moment, interpolated between snapshots |
+| `run.filter(phase='momentum')` | part of a run, itself a `TrinityOutput` |
+| `run.to_dataframe()` | the whole run as a pandas `DataFrame` |
+| `run.info(verbose=True)` | every stored quantity, described, with units |
+
+> **Note** — Snapshots are written in the order the output buffer flushes them,
+> which is not chronological, and a long run can repeat snapshots. Sort on
+> `t_now` before plotting a raw run, or pass it through `examples/thin_run.py`,
+> which sorts and de-duplicates.
+
+The [tutorial notebook](?view=docs&page=notebook) does all of this against
+finished runs that ship with the repository, so you can see the output without
+running a simulation first.
+
 ## Logging
 
 The [Parameter Specifications](?view=docs&page=parameters) list the four
@@ -233,3 +276,28 @@ list of keywords and defaults is the ParamSpec registry
 and the [Parameter Specifications](?view=docs&page=parameters). For issues
 and feature requests, see
 [github.com/JiaWeiTeh/trinity/issues](https://github.com/JiaWeiTeh/trinity/issues).
+
+## Common questions
+
+**Why does the install pin numpy below 2?**
+Some numpy 2.x patch releases emit floating-point output that the
+bubble-structure integrator's monotonic guard rejects. The cap is deliberate,
+not neglect; `requirements.txt` records which versions were affected.
+
+**Do I need LaTeX?**
+Only to regenerate the published paper figures, whose style renders text with
+`text.usetex`. Running simulations and reading output do not need it.
+
+**Where do my outputs go?**
+To `path2output`. Left at its default, that resolves to `outputs/<model_name>/`
+under wherever you launched the run — so a sweep on a cluster should set an
+absolute path on a work or scratch filesystem.
+
+**Can I run a sweep on a login node?**
+You can, and `run.py` will warn you when it detects SLURM without an active
+job. Don't: use `--emit-jobs` to emit a job array instead.
+
+**Where is the raw simulation data from the papers?**
+Not in the repository — the run sets and the full SPS and cooling libraries are
+too large. They are available on request; see the
+[publications page](?view=docs&page=publications) for contact details.

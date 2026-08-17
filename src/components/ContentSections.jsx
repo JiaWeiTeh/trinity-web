@@ -598,9 +598,65 @@ function Section3Results() {
   )
 }
 
+/* One row of the papers list. Used for both groups below. */
+function PaperRow({ tag, title, status, href }) {
+  return (
+    <div className="py-3 border-b border-border-rule flex items-baseline gap-3 last:border-b-0">
+      <span style={{ fontFamily: 'var(--font-ui)' }}
+            className="text-[12px] font-medium text-teal w-[56px] shrink-0">
+        {href ? (
+          <a href={href} target="_blank" rel="noopener noreferrer"
+             className="underline underline-offset-[3px] decoration-1">
+            {tag}
+          </a>
+        ) : tag}
+      </span>
+      {title && (
+        <span style={{ fontFamily: 'var(--font-display)' }}
+              className="text-[15px] font-semibold text-ink-primary">
+          {title}
+        </span>
+      )}
+      <span style={{ fontFamily: 'var(--font-ui)' }}
+            className="text-[12px] text-ink-tertiary">
+        {title ? '\u2014 ' : ''}
+        {href ? (
+          <a href={href} target="_blank" rel="noopener noreferrer"
+             className="text-teal underline underline-offset-[3px] decoration-1">
+            {status}
+          </a>
+        ) : status}
+      </span>
+    </div>
+  )
+}
+
+function GroupLabel({ children }) {
+  return (
+    <p style={{ fontFamily: 'var(--font-ui)' }}
+       className="text-[11px] uppercase tracking-[0.22em] text-ink-tertiary mt-9 mb-2">
+      {children}
+    </p>
+  )
+}
+
 function Section4Papers() {
   const papers = [
-    { num: 'Paper I', title: 'Code & Methods', status: 'Teh et al. (2026), arXiv:2605.27517', href: 'https://arxiv.org/abs/2605.27517' },
+    { tag: 'Paper I', title: 'Code & Methods', status: 'Teh et al. (2026), arXiv:2605.27517', href: 'https://arxiv.org/abs/2605.27517' },
+  ]
+
+  /* Work by the same group on the physics TRINITY models, and the observational
+     counterpart to its escape-fraction prediction. */
+  const related = [
+    { tag: '2026', title: 'Neutral hydrogen around the Orion nebula',
+      status: 'Soler et al., A&A 711, A85 — NeAtHood I',
+      href: 'https://doi.org/10.1051/0004-6361/202659272' },
+    { tag: '2024', title: 'Massive star cluster formation',
+      status: 'Polak et al., A&A 690, A94 — resolving feedback of individual stars',
+      href: 'https://arxiv.org/abs/2312.06509' },
+    { tag: '2023', title: 'LyC escape fraction in NGC 628',
+      status: 'Teh et al., MNRAS 524, 1191 — LEGUS clusters with SIGNALS H II regions',
+      href: 'https://doi.org/10.1093/mnras/stad1780' },
   ]
 
   return (
@@ -612,35 +668,17 @@ function Section4Papers() {
           TRINITY is described in a series of methods and science papers.
         </p>
         <div>
-          {papers.map((p, i) => (
-            <div key={i} className="py-3 border-b border-border-rule flex items-baseline gap-3 last:border-b-0">
-              <span style={{ fontFamily: 'var(--font-ui)' }}
-                    className="text-[12px] font-medium text-teal w-[56px] shrink-0">
-                {p.href ? (
-                  <a href={p.href} target="_blank" rel="noopener noreferrer"
-                     className="underline underline-offset-[3px] decoration-1">
-                    {p.num}
-                  </a>
-                ) : p.num}
-              </span>
-              {p.title && (
-                <span style={{ fontFamily: 'var(--font-display)' }}
-                      className="text-[15px] font-semibold text-ink-primary">
-                  {p.title}
-                </span>
-              )}
-              <span style={{ fontFamily: 'var(--font-ui)' }}
-                    className="text-[12px] text-ink-tertiary">
-                {p.title ? '— ' : ''}
-                {p.href ? (
-                  <a href={p.href} target="_blank" rel="noopener noreferrer"
-                     className="text-teal underline underline-offset-[3px] decoration-1">
-                    {p.status}
-                  </a>
-                ) : p.status}
-              </span>
-            </div>
-          ))}
+          {papers.map((p, i) => <PaperRow key={i} {...p} />)}
+        </div>
+
+        <GroupLabel>Related work</GroupLabel>
+        <p style={{ fontFamily: 'var(--font-display)' }}
+           className="text-[14px] text-ink-secondary leading-[1.6] mb-2">
+          Studies of the same processes from the same group, and the observational
+          counterpart to the escape fractions TRINITY predicts.
+        </p>
+        <div>
+          {related.map((p, i) => <PaperRow key={i} {...p} />)}
         </div>
       </div>
     </section>
