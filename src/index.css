@@ -541,6 +541,37 @@ sup {
   font-size: inherit;
 }
 
+/* Python and notebook output are not terminal sessions. Give them the light
+   treatment a Jupyter cell has, in this site's paper tones rather than
+   Jupyter's greys, so the notebook page still belongs here. */
+.code-block--light pre {
+  background: var(--color-card);
+  color: var(--color-ink-primary);
+  border: 1px solid var(--color-border-card);
+}
+
+/* A notebook's printed result sits under its cell with no chrome of its own. */
+.code-block--light:has(code.language-output) pre {
+  background: transparent;
+  border: none;
+  border-left: 2px solid var(--color-border-card);
+  border-radius: 0;
+  color: var(--color-ink-secondary);
+  font-size: 12px;
+  padding: 4px 0 4px 14px;
+}
+
+/* The copy button was built for a dark block; invert it on the light ones. */
+.code-block--light .code-copy {
+  border-color: var(--color-border-card);
+  background: var(--color-paper);
+  color: var(--color-ink-tertiary);
+}
+.code-block--light .code-copy:hover {
+  background: var(--color-paper);
+  color: var(--color-ink-primary);
+}
+
 .docs-article blockquote {
   margin: 14px 0;
   padding: 6px 14px;
