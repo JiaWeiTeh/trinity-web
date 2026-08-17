@@ -7,9 +7,9 @@
   --color-navy: #0D1B2A;
   --color-ink-primary: #1E2430;
   --color-ink-secondary: #5E6776;
-  --color-ink-tertiary: #97948C;
+  --color-ink-tertiary: #64625C;
   --color-ink-line: #2A3442;
-  --color-teal: #0EA5C8;
+  --color-teal: #096D84;
   --color-teal-wash: #E6F7FA;
   --color-border-card: #D8D2C6;
   --color-border-rule: #E7E1D7;
@@ -20,6 +20,22 @@
 html {
   overscroll-behavior: none;
   scroll-behavior: smooth;
+}
+
+/* Honour a reduced-motion preference. The JS scroll helper already checks this;
+   CSS smooth scrolling and the hover transitions have to be told separately. */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
 body {

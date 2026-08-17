@@ -6,16 +6,14 @@ const TABS = [
 
 export default function PaperTabs({ activeView, onChange }) {
   return (
-    <div className="paper-tabs" role="tablist" aria-label="Document view">
+    <nav className="paper-tabs" aria-label="Document view">
       {TABS.map((t) => {
         const isActive = activeView === t.key
         return (
           <button
             key={t.key}
-            role="tab"
-            aria-selected={isActive}
-            aria-controls="paper-content"
-            tabIndex={isActive ? 0 : -1}
+            type="button"
+            aria-current={isActive ? 'page' : undefined}
             className={`paper-tab ${isActive ? 'is-active' : ''}`}
             onClick={() => onChange(t.key)}
           >
@@ -23,6 +21,6 @@ export default function PaperTabs({ activeView, onChange }) {
           </button>
         )
       })}
-    </div>
+    </nav>
   )
 }

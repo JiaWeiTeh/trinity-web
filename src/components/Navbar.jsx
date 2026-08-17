@@ -24,37 +24,54 @@ export default function Navbar({ view = 'paper', onViewChange }) {
     onViewChange?.(key)
   }
 
+  // The fixed side tabs are hidden below 900px (see .paper-tabs in index.css),
+  // so on small screens the navbar is the only navigation and must be there from
+  // the start. On wide screens it still fades in once you have scrolled a little.
   useEffect(() => {
-    const handleScroll = () => {
-      setVisible(window.scrollY > window.innerHeight * 0.3)
+    const noSideTabs = window.matchMedia('(max-width: 900px)')
+
+    const update = () => {
+      setVisible(noSideTabs.matches || window.scrollY > window.innerHeight * 0.3)
     }
-    window.addEventListener('scroll', handleScroll, { passive: true })
-    handleScroll()
-    return () => window.removeEventListener('scroll', handleScroll)
+
+    window.addEventListener('scroll', update, { passive: true })
+    noSideTabs.addEventListener('change', update)
+    update()
+
+    return () => {
+      window.removeEventListener('scroll', update)
+      noSideTabs.removeEventListener('change', update)
+    }
   }, [])
+
+  const scrollBehavior = () =>
+    window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'
 
   const scrollTo = (e, href) => {
     e.preventDefault()
     setMenuOpen(false)
+    const behavior = scrollBehavior()
     if (href === '#top') {
       history.pushState(null, '', window.location.pathname + window.location.search)
-      window.scrollTo({ top: 0, behavior: 'smooth' })
+      window.scrollTo({ top: 0, behavior })
       return
     }
     history.pushState(null, '', href)
     const el = document.querySelector(href)
-    if (el) el.scrollIntoView({ behavior: 'smooth' })
+    if (el) el.scrollIntoView({ behavior })
   }
 
   useEffect(() => {
     const onPopState = () => {
+      const behavior = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
+        ? 'auto' : 'smooth'
       const hash = window.location.hash
       if (!hash) {
-        window.scrollTo({ top: 0, behavior: 'smooth' })
+        window.scrollTo({ top: 0, behavior })
         return
       }
       const el = document.querySelector(hash)
-      if (el) el.scrollIntoView({ behavior: 'smooth' })
+      if (el) el.scrollIntoView({ behavior })
     }
     window.addEventListener('popstate', onPopState)
     return () => window.removeEventListener('popstate', onPopState)

@@ -645,8 +645,7 @@ function Section4Papers() {
     { tag: 'Paper I', title: 'Code & Methods', status: 'Teh et al. (2026), arXiv:2605.27517', href: 'https://arxiv.org/abs/2605.27517' },
   ]
 
-  /* Work by the same group on the physics TRINITY models, and the observational
-     counterpart to its escape-fraction prediction. */
+  /* Other studies that use TRINITY. */
   const related = [
     { tag: '2026', title: 'Neutral hydrogen around the Orion nebula',
       status: 'Soler et al., A&A 711, A85 — NeAtHood I',
@@ -654,9 +653,6 @@ function Section4Papers() {
     { tag: '2024', title: 'Massive star cluster formation',
       status: 'Polak et al., A&A 690, A94 — resolving feedback of individual stars',
       href: 'https://arxiv.org/abs/2312.06509' },
-    { tag: '2023', title: 'LyC escape fraction in NGC 628',
-      status: 'Teh et al., MNRAS 524, 1191 — LEGUS clusters with SIGNALS H II regions',
-      href: 'https://doi.org/10.1093/mnras/stad1780' },
   ]
 
   return (
@@ -671,12 +667,7 @@ function Section4Papers() {
           {papers.map((p, i) => <PaperRow key={i} {...p} />)}
         </div>
 
-        <GroupLabel>Related work</GroupLabel>
-        <p style={{ fontFamily: 'var(--font-display)' }}
-           className="text-[14px] text-ink-secondary leading-[1.6] mb-2">
-          Studies of the same processes from the same group, and the observational
-          counterpart to the escape fractions TRINITY predicts.
-        </p>
+        <GroupLabel>Work that also uses TRINITY to study bubbles</GroupLabel>
         <div>
           {related.map((p, i) => <PaperRow key={i} {...p} />)}
         </div>

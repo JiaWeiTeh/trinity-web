@@ -35,6 +35,25 @@ export default function TitleBlock({ onViewChange }) {
           <sup>3</sup> Astronomisches Rechen-Institut (ARI), Zentrum für Astronomie, Universität Heidelberg
         </p>
 
+        {/* Author links — quiet, in the manner of a paper's author line */}
+        <p style={{ fontFamily: 'var(--font-ui)' }}
+           className="text-[12px] text-ink-tertiary mb-6 flex justify-center gap-3">
+          <a href="mailto:jiaweiteh.astro@gmail.com"
+             className="hover:text-ink-primary transition-colors duration-150">
+            Email
+          </a>
+          <span aria-hidden="true">·</span>
+          <a href="https://github.com/JiaWeiTeh" target="_blank" rel="noopener noreferrer"
+             className="hover:text-ink-primary transition-colors duration-150">
+            GitHub
+          </a>
+          <span aria-hidden="true">·</span>
+          <a href="https://www.linkedin.com/in/jiaweiteh/" target="_blank" rel="noopener noreferrer"
+             className="hover:text-ink-primary transition-colors duration-150">
+            LinkedIn
+          </a>
+        </p>
+
         {/* Construction notice — intentionally feels like a taped-on note */}
         <div style={{ fontFamily: 'var(--font-ui)' }}
              className="inline-block border border-dashed border-ink-tertiary bg-amber-50/60 px-4 py-2 text-[12px] text-ink-secondary mb-6 max-w-[520px] text-left leading-relaxed">
