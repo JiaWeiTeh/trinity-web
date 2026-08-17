@@ -70,7 +70,7 @@ export default function TitleBlock({ onViewChange }) {
             className="text-[13px] text-teal underline underline-offset-[3px] decoration-1 cursor-pointer">
             Get started →
           </button>
-          <a href="https://arxiv.org/abs/2605.27517"
+          <a href="https://ui.adsabs.harvard.edu/abs/arXiv:2605.27517/abstract"
              target="_blank" rel="noopener noreferrer"
              style={{ fontFamily: 'var(--font-ui)' }}
              className="text-[13px] text-teal underline underline-offset-[3px] decoration-1">

@@ -642,17 +642,17 @@ function GroupLabel({ children }) {
 
 function Section4Papers() {
   const papers = [
-    { tag: 'Paper I', title: 'Code & Methods', status: 'Teh et al. (2026), arXiv:2605.27517', href: 'https://arxiv.org/abs/2605.27517' },
+    { tag: 'Paper I', title: 'Code & Methods', status: 'Teh et al. (2026), arXiv:2605.27517', href: 'https://ui.adsabs.harvard.edu/abs/arXiv:2605.27517/abstract' },
   ]
 
   /* Other studies that use TRINITY. */
   const related = [
     { tag: '2026', title: 'Neutral hydrogen around the Orion nebula',
       status: 'Soler et al., A&A 711, A85 — NeAtHood I',
-      href: 'https://doi.org/10.1051/0004-6361/202659272' },
+      href: 'https://ui.adsabs.harvard.edu/abs/2026A%26A...711A..85S/abstract' },
     { tag: '2024', title: 'Massive star cluster formation',
       status: 'Polak et al., A&A 690, A94 — resolving feedback of individual stars',
-      href: 'https://arxiv.org/abs/2312.06509' },
+      href: 'https://ui.adsabs.harvard.edu/abs/2024A%26A...690A..94P/abstract' },
   ]
 
   return (

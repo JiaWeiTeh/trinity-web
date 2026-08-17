@@ -26,6 +26,12 @@ default, `outputs/<model_name>/` under the working directory. See
 [Running TRINITY](?view=docs&page=running) for the parameter-file
 syntax, sweep modes, CLI flags, and output layout.
 
+## Seeing the output
+
+The [tutorial notebook](?view=docs&page=notebook) reads finished runs that ship
+with the repository and plots them, so you can see what TRINITY produces before
+running anything yourself.
+
 ## License & citation
 
 TRINITY is distributed under the [GNU GPL v3](?view=docs&page=license).
