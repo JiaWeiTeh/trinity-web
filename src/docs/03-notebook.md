@@ -60,6 +60,12 @@ run = runs['homogeneous']
 run
 ```
 
+
+
+
+```output
+TrinityOutput('dictionary.jsonl', snapshots=82, t=[1.9562e-06, 1.5000e+01])
+```
 ## What is in the run
 
 `info()` summarises the run: how long it went on for, which evolutionary phases it
@@ -71,6 +77,35 @@ passed through, how it ended, and the state of the bubble when it stopped. Add
 run.info()
 ```
 
+```output
+======================================================================
+TRINITY Output: dictionary.jsonl
+======================================================================
+
+  Model name:    cloud_example_homogeneous
+  Snapshots:     82
+  Time range:    [1.9562e-06, 1.5000e+01] Myr
+  Parameters:    162
+
+  Phases:
+    energy      :   13 snapshots, t=[1.9562e-06, 1.8693e-03]
+    implicit    :   20 snapshots, t=[3.5000e-03, 2.2437e+00]
+    transition  :    6 snapshots, t=[2.4957e+00, 2.9022e+00]
+    momentum    :   43 snapshots, t=[2.9196e+00, 1.5000e+01]
+
+  Ended:         stopping_time — Stopping time reached
+  Final state:
+    age                    15.000 Myr
+    shell radius R2        85.719 pc
+    expansion velocity     0.825 km/s
+    shell mass swept       1.893e+06 Msun
+    shell thickness        64.109 pc
+    peak shell density     1.625e+01 cm^-3
+    bubble energy          0.000e+00 erg
+    bubble pressure        1.491e+03 K cm^-3 (P/k_B)
+    bubble temperature     1.656e+06 K
+    fate                   still expanding
+```
 ## Shell radius and velocity
 
 `get()` returns any stored quantity across every snapshot as a NumPy array. Times are
@@ -143,6 +178,12 @@ fig.suptitle('Uniform cloud: how the shell expands', y=0.94)
 fig.tight_layout()
 ```
 
+
+    
+![png](/trinity-web/notebook/quickstart_files/quickstart_6_0.png)
+    
+
+
 ## Units
 
 Everything comes back in TRINITY's internal units — masses in $M_\odot$, lengths in
@@ -165,6 +206,16 @@ print('          same:', velocity[-1].to('km/s'))
 print('shell radius :', run.quantity('R2')[-1].to('lyr'))
 ```
 
+```output
+R2 is stored in   pc
+v2 is stored in   pc/Myr
+Eb is stored in   Msun*pc^2/Myr^2
+isCollapse is     None (no units — it is a flag)
+
+final velocity: 0.8433577434446878 pc / Myr
+          same: 0.8246286416344784 km / s
+shell radius : 279.57757711528933 lyr
+```
 ## Which feedback channel is pushing
 
 Every snapshot stores the forces acting on the shell, so you can watch the balance
@@ -195,6 +246,12 @@ ax.legend(fontsize=9, frameon=False, ncol=2)
 ax.set_title('What drives the shell')
 fig.tight_layout()
 ```
+
+
+    
+![png](/trinity-web/notebook/quickstart_files/quickstart_10_0.png)
+    
+
 
 ## Looking inside a snapshot
 
@@ -252,6 +309,12 @@ ax.set_title('The shell thickens as it sweeps up gas')
 fig.tight_layout()
 ```
 
+
+    
+![png](/trinity-web/notebook/quickstart_files/quickstart_12_0.png)
+    
+
+
 ## Same cloud mass, same efficiency, three different endings
 
 This is the comparison the three shipped runs exist for. Nothing differs between them
@@ -288,6 +351,15 @@ for name, out in runs.items():
     print(f"{styles[name][0]:22} ran to {out.t_max:6.2f} Myr   "
           f"{ending.get('detail', 'unknown')}")
 ```
+
+```output
+uniform                ran to  15.00 Myr   Stopping time reached
+power law, $r^{-2}$    ran to   1.88 Myr   Small radius reached (event)
+Bonnor-Ebert           ran to   4.03 Myr   Small radius reached (event)
+```
+![png](/trinity-web/notebook/quickstart_files/quickstart_14_1.png)
+    
+
 
 ## Where to go from here
 
