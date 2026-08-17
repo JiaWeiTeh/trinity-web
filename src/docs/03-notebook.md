@@ -4,9 +4,8 @@ A Jupyter notebook that opens finished TRINITY runs and plots them. Three runs
 ship with the repository, so it works on a fresh clone with no simulation to run
 first.
 
-[Read the rendered notebook →](/trinity-web/notebook/quickstart.html)
-
-[Download the notebook →](/trinity-web/notebook/quickstart.ipynb)
+```notebook
+```
 
 ## What it covers
 

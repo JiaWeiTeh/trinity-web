@@ -4,6 +4,7 @@ import remarkGfm from 'remark-gfm'
 import remarkMath from 'remark-math'
 import rehypeKatex from 'rehype-katex'
 import rehypeSlug from 'rehype-slug'
+import NotebookEmbed from './NotebookEmbed'
 import ParameterTable from './ParameterTable'
 
 /* Fenced code blocks with a recognised language slot become custom
@@ -11,6 +12,7 @@ import ParameterTable from './ParameterTable'
    e.g. ```parameter-table to mount the parameter reference. */
 const CUSTOM_BLOCKS = {
   'language-parameter-table': () => <ParameterTable />,
+  'language-notebook': () => <NotebookEmbed />,
 }
 
 function getCodeClass(children) {
