@@ -6,12 +6,7 @@ export default function Footer({ onViewChange }) {
              className="text-[12px] text-ink-tertiary text-center md:text-left">
           <div>TRINITY — ITA/ZAH, Universität Heidelberg</div>
           <div>Jia Wei Teh</div>
-          <div>
-            <a href="mailto:jiaweiteh.astro@gmail.com"
-               className="text-ink-tertiary underline underline-offset-[3px] decoration-1 hover:text-ink-primary transition-colors duration-150">
-              jiaweiteh.astro@gmail.com
-            </a>
-          </div>
+          <div>jiaweiteh.astro (at) gmail.com</div>
         </div>
         <div className="flex items-center gap-4">
           <a href="https://github.com/JiaWeiTeh/trinity"

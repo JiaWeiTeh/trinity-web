@@ -38,7 +38,7 @@ export default function TitleBlock({ onViewChange }) {
         {/* Author links — quiet, in the manner of a paper's author line */}
         <p style={{ fontFamily: 'var(--font-ui)' }}
            className="text-[12px] text-ink-tertiary mb-6 flex justify-center gap-3">
-          <a href="mailto:jiaweiteh.astro@gmail.com"
+          <a href="#contact"
              className="hover:text-ink-primary transition-colors duration-150">
             Email
           </a>

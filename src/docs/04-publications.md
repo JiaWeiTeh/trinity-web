@@ -5,6 +5,9 @@ paper, Teh et al. (2026),
 [arXiv:2605.27517](https://arxiv.org/abs/2605.27517) (BibTeX via
 [ADS](https://ui.adsabs.harvard.edu/abs/2026arXiv260527517T/abstract)).
 
+The repository carries a `CITATION.cff`, so GitHub's *Cite this repository*
+button hands you a ready BibTeX entry for the paper.
+
 ## Legacy citations
 
 TRINITY builds on the WARPFIELD framework. Users may also wish to cite:

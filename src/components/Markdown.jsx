@@ -84,6 +84,17 @@ function Anchor(props) {
     )
   }
 
+  // A link to a file the reader wants to keep, rather than a page to look at.
+  // Without the download attribute the browser just renders the JSON.
+  const isDownload = href && /\.(ipynb|zip|csv|param)$/i.test(href)
+  if (isDownload) {
+    return (
+      <a href={href} download {...rest}>
+        {children}
+      </a>
+    )
+  }
+
   // http(s) links leave the site; so do absolute paths, which point at static
   // files served alongside it (the rendered notebook). Both open in a new tab.
   const external = href && (/^https?:\/\//.test(href) || href.startsWith('/'))

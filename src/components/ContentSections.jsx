@@ -682,11 +682,12 @@ function Acknowledgements() {
     'JWT thanks the ODE solver for converging most of the time.',
     'JWT thanks the mass-to-light ratio for keeping things interesting, and coffee for keeping things moving.',
     'JWT acknowledges the Sun for powering the H II regions, and espresso for powering the code.',
-    'JWT is grateful to the Rosette Nebula for looking exactly like a textbook figure, and to RSK for pointing out when the code does not.',
+    'JWT is grateful to the Rosette Nebula for looking exactly like a textbook figure.',
     'JWT acknowledges gravity for providing the only restoring force in this problem, and in the chair.',
     'JWT thanks the interstellar medium for being compressible, and deadlines for being incompressible.',
     'JWT is grateful to Starburst99 for the stellar models, and to Heidelberg\'s bakeries for the fuel.',
-    'JWT thanks the anonymous mass-loading parameter for absorbing all remaining uncertainties.',
+    'JWT acknowledges Reviewer 1, who was right.',
+    'JWT acknowledges the units, which were checked. Twice.',
   ];
 
   const [index, setIndex] = useState(0);
@@ -726,7 +727,7 @@ function Acknowledgements() {
 
 function Contact() {
   return (
-    <section className="py-10">
+    <section id="contact" className="py-10">
       <div className="max-w-[680px] mx-auto">
         <p style={{ fontFamily: 'var(--font-ui)' }}
            className="text-[12px] font-medium italic text-ink-tertiary mb-2">
@@ -736,12 +737,11 @@ function Contact() {
            className="text-[13px] text-ink-primary leading-relaxed">
           Jia Wei Teh
         </p>
+        {/* Written out rather than a mailto:, so the address is not a link a
+            crawler can harvest in one pass. */}
         <p style={{ fontFamily: 'var(--font-ui)' }}
-           className="text-[12px] leading-relaxed mt-0.5">
-          <a href="mailto:jiaweiteh.astro@gmail.com"
-             className="text-teal underline underline-offset-[3px] decoration-1">
-            jiaweiteh.astro@gmail.com
-          </a>
+           className="text-[12px] text-ink-secondary leading-relaxed mt-0.5">
+          jiaweiteh.astro (at) gmail.com
         </p>
         <p style={{ fontFamily: 'var(--font-ui)' }}
            className="text-[12px] text-ink-secondary leading-relaxed mt-0.5">
