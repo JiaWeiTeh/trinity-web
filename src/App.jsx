@@ -101,7 +101,7 @@ export default function App() {
         >
           {view === 'paper' && (
             <>
-              <TitleBlock onViewChange={changeView} />
+              <TitleBlock onViewChange={changeView} onNavigate={navigateTo} />
               <ContentSections />
             </>
           )}

@@ -1,4 +1,13 @@
-export default function TitleBlock({ onViewChange }) {
+export default function TitleBlock({ onViewChange, onNavigate }) {
+  // The contact block is at the foot of this same page, so this is an in-page
+  // jump rather than a mailto — deliberate, see the address written out there.
+  const jumpToContact = (e) => {
+    e.preventDefault()
+    const behavior = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
+      ? 'auto' : 'smooth'
+    document.getElementById('contact')?.scrollIntoView({ behavior })
+  }
+
   return (
     <section className="pb-8">
       <div className="max-w-[720px] mx-auto text-center">
@@ -38,7 +47,7 @@ export default function TitleBlock({ onViewChange }) {
         {/* Author links — quiet, in the manner of a paper's author line */}
         <p style={{ fontFamily: 'var(--font-ui)' }}
            className="text-[12px] text-ink-tertiary mb-6 flex justify-center gap-3">
-          <a href="#contact"
+          <a href="#contact" onClick={jumpToContact}
              className="hover:text-ink-primary transition-colors duration-150">
             Email
           </a>
@@ -46,11 +55,6 @@ export default function TitleBlock({ onViewChange }) {
           <a href="https://github.com/JiaWeiTeh" target="_blank" rel="noopener noreferrer"
              className="hover:text-ink-primary transition-colors duration-150">
             GitHub
-          </a>
-          <span aria-hidden="true">·</span>
-          <a href="https://www.linkedin.com/in/jiaweiteh/" target="_blank" rel="noopener noreferrer"
-             className="hover:text-ink-primary transition-colors duration-150">
-            LinkedIn
           </a>
         </p>
 
@@ -69,6 +73,13 @@ export default function TitleBlock({ onViewChange }) {
             style={{ fontFamily: 'var(--font-ui)' }}
             className="text-[13px] text-teal underline underline-offset-[3px] decoration-1 cursor-pointer">
             Get started →
+          </button>
+          <button
+            type="button"
+            onClick={() => onNavigate?.('?view=docs&page=notebook')}
+            style={{ fontFamily: 'var(--font-ui)' }}
+            className="text-[13px] text-teal underline underline-offset-[3px] decoration-1 cursor-pointer">
+            Notebook tutorial →
           </button>
           <a href="https://ui.adsabs.harvard.edu/abs/arXiv:2605.27517/abstract"
              target="_blank" rel="noopener noreferrer"
