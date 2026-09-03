@@ -25,3 +25,6 @@ dist-ssr
 
 # staged for the maintainer to delete by hand; never published
 to-be-deleted/
+
+# working plan — internal, not part of the site
+PLAN.md
