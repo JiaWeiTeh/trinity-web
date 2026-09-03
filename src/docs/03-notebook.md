@@ -1,11 +1,11 @@
 # Tutorial notebook
 
 [Download this notebook](/trinity-web/notebook/quickstart.ipynb) to run it yourself, or read it
-here. It works on a fresh clone — the runs it opens ship with the repository.
+here. It works on a fresh clone: the runs it opens ship with the repository.
 
 This notebook opens finished TRINITY runs and plots them. Three runs ship with the
-repository under `examples/runs/`, so everything below works straight after cloning —
-there is no simulation to run first.
+repository under `examples/runs/`, so everything below works straight after cloning. There is no
+simulation to run first.
 
 The three use the same cloud mass ($10^6\,M_\odot$) and the same star-formation
 efficiency (1%). The only thing that differs is how the cloud's mass is arranged:
@@ -16,13 +16,13 @@ efficiency (1%). The only thing that differs is how the cloud's mass is arranged
 | `powerlaw` | $\rho \propto r^{-2}$ | `param/cloud_example_PL.param` |
 | `bonnor_ebert` | Bonnor–Ebert sphere | `param/cloud_example_BE.param` |
 
-That one difference turns out to decide whether the shell escapes or falls back —
+That one difference turns out to decide whether the shell escapes or falls back,
 which is what the last section shows.
 
 ## Opening a run
 
 A run is a folder. `TrinityOutput.open()` takes the `dictionary.jsonl` inside it and
-picks up `metadata.json` from alongside — which is why a run folder has to be copied
+picks up `metadata.json` from alongside, which is why a run folder has to be copied
 as a whole, not just the `.jsonl`.
 
 
@@ -113,7 +113,7 @@ in Myr, radii in pc, velocities in pc/Myr (1 pc/Myr is about 0.98 km/s).
 
 The coloured bands behind the curves mark the evolutionary regime. TRINITY labels the
 energy-driven regime with two names, `energy` and `implicit`, depending on how cooling
-is solved — so both are shaded as one band below. After that come `transition` and
+is solved, so both are shaded as one band below. After that come `transition` and
 finally `momentum`, always in that order.
 
 
@@ -186,17 +186,17 @@ fig.tight_layout()
 
 ## Units
 
-Everything comes back in TRINITY's internal units — masses in $M_\odot$, lengths in
-pc, times in Myr. You do not have to remember which is which: `units()` tells you what
-a quantity is stored in, and `quantity()` hands back the same numbers as an astropy
-`Quantity`, so astropy can do the conversion for you.
+Everything comes back in TRINITY's internal units: masses in $M_\odot$, lengths in
+pc, times in Myr. `units()` tells you what a quantity is stored in, and
+`quantity()` hands back the same numbers as an astropy `Quantity`, so astropy can
+do the conversion for you.
 
 
 ```python
 print('R2 is stored in  ', run.units('R2'))
 print('v2 is stored in  ', run.units('v2'))
 print('Eb is stored in  ', run.units('Eb'))
-print('isCollapse is    ', run.units('isCollapse'), '(no units — it is a flag)')
+print('isCollapse is    ', run.units('isCollapse'), '(no units: it is a flag)')
 
 # Attach the units and let astropy convert.
 velocity = run.quantity('v2')
@@ -210,7 +210,7 @@ print('shell radius :', run.quantity('R2')[-1].to('lyr'))
 R2 is stored in   pc
 v2 is stored in   pc/Myr
 Eb is stored in   Msun*pc^2/Myr^2
-isCollapse is     None (no units — it is a flag)
+isCollapse is     None (no units: it is a flag)
 
 final velocity: 0.8433577434446878 pc / Myr
           same: 0.8246286416344784 km / s
@@ -259,15 +259,15 @@ Most stored quantities are a single number per snapshot, but a few are radial
 profiles. Each profile comes with its own radius axis, named `*_r_arr`. Profiles that
 span many orders of magnitude are stored as $\log_{10}$ and named with a `log_`
 prefix, so remember to undo that before plotting. Profile arrays are not covered by
-`quantity()` — that works on the per-snapshot time series — so attach the unit yourself
-and let astropy convert, exactly as above.
+`quantity()` (that works on the per-snapshot time series), so attach the unit
+yourself and let astropy convert, exactly as above.
 
 Plotting the raw radius is not much use here. The shell grows from about 0.07 pc to
 190 pc over the run, so on a shared axis the early profiles collapse into the left
 edge and you cannot see them at all. Dividing by $R_2$ is not enough either: the
 youngest shell is so thin that it still comes out as a single vertical line.
 
-So the x-axis below is the fraction of the way through the shell — 0 at the inner
+So the x-axis below is the fraction of the way through the shell: 0 at the inner
 edge $R_2$, 1 at the outer edge. Every snapshot then fills the axis and you can
 compare the *shape* of the density profile across four orders of magnitude in size.
 The legend keeps the physical scale, since that is what the normalisation hides.
@@ -363,7 +363,7 @@ Bonnor-Ebert           ran to   4.03 Myr   Small radius reached (event)
 
 ## Where to go from here
 
-A few things worth knowing once you start using your own runs:
+Once you start using your own runs:
 
 - `run.get_at_time(2.0)` gives the state at any moment, interpolated between snapshots.
 - `run.filter(phase='momentum')` narrows to part of a run and hands back another
