@@ -17,7 +17,7 @@ job array with `--emit-jobs` (see *Running on a cluster* below).
 
 Output goes to the `path2output` directory. The default, `def_dir`,
 resolves to `outputs/<model_name>/` for a single run, or one
-`outputs/<run_name>/` subfolder per combination for a sweep — see
+`outputs/<run_name>/` subfolder per combination for a sweep. See
 *Outputs* below for the layout.
 
 ## Parameter-file formats
@@ -61,24 +61,24 @@ simulations. Worked examples ship as `param/sweep_example.param`
 | Flag | Description |
 | --- | --- |
 | `--dry-run`, `-n` | Preview every combination (with GMC warnings) without running. |
-| `--workers N`, `-w` | Parallel workers for the sweep pool — or the array cap with `--emit-jobs`. |
+| `--workers N`, `-w` | Parallel workers for the sweep pool, or the array cap with `--emit-jobs`. |
 | `--yes`, `-y` | Skip the confirmation prompt. |
 | `--verbose`, `-v` | DEBUG-level logs and the full base-parameter list. |
 | `--emit-jobs DIR` | Emit a SLURM job-array bundle in `DIR` instead of running locally. |
 | `--collect-report DIR` | Aggregate a finished `--emit-jobs` bundle into a sweep report. |
 
-> **Note** — Most flags apply only to sweeps. For a single run,
+> **Note:** Most flags apply only to sweeps. For a single run,
 > `--dry-run` prints the parameter file and exits, while
 > `--workers` and `--yes` are ignored.
 
-The default worker count adapts to the machine — the full allocation
+The default worker count adapts to the machine: the full allocation
 inside a SLURM job, a sensible fraction of the cores otherwise; `--help`
 has the details. `--emit-jobs` and `--collect-report` are mutually
 exclusive.
 
 Before launching, `run.py` runs a plausibility check on every
 combination (cloud mass vs. core/ISM density, cloud radius, …) and lists
-any invalid ones up front, so you can abort before wasting compute.
+any invalid ones up front.
 `Ctrl+C` or `SIGTERM` (e.g. from SLURM `scancel`) cancels cleanly:
 in-flight workers stop and a completed / failed / cancelled report is
 written to the output directory.
@@ -87,7 +87,7 @@ written to the output directory.
 
 A sweep runs in-process on a laptop or single node, sized by
 `--workers`. To spread it across nodes on an HPC cluster (e.g.
-bwForCluster Helix), emit a SLURM **job array** instead — one task per
+bwForCluster Helix), emit a SLURM **job array** instead: one task per
 combination, packed across nodes and restarted independently on failure:
 
 ```bash
@@ -109,8 +109,8 @@ jobs/
 ```
 
 Each task runs one simulation on one CPU, with math-library threads
-pinned to one (`OMP_NUM_THREADS=1`, `MPLBACKEND=Agg`) — parallelism comes
-from many tasks, not threading. `--workers K` at emit time caps
+pinned to one (`OMP_NUM_THREADS=1`, `MPLBACKEND=Agg`). Parallelism comes
+from many tasks, not from threading. `--workers K` at emit time caps
 concurrency as `--array=1-N%K`.
 
 When the array finishes, `--collect-report DIR` reads each task's exit
@@ -119,9 +119,9 @@ local sweep, and prints a ready
 `sbatch --array=<failed ids> jobs/submit_sweep.sbatch` to rerun only the
 failures.
 
-> **Note** — Bundled inputs (SPS, cooling tables, `lib/default/`) resolve
+> **Note:** Bundled inputs (SPS, cooling tables, `lib/default/`) resolve
 > relative to the package, so the clone location does not matter. Only
-> `path2output` follows the launch directory — point it at an absolute
+> `path2output` follows the launch directory. Point it at an absolute
 > work/scratch path for cluster runs. Running the in-process pool on a
 > *login* node is discouraged; `run.py` warns when SLURM is detected
 > without an active job.
@@ -161,12 +161,12 @@ outputs/my_sweep/
 ### Run names
 
 Each sweep combination gets its own folder, named automatically from the
-parameters that vary — for example `1e7_sfe010_n1e4_noPHII` is
+parameters that vary. For example, `1e7_sfe010_n1e4_noPHII` is
 `mCloud=1e7, sfe=0.10, nCore=1e4` with `include_PHII = False`. Values
 that would be unsafe in a path are sanitised, and an over-long name
 aborts the sweep with a clear error.
 
-> **Note** — The folder name is only a readable handle. Every run also
+> **Note:** The folder name is only a readable handle. Every run also
 > writes its full resolved parameters to a per-run `.param` file (and the
 > sweep-wide `sweep_report.json`), so keys left at their default are still
 > recorded. Scripts comparing across sweeps should read those sidecars
@@ -177,7 +177,7 @@ aborts the sweep with a clear error.
 ### dictionary.jsonl
 
 Each simulation streams its full state to `dictionary.jsonl` as
-newline-delimited JSON, one object per snapshot — administrative fields,
+newline-delimited JSON, one object per snapshot: administrative fields,
 cloud setup, dynamical state, feedback rates, pressures, forces, and the
 1-D bubble and shell profiles. Writes are append-only and crash-safe, so
 the file always parses (a trailing partial line aside). Each snapshot is
@@ -189,7 +189,7 @@ decades, is stored in $\log_{10}$ space (`log_*`); the point budget is
 set by `simplify_npoints`. To recover a profile, interpolate the abscissa
 against the (possibly log-space) values.
 
-> **Note** — To read the file, use the TRINITY reader API: it hides the
+> **Note:** To read the file, use the TRINITY reader API: it hides the
 > JSONL layout, the per-key units, and the legacy `.json` format behind a
 > small set of classes.
 
@@ -199,14 +199,14 @@ Run constants and end-of-run summaries live in a sibling `metadata.json`
 instead of being repeated in every snapshot: the inputs and set-once
 derived values, how the run ended, the full final state, and a
 post-mortem block for diagnosing failures. The reader folds the constants
-back into each snapshot on load, so you rarely read this file directly —
-but it is small and human-readable. All writes are atomic, so an
+back into each snapshot on load, so you rarely read this file directly. It is
+small and human-readable. All writes are atomic, so an
 interrupted write never corrupts the file.
 
 ### show_run
 
-For a quick human-readable view of a finished run — context, termination
-reason, and final state — without writing any plotting code:
+For a quick human-readable view of a finished run (context, termination
+reason, and final state) without writing any plotting code:
 
 ```bash
 python -m trinity._output.show_run path2output/
@@ -233,8 +233,8 @@ R2 = run.get('R2')
 v2 = run.get('v2')
 ```
 
-`get()` returns TRINITY's internal units — $M_\odot$, pc, Myr. You do not have
-to remember which applies to what:
+`get()` returns TRINITY's internal units: $M_\odot$, pc, Myr. The reader reports
+and converts them:
 
 ```python
 run.units('v2')                    # 'pc/Myr'
@@ -250,7 +250,7 @@ A few other things worth knowing:
 | `run.to_dataframe()` | the whole run as a pandas `DataFrame` |
 | `run.info(verbose=True)` | every stored quantity, described, with units |
 
-> **Note** — Snapshots are written in the order the output buffer flushes them,
+> **Note:** Snapshots are written in the order the output buffer flushes them,
 > which is not chronological, and a long run can repeat snapshots. Sort on
 > `t_now` before plotting a raw run, or pass it through `examples/thin_run.py`,
 > which sorts and de-duplicates.
@@ -263,8 +263,8 @@ running a simulation first.
 
 The [Parameter Specifications](?view=docs&page=parameters) list the four
 logging parameters (`log_level`, `log_console`, `log_file`, `log_colors`)
-and their defaults. Levels follow the usual ladder — `DEBUG`, `INFO`,
-`WARNING`, `ERROR`, `CRITICAL` — and each includes every more severe one,
+and their defaults. Levels follow the usual ladder (`DEBUG`, `INFO`,
+`WARNING`, `ERROR`, `CRITICAL`), and each includes every more severe one,
 so `log_level = INFO` emits `INFO` and above. Console logging is off by
 default; the log file is written.
 
@@ -281,8 +281,8 @@ and feature requests, see
 
 **Why does the install pin numpy below 2?**
 Some numpy 2.x patch releases emit floating-point output that the
-bubble-structure integrator's monotonic guard rejects. The cap is deliberate,
-not neglect; `requirements.txt` records which versions were affected.
+bubble-structure integrator's monotonic guard rejects. The cap is
+deliberate; `requirements.txt` records which versions were affected.
 
 **Do I need LaTeX?**
 Only to regenerate the published paper figures, whose style renders text with
@@ -290,7 +290,7 @@ Only to regenerate the published paper figures, whose style renders text with
 
 **Where do my outputs go?**
 To `path2output`. Left at its default, that resolves to `outputs/<model_name>/`
-under wherever you launched the run — so a sweep on a cluster should set an
+under wherever you launched the run. A sweep on a cluster should set an
 absolute path on a work or scratch filesystem.
 
 **Can I run a sweep on a login node?**
@@ -298,6 +298,6 @@ You can, and `run.py` will warn you when it detects SLURM without an active
 job. Don't: use `--emit-jobs` to emit a job array instead.
 
 **Where is the raw simulation data from the papers?**
-Not in the repository — the run sets and the full SPS and cooling libraries are
+Not in the repository: the run sets and the full SPS and cooling libraries are
 too large. They are available on request; see the
 [publications page](?view=docs&page=publications) for contact details.

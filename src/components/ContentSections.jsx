@@ -321,7 +321,7 @@ function Section1Setup() {
             {' '}The clearing is therefore set by pre-supernova feedback.
           </p>
           <p>
-            This raises the question the code is built to address: among the
+            The code addresses one question: among the
             pre-supernova channels (winds, direct and dust-reprocessed radiation
             pressure, and the pressure of photoionised gas, P<sub>H II</sub>),
             which one dominates, when, and for which clouds?
@@ -335,9 +335,9 @@ function Section1Setup() {
             3D simulations.
           </p>
           <p>
-            TRINITY is designed to survey it at low cost, and to return
-            quantities that can be compared with observations: shell sizes, the
-            balance of forces, and the fraction of ionising photons that escape.
+            TRINITY surveys it at low cost and returns quantities that can be
+            compared with observations: shell sizes, the balance of forces, and
+            the fraction of ionising photons that escape.
           </p>
         </Prose>
       </div>
@@ -524,12 +524,7 @@ function Section3Results() {
           </FigureSource>
         </div>
 
-        <p style={{ fontFamily: 'var(--font-display)' }}
-           className="text-[17px] text-ink-secondary leading-[1.65] mt-10 mb-5">
-          Three results from the parameter survey are worth highlighting.
-        </p>
-
-        <div className="grid gap-5 md:grid-cols-1">
+        <div className="grid gap-5 md:grid-cols-1 mt-10">
           <ResultCard
             index={1}
             title="Photoionised gas affects the dynamics"
@@ -560,7 +555,7 @@ function Section3Results() {
               <PaperFigure
                 src="densityProfile_paper.png"
                 pdf="densityProfile_paper.pdf"
-                alt="Top: four cloud density profiles and their enclosed mass. Bottom: bubble radius versus time — only the steep r-to-the-minus-two cloud keeps expanding; the uniform, r-to-the-minus-one, and Bonnor–Ebert clouds turn over and re-collapse."
+                alt="Top: four cloud density profiles and their enclosed mass. Bottom: bubble radius versus time: only the steep r-to-the-minus-two cloud keeps expanding; the uniform, r-to-the-minus-one, and Bonnor–Ebert clouds turn over and re-collapse."
                 maxH={520}
               />
             }
