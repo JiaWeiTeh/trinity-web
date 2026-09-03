@@ -287,7 +287,7 @@ function Abstract() {
           <p style={{ fontFamily: 'var(--font-ui)' }}
              className="text-[12px] text-ink-tertiary mt-4">
             <span className="font-medium" style={{ fontStyle: 'italic' }}>Key words. </span>
-            methods: numerical — ISM: bubbles — ISM: clouds — ISM: H{' '}II regions — ISM: kinematics and dynamics — stars: formation
+            methods: numerical; ISM: bubbles; ISM: clouds; ISM: H{' '}II regions; ISM: kinematics and dynamics; stars: formation
           </p>
 
           {/* Status line */}
