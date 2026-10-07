@@ -93,6 +93,16 @@ export default function App() {
     else changeView(target.view)
   }, [changePage, changeView])
 
+  // The retired Docs citation page lives on at /#publications; take old links there.
+  useEffect(() => {
+    if (new URLSearchParams(window.location.search).get('page') !== 'publications') return
+    const url = new URL(window.location.href)
+    url.search = ''
+    url.hash = '#publications'
+    history.replaceState(null, '', url.toString())
+    document.getElementById('publications')?.scrollIntoView()
+  }, [])
+
   useEffect(() => {
     const onPop = () => setLocation(readLocation())
     window.addEventListener('popstate', onPop)

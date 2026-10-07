@@ -83,7 +83,7 @@ function DocsHeader({ docs, active, onPageChange }) {
             <button
               key={d.key}
               type="button"
-              onClick={() => onPageChange(d.key)}
+              onClick={() => { if (!isActive) onPageChange(d.key) }}
               aria-current={isActive ? 'page' : undefined}
               className={`group min-h-[124px] rounded-[14px] border p-5 text-left transition duration-200 ${
                 isActive

@@ -17,13 +17,14 @@ export default function TitleBlock({ onNavigate }) {
           Feedback-driven bubble evolution in molecular clouds
         </p>
 
-        <p 
-           className="font-display text-[14px] text-ink-primary mb-1">
-          Jia Wei Teh (郑家伟), Ralf S. Klessen, Simon C. O. Glover, and Kathryn Kreckel
+        <p className="font-display text-[14px] text-ink-primary mb-1">
+          Jia Wei Teh (郑家伟)<sup>1⋆</sup>, Ralf S. Klessen<sup>1,2</sup>, Simon C. O. Glover<sup>1</sup>, and Kathryn Kreckel<sup>3</sup>
         </p>
-        <p 
-           className="font-ui text-[12px] text-ink-tertiary mb-2">
-          Zentrum für Astronomie der Universität Heidelberg
+        {/* Affiliations as printed in Paper I. */}
+        <p className="font-ui text-[12px] text-ink-tertiary mb-2 leading-relaxed">
+          <sup>1</sup> Universität Heidelberg, Zentrum für Astronomie, Institut für Theoretische Astrophysik, Albert-Ueberle-Straße 2, 69120 Heidelberg, Germany<br />
+          <sup>2</sup> Universität Heidelberg, Interdisziplinäres Zentrum für Wissenschaftliches Rechnen, Im Neuenheimer Feld 205, 69120 Heidelberg, Germany<br />
+          <sup>3</sup> Universität Heidelberg, Zentrum für Astronomie, Astronomisches Rechen-Institut, Mönchhofstraße 12-14, 69120 Heidelberg, Germany
         </p>
         <p 
            className="font-ui text-[11px] text-ink-tertiary italic mb-6">
