@@ -299,5 +299,5 @@ job. Don't: use `--emit-jobs` to emit a job array instead.
 
 **Where is the raw simulation data from the papers?**
 Not in the repository: the run sets and the full SPS and cooling libraries are
-too large. They are available on request; see the
-[publications page](?view=docs&page=publications) for contact details.
+too large. They are available on request; contact details are in the site
+footer.
