@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react'
 import BubbleDiagram from './BubbleDiagram'
 import TimeScrubber from './TimeScrubber'
 import Publications from './Publications'
+import AppLink from './AppLink'
 import { PAPER_URL } from '../links'
 
 const QUICKSTART = `git clone https://github.com/JiaWeiTeh/trinity
@@ -16,8 +17,8 @@ function Rule() {
 
 function SectionHeading({ children }) {
   return (
-    <h2 style={{ fontFamily: 'var(--font-display)' }}
-        className="text-[26px] font-semibold text-ink-primary leading-none mb-5">
+    <h2 
+        className="font-display text-[26px] font-semibold text-ink-primary leading-none mb-5">
       {children}
     </h2>
   )
@@ -26,8 +27,8 @@ function SectionHeading({ children }) {
 /* One place to tune the body type for the page. */
 function Prose({ children }) {
   return (
-    <div style={{ fontFamily: 'var(--font-display)' }}
-         className="text-[17px] text-ink-secondary leading-[1.65] space-y-4">
+    <div 
+         className="font-display text-[17px] text-ink-secondary leading-[1.65] space-y-4">
       {children}
     </div>
   )
@@ -79,8 +80,8 @@ function Introduction() {
 }
 
 function ShellFigure() {
-  // Start inside the energy-driven phase so the figure is not an empty circle on load.
-  const [time, setTime] = useState(0.3)
+  // The diagram's labels fade in between 0.5 and 1.2 Myr; start where they are all visible.
+  const [time, setTime] = useState(1.2)
 
   return (
     <div className="mt-10 flex flex-col items-center gap-4">
@@ -92,15 +93,15 @@ function ShellFigure() {
             </div>
           </div>
           <div className="flex flex-col justify-center p-6 md:p-7">
-            <p style={{ fontFamily: 'var(--font-display)' }}
-               className="text-[15px] leading-7 text-ink-secondary">
+            <p 
+               className="font-display text-[15px] leading-7 text-ink-secondary">
               The shell TRINITY follows, from the inside out: free-streaming
               winds to the termination shock R<sub>ts</sub>, the hot
               shocked-wind bubble to R<sub>b</sub>, the ionised layer to the
               ionisation front R<sub>if</sub>, and the swept-up neutral shell
               to R<sub>sh</sub>, inside the natal cloud. Drag the slider to
               move through the energy-driven, transition and momentum-driven
-              phases, or hover a label to isolate a zone. Radii are schematic,
+              phases, or hover a ring to pick out its zone. Radii are schematic,
               not to scale.
             </p>
           </div>
@@ -121,13 +122,13 @@ function GetTheCode({ onNavigate }) {
       <pre className="font-mono text-[13px] leading-[1.55] bg-navy text-paper rounded-md px-4 py-3.5 overflow-x-auto">
         {QUICKSTART}
       </pre>
-      <p style={{ fontFamily: 'var(--font-ui)' }}
-         className="mt-4 text-[13px] text-ink-tertiary leading-relaxed">
+      <p 
+         className="font-ui mt-4 text-[13px] text-ink-tertiary leading-relaxed">
         Pure Python, no compilation step.{' '}
-        <button type="button" onClick={() => onNavigate?.('?view=docs&page=running')}
-                className="text-teal underline underline-offset-[3px] decoration-1 cursor-pointer">
+        <AppLink href="?view=docs&page=running" onNavigate={onNavigate}
+                 className="text-teal underline underline-offset-[3px] decoration-1">
           Running TRINITY →
-        </button>
+        </AppLink>
         {' '}covers parameter files, sweeps and outputs.
       </p>
     </section>
@@ -166,15 +167,15 @@ function Acknowledgements() {
 
   return (
     <section className="py-10">
-      <p style={{ fontFamily: 'var(--font-ui)' }}
-         className="text-[12px] font-medium italic text-ink-tertiary mb-2">
+      <p 
+         className="font-ui text-[12px] font-medium italic text-ink-tertiary mb-2">
         Acknowledgements
       </p>
       <p
         onClick={advance}
         title="Click for another"
-        style={{ fontFamily: 'var(--font-ui)', opacity: visible ? 1 : 0, transition: 'opacity 500ms ease', cursor: 'pointer' }}
-        className="text-[12px] text-ink-tertiary leading-relaxed hover:text-ink-secondary">
+        style={{ opacity: visible ? 1 : 0, transition: 'opacity 500ms ease', cursor: 'pointer' }}
+        className="font-ui text-[12px] text-ink-tertiary leading-relaxed hover:text-ink-secondary">
         {messages[index]}
       </p>
     </section>

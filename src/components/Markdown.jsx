@@ -5,6 +5,7 @@ import remarkMath from 'remark-math'
 import rehypeKatex from 'rehype-katex'
 import rehypeSlug from 'rehype-slug'
 import ParameterTable from './ParameterTable'
+import AppLink from './AppLink'
 
 /* Fenced code blocks with a recognised language slot become custom
    interactive blocks. The marker is the language tag on a ``` fence,
@@ -78,15 +79,7 @@ function Anchor(props) {
   // Internal app routes are written as query-only hrefs (?view=…&page=…)
   // — intercept them for client-side navigation instead of a full reload.
   if (href && href.startsWith('?')) {
-    return (
-      <a
-        href={href}
-        onClick={(e) => { e.preventDefault(); onNavigate?.(href) }}
-        {...rest}
-      >
-        {children}
-      </a>
-    )
+    return <AppLink href={href} onNavigate={onNavigate} {...rest}>{children}</AppLink>
   }
 
   // A link to a file the reader wants to keep, rather than a page to look at.

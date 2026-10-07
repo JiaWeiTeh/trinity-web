@@ -201,7 +201,7 @@ export default function ParameterTable() {
   const hasQuery = query.trim().length > 0
 
   return (
-    <div className="my-6" style={{ fontFamily: 'var(--font-ui)' }}>
+    <div className="font-ui my-6">
       <div className="rounded-xl border border-border-card bg-card p-4">
         <div className="grid gap-3 md:grid-cols-[1fr_180px]">
           <label className="block">

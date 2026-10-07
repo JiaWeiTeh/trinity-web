@@ -8,9 +8,8 @@
   --color-ink-primary: #1E2430;
   --color-ink-secondary: #5E6776;
   --color-ink-tertiary: #64625C;
-  --color-ink-line: #2A3442;
   --color-teal: #096D84;
-  --color-teal-wash: #E6F7FA;
+  --color-accent: #0EA5C8;
   --color-border-card: #D8D2C6;
   --color-border-rule: #E7E1D7;
   --font-display: 'Source Serif 4', Georgia, serif;
@@ -40,9 +39,9 @@ html {
 
 body {
   margin: 0;
-  background: #E7E3DA;
-  color: #1E2430;
-  font-family: 'Source Serif 4', Georgia, serif;
+  background: var(--color-desk);
+  color: var(--color-ink-primary);
+  font-family: var(--font-display);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -63,7 +62,7 @@ body {
   width: 16px;
   height: 16px;
   border-radius: 50%;
-  background: #0EA5C8;
+  background: var(--color-accent);
   border: 2px solid #FFFFFF;
   cursor: pointer;
   transition: transform 0.15s ease;
@@ -75,7 +74,7 @@ body {
   width: 16px;
   height: 16px;
   border-radius: 50%;
-  background: #0EA5C8;
+  background: var(--color-accent);
   border: 2px solid #FFFFFF;
   cursor: pointer;
 }
@@ -83,13 +82,6 @@ body {
   height: 4px;
   border-radius: 2px;
   background: rgba(30, 36, 48, 0.1);
-}
-
-/* Superscript fix for author line */
-sup {
-  font-size: 0.7em;
-  vertical-align: super;
-  line-height: 0;
 }
 
 /* Ensure smooth scroll targets account for fixed navbar */
@@ -111,7 +103,7 @@ sup {
 
 .figure-card-image {
   background:
-    radial-gradient(circle at 50% 45%, rgba(14, 165, 200, 0.08), transparent 36%),
+    radial-gradient(circle at 50% 45%, color-mix(in srgb, var(--color-accent) 8%, transparent), transparent 36%),
     linear-gradient(180deg, #FFFEFA, #F7F4EE);
 }
 
