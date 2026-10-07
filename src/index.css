@@ -84,6 +84,13 @@ body {
   background: rgba(30, 36, 48, 0.1);
 }
 
+/* Affiliation marks in the author line */
+sup {
+  font-size: 0.7em;
+  vertical-align: super;
+  line-height: 0;
+}
+
 /* Ensure smooth scroll targets account for fixed navbar */
 [id] {
   scroll-margin-top: 64px;
@@ -416,7 +423,12 @@ body {
   font-style: italic;
 }
 
+/* A table wider than a phone screen scrolls inside the article instead of
+   widening the page. */
 .docs-article table {
+  display: block;
+  max-width: 100%;
+  overflow-x: auto;
   border-collapse: collapse;
   margin: 16px 0;
   font-family: var(--font-ui);

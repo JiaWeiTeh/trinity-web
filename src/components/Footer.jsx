@@ -11,7 +11,7 @@ export default function Footer() {
         <div>
           <div className="text-ink-primary">Jia Wei Teh</div>
           <div className="text-ink-secondary">jiaweiteh.astro (at) gmail.com</div>
-          <div>Institut für Theoretische Astrophysik, Zentrum für Astronomie der Universität Heidelberg</div>
+          <div>Universität Heidelberg, Zentrum für Astronomie, Institut für Theoretische Astrophysik, Albert-Ueberle-Straße 2, 69120 Heidelberg, Germany</div>
         </div>
         <div className="md:text-right">
           <div>
