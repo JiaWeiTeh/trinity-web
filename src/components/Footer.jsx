@@ -6,8 +6,8 @@ import { REPO_URL } from '../links'
 export default function Footer() {
   return (
     <footer id="contact" className="py-8">
-      <div style={{ fontFamily: 'var(--font-ui)' }}
-           className="max-w-[1060px] mx-auto px-6 md:px-10 flex flex-col md:flex-row md:items-end justify-between gap-4 text-[12px] text-ink-tertiary leading-relaxed text-center md:text-left">
+      <div 
+           className="font-ui max-w-[1060px] mx-auto px-6 md:px-10 flex flex-col md:flex-row md:items-end justify-between gap-4 text-[12px] text-ink-tertiary leading-relaxed text-center md:text-left">
         <div>
           <div className="text-ink-primary">Jia Wei Teh</div>
           <div className="text-ink-secondary">jiaweiteh.astro (at) gmail.com</div>

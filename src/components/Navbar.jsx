@@ -1,41 +1,40 @@
+import AppLink from './AppLink'
 import { REPO_URL } from '../links'
 
 const VIEWS = [
-  { key: 'overview', label: 'Overview' },
-  { key: 'docs', label: 'Docs' },
+  { key: 'overview', label: 'Overview', href: '?view=overview' },
+  { key: 'docs', label: 'Docs', href: '?view=docs' },
 ]
 
-/* The site's one navigation: always visible, three items, no menu. */
-export default function Navbar({ view = 'overview', onViewChange }) {
+/* The site's one navigation: always visible, no menu. */
+export default function Navbar({ view = 'overview', onNavigate }) {
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-desk/80 backdrop-blur-md border-b border-border-rule">
+    <nav aria-label="Site" className="fixed top-0 left-0 right-0 z-50 bg-desk/80 backdrop-blur-md border-b border-border-rule">
       <div className="max-w-5xl mx-auto px-6 h-12 flex items-center justify-between">
-        <button
-          type="button"
-          onClick={() => onViewChange?.('overview')}
+        <AppLink
+          href="?view=overview"
+          onNavigate={onNavigate}
           aria-label="TRINITY overview"
-          className="text-ink-primary font-semibold tracking-widest text-sm hover:text-teal transition-colors cursor-pointer"
-          style={{ fontFamily: 'var(--font-display)' }}
+          className="font-display text-ink-primary font-semibold tracking-widest text-sm hover:text-teal transition-colors"
         >
           TRINITY
-        </button>
+        </AppLink>
 
-        <div style={{ fontFamily: 'var(--font-ui)' }}
-             className="flex items-center gap-5 text-sm">
+        <div className="font-ui flex items-center gap-5 text-sm">
           {VIEWS.map((v) => {
             const isActive = view === v.key
             return (
-              <button
+              <AppLink
                 key={v.key}
-                type="button"
-                onClick={() => onViewChange?.(v.key)}
+                href={v.href}
+                onNavigate={onNavigate}
                 aria-current={isActive ? 'page' : undefined}
-                className={`transition-colors duration-150 cursor-pointer ${
+                className={`transition-colors duration-150 ${
                   isActive ? 'text-ink-primary' : 'text-ink-secondary hover:text-ink-primary'
                 }`}
               >
                 {v.label}
-              </button>
+              </AppLink>
             )
           })}
           <a href={REPO_URL} target="_blank" rel="noopener noreferrer"

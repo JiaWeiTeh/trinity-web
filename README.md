@@ -10,5 +10,12 @@ Interactive showcase website for the TRINITY stellar feedback code.
 
 ```bash
 npm install
-npm run dev
+npm run dev      # live server
+npm run lint     # eslint
+npm run build    # production build into dist/ (what the Pages workflow deploys)
 ```
+
+The parameter reference (`src/docs/parameters.json`) is refreshed from trinity's
+`default.param` with `node scripts/extract-parameters.mjs --write`; the script's header
+describes what it preserves and what it overwrites. The tutorial notebook page and its
+figures are written by `examples/export_web.sh` in the trinity repository.
