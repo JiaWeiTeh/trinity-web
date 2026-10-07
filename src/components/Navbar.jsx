@@ -14,14 +14,13 @@ export default function Navbar({ view = 'overview', onViewChange }) {
           type="button"
           onClick={() => onViewChange?.('overview')}
           aria-label="TRINITY overview"
-          className="text-ink-primary font-semibold tracking-widest text-sm hover:text-teal transition-colors cursor-pointer"
-          style={{ fontFamily: 'var(--font-display)' }}
+          className="font-display text-ink-primary font-semibold tracking-widest text-sm hover:text-teal transition-colors cursor-pointer"
         >
           TRINITY
         </button>
 
-        <div style={{ fontFamily: 'var(--font-ui)' }}
-             className="flex items-center gap-5 text-sm">
+        <div 
+             className="font-ui flex items-center gap-5 text-sm">
           {VIEWS.map((v) => {
             const isActive = view === v.key
             return (

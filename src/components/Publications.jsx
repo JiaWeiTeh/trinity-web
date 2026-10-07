@@ -25,16 +25,16 @@ const LINK = 'text-teal underline underline-offset-[3px] decoration-1'
 function Row({ tag, title, status, href }) {
   return (
     <div className="py-3 border-b border-border-rule flex flex-wrap items-baseline gap-x-3 gap-y-1 last:border-b-0">
-      <span style={{ fontFamily: 'var(--font-ui)' }}
-            className="text-[12px] font-medium text-teal w-[56px] shrink-0">
+      <span 
+            className="font-ui text-[12px] font-medium text-teal w-[56px] shrink-0">
         <a href={href} target="_blank" rel="noopener noreferrer" className={LINK}>{tag}</a>
       </span>
-      <span style={{ fontFamily: 'var(--font-display)' }}
-            className="text-[15px] font-semibold text-ink-primary">
+      <span 
+            className="font-display text-[15px] font-semibold text-ink-primary">
         {title}
       </span>
-      <span style={{ fontFamily: 'var(--font-ui)' }}
-            className="text-[12px] text-ink-tertiary">
+      <span 
+            className="font-ui text-[12px] text-ink-tertiary">
         <a href={href} target="_blank" rel="noopener noreferrer" className={LINK}>{status}</a>
       </span>
     </div>
@@ -43,8 +43,8 @@ function Row({ tag, title, status, href }) {
 
 function GroupLabel({ children }) {
   return (
-    <p style={{ fontFamily: 'var(--font-ui)' }}
-       className="text-[11px] uppercase tracking-[0.22em] text-ink-tertiary mt-9 mb-2">
+    <p 
+       className="font-ui text-[11px] uppercase tracking-[0.22em] text-ink-tertiary mt-9 mb-2">
       {children}
     </p>
   )
@@ -63,8 +63,8 @@ export default function Publications() {
       </div>
 
       <GroupLabel>Citing TRINITY</GroupLabel>
-      <p style={{ fontFamily: 'var(--font-display)' }}
-         className="text-[15px] leading-7 text-ink-secondary">
+      <p 
+         className="font-display text-[15px] leading-7 text-ink-secondary">
         If you use TRINITY in published work, please cite{' '}
         <a href={PAPER_URL} target="_blank" rel="noopener noreferrer" className={LINK}>Paper I</a>;
         the ADS record carries the BibTeX entry, and the repository&rsquo;s{' '}

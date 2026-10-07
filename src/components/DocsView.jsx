@@ -63,16 +63,16 @@ function buildDocs() {
 function DocsHeader({ docs, active, onPageChange }) {
   return (
     <header className="mb-12 max-w-[760px]">
-      <p style={{ fontFamily: 'var(--font-ui)' }}
-         className="text-[11px] uppercase tracking-[0.28em] text-ink-tertiary">
+      <p 
+         className="font-ui text-[11px] uppercase tracking-[0.28em] text-ink-tertiary">
         Manual pages
       </p>
-      <h1 style={{ fontFamily: 'var(--font-display)' }}
-          className="mt-5 text-[34px] sm:text-[42px] font-semibold leading-tight tracking-[-0.015em] text-ink-primary">
+      <h1 
+          className="font-display mt-5 text-[34px] sm:text-[42px] font-semibold leading-tight tracking-[-0.015em] text-ink-primary">
         Documentation
       </h1>
-      <p style={{ fontFamily: 'var(--font-display)' }}
-         className="mt-5 max-w-[680px] text-[17px] sm:text-[20px] leading-[1.55] text-ink-secondary">
+      <p 
+         className="font-display mt-5 max-w-[680px] text-[17px] sm:text-[20px] leading-[1.55] text-ink-secondary">
         A compact reference for running TRINITY simulations and configuring parameter files.
       </p>
 
@@ -87,23 +87,22 @@ function DocsHeader({ docs, active, onPageChange }) {
               aria-current={isActive ? 'page' : undefined}
               className={`group min-h-[124px] rounded-[14px] border p-5 text-left transition duration-200 ${
                 isActive
-                  ? 'border-teal bg-paper shadow-[0_18px_45px_rgba(14,165,200,0.10)]'
+                  ? 'border-teal bg-paper shadow-[0_18px_45px_color-mix(in_srgb,var(--color-accent)_10%,transparent)]'
                   : 'border-border-card bg-paper/60 shadow-sm hover:-translate-y-[2px] hover:bg-paper hover:shadow-[0_12px_30px_rgba(55,48,39,0.07)]'
               }`}
             >
               <p
-                style={{ fontFamily: 'var(--font-ui)' }}
-                className={`text-[11px] uppercase tracking-[0.26em] ${isActive ? 'text-teal' : 'text-ink-tertiary'}`}
+                className={`font-ui text-[11px] uppercase tracking-[0.26em] ${isActive ? 'text-teal' : 'text-ink-tertiary'}`}
               >
                 {d.kicker}
               </p>
-              <h2 style={{ fontFamily: 'var(--font-display)' }}
-                  className="mt-4 text-[20px] font-semibold leading-tight text-ink-primary">
+              <h2 
+                  className="font-display mt-4 text-[20px] font-semibold leading-tight text-ink-primary">
                 {d.title}
               </h2>
               {d.description && (
-                <p style={{ fontFamily: 'var(--font-ui)' }}
-                   className="mt-2 text-[13px] text-ink-secondary">
+                <p 
+                   className="font-ui mt-2 text-[13px] text-ink-secondary">
                   {d.description}
                 </p>
               )}
@@ -146,8 +145,8 @@ export default function DocsView({ page, onPageChange, onNavigate }) {
   if (!docs.length) {
     return (
       <div className="max-w-[680px] mx-auto py-16 text-center">
-        <p style={{ fontFamily: 'var(--font-ui)' }}
-           className="text-[13px] text-ink-tertiary">
+        <p 
+           className="font-ui text-[13px] text-ink-tertiary">
           No documentation pages yet. Add markdown files to{' '}
           <code className="text-ink-secondary">src/docs/</code> to populate this view.
         </p>
@@ -174,8 +173,8 @@ export default function DocsView({ page, onPageChange, onNavigate }) {
         <aside className="docs-index" aria-label="On this page">
           {sections.length > 0 && (
             <>
-              <p style={{ fontFamily: 'var(--font-ui)' }}
-                 className="text-[11px] uppercase tracking-[0.18em] text-ink-tertiary mb-3">
+              <p 
+                 className="font-ui text-[11px] uppercase tracking-[0.18em] text-ink-tertiary mb-3">
                 On this page
               </p>
               <ul className="docs-section-list">

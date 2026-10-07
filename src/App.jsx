@@ -21,8 +21,8 @@ function readLocation() {
 
 const docsFallback = (
   <div
-    style={{ fontFamily: 'var(--font-ui)' }}
-    className="text-[13px] text-ink-tertiary py-20 text-center"
+    
+    className="font-ui text-[13px] text-ink-tertiary py-20 text-center"
   >
     Loading…
   </div>

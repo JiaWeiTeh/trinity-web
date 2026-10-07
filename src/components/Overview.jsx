@@ -16,8 +16,8 @@ function Rule() {
 
 function SectionHeading({ children }) {
   return (
-    <h2 style={{ fontFamily: 'var(--font-display)' }}
-        className="text-[26px] font-semibold text-ink-primary leading-none mb-5">
+    <h2 
+        className="font-display text-[26px] font-semibold text-ink-primary leading-none mb-5">
       {children}
     </h2>
   )
@@ -26,8 +26,8 @@ function SectionHeading({ children }) {
 /* One place to tune the body type for the page. */
 function Prose({ children }) {
   return (
-    <div style={{ fontFamily: 'var(--font-display)' }}
-         className="text-[17px] text-ink-secondary leading-[1.65] space-y-4">
+    <div 
+         className="font-display text-[17px] text-ink-secondary leading-[1.65] space-y-4">
       {children}
     </div>
   )
@@ -92,8 +92,8 @@ function ShellFigure() {
             </div>
           </div>
           <div className="flex flex-col justify-center p-6 md:p-7">
-            <p style={{ fontFamily: 'var(--font-display)' }}
-               className="text-[15px] leading-7 text-ink-secondary">
+            <p 
+               className="font-display text-[15px] leading-7 text-ink-secondary">
               The shell TRINITY follows, from the inside out: free-streaming
               winds to the termination shock R<sub>ts</sub>, the hot
               shocked-wind bubble to R<sub>b</sub>, the ionised layer to the
@@ -121,8 +121,8 @@ function GetTheCode({ onNavigate }) {
       <pre className="font-mono text-[13px] leading-[1.55] bg-navy text-paper rounded-md px-4 py-3.5 overflow-x-auto">
         {QUICKSTART}
       </pre>
-      <p style={{ fontFamily: 'var(--font-ui)' }}
-         className="mt-4 text-[13px] text-ink-tertiary leading-relaxed">
+      <p 
+         className="font-ui mt-4 text-[13px] text-ink-tertiary leading-relaxed">
         Pure Python, no compilation step.{' '}
         <button type="button" onClick={() => onNavigate?.('?view=docs&page=running')}
                 className="text-teal underline underline-offset-[3px] decoration-1 cursor-pointer">
@@ -166,15 +166,15 @@ function Acknowledgements() {
 
   return (
     <section className="py-10">
-      <p style={{ fontFamily: 'var(--font-ui)' }}
-         className="text-[12px] font-medium italic text-ink-tertiary mb-2">
+      <p 
+         className="font-ui text-[12px] font-medium italic text-ink-tertiary mb-2">
         Acknowledgements
       </p>
       <p
         onClick={advance}
         title="Click for another"
-        style={{ fontFamily: 'var(--font-ui)', opacity: visible ? 1 : 0, transition: 'opacity 500ms ease', cursor: 'pointer' }}
-        className="text-[12px] text-ink-tertiary leading-relaxed hover:text-ink-secondary">
+        style={{ opacity: visible ? 1 : 0, transition: 'opacity 500ms ease', cursor: 'pointer' }}
+        className="font-ui text-[12px] text-ink-tertiary leading-relaxed hover:text-ink-secondary">
         {messages[index]}
       </p>
     </section>

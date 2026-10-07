@@ -96,15 +96,13 @@ function Labels({ radii, bubbleOpacity, hoveredZone, groupOpacity }) {
               stroke={highlighted ? '#1E2430' : '#97948C'} strokeWidth={highlighted ? 0.9 : 0.5} />
             <text x={LABEL_X} y={hasSub ? l.labelY - 1 : l.labelY}
               fill={highlighted ? '#1E2430' : '#5E6776'} fontSize={10} fontWeight={highlighted ? 600 : 500}
-              dominantBaseline="central"
-              style={{ fontFamily: 'var(--font-ui)' }}>
+              dominantBaseline="central" className="font-ui">
               {l.text}
             </text>
             {hasSub && (
               <text x={LABEL_X} y={l.labelY + 12}
                 fill={highlighted ? '#5E6776' : '#97948C'} fontSize={8} fontWeight={400} fontStyle="italic"
-                dominantBaseline="central"
-                style={{ fontFamily: 'var(--font-ui)' }}>
+                dominantBaseline="central" className="font-ui">
                 {l.desc && <tspan>{l.desc}{l.radius ? '  ' : ''}</tspan>}
                 {l.radius && (
                   <>

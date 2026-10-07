@@ -11,12 +11,12 @@ export default function TimeScrubber({ time, onTimeChange }) {
   return (
     <div className="w-full">
       <div className="flex items-baseline justify-between gap-3">
-        <p style={{ fontFamily: 'var(--font-ui)' }}
-           className="text-[11px] uppercase tracking-[0.16em] text-ink-tertiary">
+        <p 
+           className="font-ui text-[11px] uppercase tracking-[0.16em] text-ink-tertiary">
           <span style={{ fontStyle: 'italic' }}>t</span>{' = '}{time.toFixed(2)}{' Myr'}
         </p>
-        <p style={{ fontFamily: 'var(--font-ui)' }}
-           className="text-[11px] uppercase tracking-[0.16em] text-teal font-medium">
+        <p 
+           className="font-ui text-[11px] uppercase tracking-[0.16em] text-teal font-medium">
           {phaseFor(time)}
         </p>
       </div>
@@ -37,8 +37,7 @@ export default function TimeScrubber({ time, onTimeChange }) {
         </div>
       </div>
 
-      <div className="mt-2 flex justify-between text-[10px] text-ink-tertiary"
-           style={{ fontFamily: 'var(--font-ui)' }}>
+      <div className="font-ui mt-2 flex justify-between text-[10px] text-ink-tertiary">
         <span>0</span>
         <span>5</span>
       </div>
