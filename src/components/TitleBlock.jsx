@@ -34,7 +34,7 @@ export default function TitleBlock({ onNavigate }) {
           <a href={PAPER_URL} target="_blank" rel="noopener noreferrer" className={LINK}>
             Read Paper I →
           </a>
-          <button type="button" onClick={() => onNavigate?.('?view=start')}
+          <button type="button" onClick={() => onNavigate?.('?view=docs&page=getting-started')}
                   className={`${LINK} cursor-pointer`}>
             Get started →
           </button>
