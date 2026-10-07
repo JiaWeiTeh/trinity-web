@@ -1,3 +1,5 @@
+# Getting started
+
 ## Install
 
 Clone the repository and install the Python dependencies:
@@ -35,7 +37,6 @@ running anything yourself.
 ## License & citation
 
 TRINITY is distributed under the [GNU GPL v3](?view=docs&page=license).
-For the physical model and results, see the [Paper](?view=paper). If
-you use it in published work, please see the
-[publications page](?view=docs&page=publications) for the citation and
-acknowledgement.
+For the physical model and results, see
+[Paper I](https://ui.adsabs.harvard.edu/abs/arXiv:2605.27517/abstract),
+which is also the paper to cite if you use TRINITY in published work.
