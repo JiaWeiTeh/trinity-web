@@ -31,13 +31,11 @@ const WARPFIELD = [
 
 const LINK = 'text-teal underline underline-offset-[3px] decoration-1'
 
-/* Tag in the margin; title over its citation, both linking to the ADS record. */
+/* Tag in the margin; title over its citation, the title linking to the ADS record. */
 function Row({ tag, title, status, href }) {
   return (
     <div className="py-3 border-b border-border-rule flex gap-3 last:border-b-0">
-      <span className="font-ui text-[12px] font-medium text-teal w-[56px] shrink-0 pt-[3px]">
-        <a href={href} target="_blank" rel="noopener noreferrer" className={LINK}>{tag}</a>
-      </span>
+      <span className="font-ui text-[12px] font-medium text-teal w-[56px] shrink-0 pt-[3px]">{tag}</span>
       <span className="min-w-0">
         <a href={href} target="_blank" rel="noopener noreferrer"
            className="font-display text-[15px] font-semibold text-ink-primary leading-snug hover:underline underline-offset-[3px] decoration-1">

@@ -73,7 +73,7 @@ function Labels({ radii, bubbleOpacity, hoveredZone, groupOpacity }) {
     { key: 'shell', zone: 'shell', text: 'SHELL', desc: 'neutral', radius: 'sh', dotY: 62, labelY: 62, r: (radii.R_sh + radii.R_if) / 2 },
     { key: 'ionised-shell', zone: 'ionised', text: 'SHELL', desc: 'ionised', radius: 'if', dotY: 86, labelY: 86, r: (radii.R_if + ionisedInner) / 2 },
     ...(showBubble
-      ? [{ key: 'bubble', zone: 'bubble', text: 'BUBBLE', desc: null, radius: 'b', dotY: 140, labelY: 140, r: (radii.R_b + radii.R_w) / 2, opacity: bubbleOpacity }]
+      ? [{ key: 'bubble', zone: 'bubble', text: 'BUBBLE', desc: null, radius: 'b', dotY: 160, labelY: 160, r: (radii.R_b + radii.R_w) / 2, opacity: bubbleOpacity }]
       : []),
     ...(showHII ? [{ key: 'hii-label', zone: 'ionised', text: 'H\u2009II', desc: null, radius: 'if', dotY: 120, labelY: 120, r: (radii.R_if + radii.R_w) / 2 }] : []),
     { key: 'winds', zone: 'winds', text: 'WINDS', desc: null, radius: 'ts', dotY: CY, labelY: CY, r: (radii.R_w + 8) / 2 },
