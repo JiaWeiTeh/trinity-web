@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react'
 import BubbleDiagram from './BubbleDiagram'
 import TimeScrubber from './TimeScrubber'
 import Publications from './Publications'
+import AppLink from './AppLink'
 import { PAPER_URL } from '../links'
 
 const QUICKSTART = `git clone https://github.com/JiaWeiTeh/trinity
@@ -79,8 +80,8 @@ function Introduction() {
 }
 
 function ShellFigure() {
-  // Start inside the energy-driven phase so the figure is not an empty circle on load.
-  const [time, setTime] = useState(0.3)
+  // The diagram's labels fade in between 0.5 and 1.2 Myr; start where they are all visible.
+  const [time, setTime] = useState(1.2)
 
   return (
     <div className="mt-10 flex flex-col items-center gap-4">
@@ -100,7 +101,7 @@ function ShellFigure() {
               ionisation front R<sub>if</sub>, and the swept-up neutral shell
               to R<sub>sh</sub>, inside the natal cloud. Drag the slider to
               move through the energy-driven, transition and momentum-driven
-              phases, or hover a label to isolate a zone. Radii are schematic,
+              phases, or hover a ring to pick out its zone. Radii are schematic,
               not to scale.
             </p>
           </div>
@@ -124,10 +125,10 @@ function GetTheCode({ onNavigate }) {
       <p 
          className="font-ui mt-4 text-[13px] text-ink-tertiary leading-relaxed">
         Pure Python, no compilation step.{' '}
-        <button type="button" onClick={() => onNavigate?.('?view=docs&page=running')}
-                className="text-teal underline underline-offset-[3px] decoration-1 cursor-pointer">
+        <AppLink href="?view=docs&page=running" onNavigate={onNavigate}
+                 className="text-teal underline underline-offset-[3px] decoration-1">
           Running TRINITY →
-        </button>
+        </AppLink>
         {' '}covers parameter files, sweeps and outputs.
       </p>
     </section>
