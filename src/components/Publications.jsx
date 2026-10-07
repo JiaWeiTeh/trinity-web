@@ -2,16 +2,25 @@ import { PAPER_URL } from '../links'
 
 /* Papers that describe TRINITY. New papers in the series are rows here. */
 const PAPERS = [
-  { tag: 'Paper I', title: 'Code & Methods', status: 'Teh et al. (2026), arXiv:2605.27517', href: PAPER_URL },
+  { tag: 'Paper I',
+    title: 'TRINITY: A coupled model of winds, radiation, and photoionised gas in molecular clouds. I. Methods and validation',
+    status: 'Teh et al. (2026), arXiv:2605.27517',
+    href: PAPER_URL },
 ]
 
-/* Other studies that use TRINITY. */
+/* Other studies that use TRINITY, newest first. */
 const USING = [
-  { tag: '2026', title: 'Neutral hydrogen around the Orion nebula',
-    status: 'Soler et al., A&A 711, A85; NeAtHood I',
+  { tag: '2026',
+    title: "JWST Observations of Starbursts: A Young Bubble in NGC 253's Central Starburst",
+    status: 'Sheriff et al., arXiv:2609.16190',
+    href: 'https://ui.adsabs.harvard.edu/abs/arXiv:2609.16190/abstract' },
+  { tag: '2026',
+    title: 'The Neutral Atomic Hydrogen in the solar neighborhood (NeAtHood) project: I. Ghost in the shell: Neutral atomic hydrogen in the extended Orion nebula',
+    status: 'Soler et al., A&A 711, A85',
     href: 'https://ui.adsabs.harvard.edu/abs/2026A%26A...711A..85S/abstract' },
-  { tag: '2024', title: 'Massive star cluster formation',
-    status: 'Polak et al., A&A 690, A94; resolving feedback of individual stars',
+  { tag: '2024',
+    title: 'Massive star cluster formation: I. High star formation efficiency while resolving feedback of individual stars',
+    status: 'Polak et al., A&A 690, A94',
     href: 'https://ui.adsabs.harvard.edu/abs/2024A%26A...690A..94P/abstract' },
 ]
 
@@ -22,20 +31,17 @@ const WARPFIELD = [
 
 const LINK = 'text-teal underline underline-offset-[3px] decoration-1'
 
+/* Tag in the margin; title over its citation, the title linking to the ADS record. */
 function Row({ tag, title, status, href }) {
   return (
-    <div className="py-3 border-b border-border-rule flex flex-wrap items-baseline gap-x-3 gap-y-1 last:border-b-0">
-      <span 
-            className="font-ui text-[12px] font-medium text-teal w-[56px] shrink-0">
-        <a href={href} target="_blank" rel="noopener noreferrer" className={LINK}>{tag}</a>
-      </span>
-      <span 
-            className="font-display text-[15px] font-semibold text-ink-primary">
-        {title}
-      </span>
-      <span 
-            className="font-ui text-[12px] text-ink-tertiary">
-        <a href={href} target="_blank" rel="noopener noreferrer" className={LINK}>{status}</a>
+    <div className="py-3 border-b border-border-rule flex gap-3 last:border-b-0">
+      <span className="font-ui text-[12px] font-medium text-teal w-[56px] shrink-0 pt-[3px]">{tag}</span>
+      <span className="min-w-0">
+        <a href={href} target="_blank" rel="noopener noreferrer"
+           className="font-display text-[15px] font-semibold text-ink-primary leading-snug hover:underline underline-offset-[3px] decoration-1">
+          {title}
+        </a>
+        <span className="font-ui block text-[12px] text-ink-tertiary mt-0.5">{status}</span>
       </span>
     </div>
   )
@@ -43,8 +49,7 @@ function Row({ tag, title, status, href }) {
 
 function GroupLabel({ children }) {
   return (
-    <p 
-       className="font-ui text-[11px] uppercase tracking-[0.22em] text-ink-tertiary mt-9 mb-2">
+    <p className="font-ui text-[11px] uppercase tracking-[0.22em] text-ink-tertiary mt-9 mb-2">
       {children}
     </p>
   )
@@ -63,8 +68,7 @@ export default function Publications() {
       </div>
 
       <GroupLabel>Citing TRINITY</GroupLabel>
-      <p 
-         className="font-display text-[15px] leading-7 text-ink-secondary">
+      <p className="font-display text-[15px] leading-7 text-ink-secondary">
         If you use TRINITY in published work, please cite{' '}
         <a href={PAPER_URL} target="_blank" rel="noopener noreferrer" className={LINK}>Paper I</a>;
         the ADS record carries the BibTeX entry, and the repository&rsquo;s{' '}

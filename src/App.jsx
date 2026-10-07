@@ -10,6 +10,8 @@ const DocsView = lazy(() => import('./components/DocsView'))
    stopped being a paper) or ?view=start (now the first Docs page). */
 function resolveLocation(view, page) {
   if (view === 'start') return { view: 'docs', page: 'getting-started' }
+  // The Docs citation page was folded into the overview's Publications section.
+  if (view === 'docs' && page === 'publications') return { view: 'overview', page: null }
   if (view === 'docs') return { view, page }
   return { view: 'overview', page: null }
 }
@@ -17,6 +19,14 @@ function resolveLocation(view, page) {
 function readLocation() {
   const params = new URLSearchParams(window.location.search)
   return resolveLocation(params.get('view'), params.get('page'))
+}
+
+/* Re-clicking the current view or page would otherwise stack identical
+   history entries and make Back look dead. */
+function commitUrl(url) {
+  const next = url.toString()
+  if (next === window.location.href) history.replaceState(null, '', next)
+  else history.pushState(null, '', next)
 }
 
 const docsFallback = (
@@ -61,7 +71,7 @@ export default function App() {
     else url.searchParams.set('view', nextView)
     url.searchParams.delete('page')
     url.hash = ''
-    history.pushState(null, '', url.toString())
+    commitUrl(url)
     smoothScrollToTop()
   }, [])
 
@@ -71,7 +81,7 @@ export default function App() {
     url.searchParams.set('view', 'docs')
     url.searchParams.set('page', nextPage)
     url.hash = ''
-    history.pushState(null, '', url.toString())
+    commitUrl(url)
     smoothScrollToTop()
   }, [])
 
@@ -91,7 +101,7 @@ export default function App() {
 
   return (
     <>
-      <Navbar view={view} onViewChange={changeView} />
+      <Navbar view={view} onNavigate={navigateTo} />
       <main
         id="paper-content"
         className={`paper-container${view === 'docs' ? ' paper-container--docs' : ''}`}

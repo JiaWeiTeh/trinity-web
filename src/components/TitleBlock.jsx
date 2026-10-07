@@ -1,3 +1,4 @@
+import AppLink from './AppLink'
 import { PAPER_URL, REPO_URL } from '../links'
 
 const LINK = 'text-[13px] text-teal underline underline-offset-[3px] decoration-1'
@@ -34,10 +35,9 @@ export default function TitleBlock({ onNavigate }) {
           <a href={PAPER_URL} target="_blank" rel="noopener noreferrer" className={LINK}>
             Read Paper I →
           </a>
-          <button type="button" onClick={() => onNavigate?.('?view=docs&page=getting-started')}
-                  className={`${LINK} cursor-pointer`}>
+          <AppLink href="?view=docs&page=getting-started" onNavigate={onNavigate} className={LINK}>
             Get started →
-          </button>
+          </AppLink>
           <a href={REPO_URL} target="_blank" rel="noopener noreferrer" className={LINK}>
             GitHub →
           </a>
