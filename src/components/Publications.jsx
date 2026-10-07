@@ -74,6 +74,9 @@ export default function Publications() {
         <a href={WARPFIELD[0].href} target="_blank" rel="noopener noreferrer" className={LINK}>{WARPFIELD[0].label}</a>
         {' '}and{' '}
         <a href={WARPFIELD[1].href} target="_blank" rel="noopener noreferrer" className={LINK}>{WARPFIELD[1].label}</a>.
+        Stellar feedback rates come by default from{' '}
+        <a href="https://www.stsci.edu/science/starburst99/" target="_blank" rel="noopener noreferrer" className={LINK}>Starburst99</a>
+        {' '}(Leitherer et al. 1999).
       </p>
     </>
   )

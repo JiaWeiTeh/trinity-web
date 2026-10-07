@@ -10,6 +10,10 @@ const rawDocs = import.meta.glob('../docs/*.md', {
 /* Per-page card metadata. Pages not listed here fall back to a generic
    "Page" kicker and an empty description. */
 const PAGE_META = {
+  'getting-started': {
+    kicker: 'Quickstart',
+    description: 'From a fresh clone to a first run.',
+  },
   running: {
     kicker: 'Guide',
     description: 'Commands, sweep modes, outputs.',
@@ -21,10 +25,6 @@ const PAGE_META = {
   notebook: {
     kicker: 'Tutorial',
     description: 'A worked notebook, with runs that ship with the code.',
-  },
-  publications: {
-    kicker: 'Citation',
-    description: 'How to cite TRINITY and the WARPFIELD lineage.',
   },
   license: {
     kicker: 'Legal',
