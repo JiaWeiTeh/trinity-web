@@ -1,23 +1,20 @@
 import { useState, useEffect } from 'react'
 
 const navLinks = [
-  { label: 'Abstract', href: '#abstract' },
-  { label: '1. Setup', href: '#setup' },
-  { label: '2. Model', href: '#model' },
-  { label: '3. Results', href: '#results' },
-  { label: '4. Papers', href: '#papers' },
+  { label: 'Get the code', href: '#code' },
+  { label: 'Publications', href: '#publications' },
 ]
 
 const viewLinks = [
-  { key: 'paper', label: 'Paper' },
+  { key: 'overview', label: 'Overview' },
   { key: 'start', label: 'Getting started' },
   { key: 'docs', label: 'Documentation' },
 ]
 
-export default function Navbar({ view = 'paper', onViewChange }) {
+export default function Navbar({ view = 'overview', onViewChange }) {
   const [visible, setVisible] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
-  const onPaper = view === 'paper'
+  const onOverview = view === 'overview'
 
   const switchView = (key) => {
     setMenuOpen(false)
@@ -98,11 +95,11 @@ export default function Navbar({ view = 'paper', onViewChange }) {
             TRINITY
           </a>
 
-          {/* Desktop links — only shown in paper view; the fixed side tabs
+          {/* Desktop links — only shown in the overview; the fixed side tabs
               handle view switching, so the navbar stays a single-purpose
               within-view nav. */}
           <div className="hidden sm:flex items-center gap-6">
-            {onPaper && navLinks.map((link) => (
+            {onOverview && navLinks.map((link) => (
               <a
                 key={link.href}
                 href={link.href}
@@ -114,14 +111,14 @@ export default function Navbar({ view = 'paper', onViewChange }) {
                 {link.label}
               </a>
             ))}
-            {!onPaper && (
+            {!onOverview && (
               <button
                 type="button"
-                onClick={() => switchView('paper')}
+                onClick={() => switchView('overview')}
                 className="text-ink-secondary text-sm hover:text-ink-primary transition-colors cursor-pointer"
                 style={{ fontFamily: 'var(--font-ui)' }}
               >
-                ← Back to paper
+                ← Overview
               </button>
             )}
           </div>
@@ -154,7 +151,7 @@ export default function Navbar({ view = 'paper', onViewChange }) {
           where the fixed side tabs are hidden. */}
       {menuOpen && (
         <div className="fixed inset-0 z-40 bg-white/95 backdrop-blur-lg flex flex-col items-center justify-center gap-8 sm:hidden">
-          {onPaper && navLinks.map((link) => (
+          {onOverview && navLinks.map((link) => (
             <a
               key={link.href}
               href={link.href}

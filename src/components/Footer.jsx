@@ -1,32 +1,26 @@
-export default function Footer({ onViewChange }) {
+import { REPO_URL } from '../links'
+
+/* The site's one contact block. Keeps id="contact": trinity's README links
+   to /#contact. The address is written out rather than a mailto:, so it is
+   not a link a crawler can harvest in one pass. */
+export default function Footer() {
   return (
-    <footer className="py-8">
-      <div className="max-w-[1060px] mx-auto px-6 md:px-10 flex flex-col md:flex-row items-center justify-between gap-4">
-        <div style={{ fontFamily: 'var(--font-ui)' }}
-             className="text-[12px] text-ink-tertiary text-center md:text-left">
-          <div>TRINITY — ITA/ZAH, Universität Heidelberg</div>
-          <div>Jia Wei Teh</div>
-          <div>jiaweiteh.astro (at) gmail.com</div>
+    <footer id="contact" className="py-8">
+      <div style={{ fontFamily: 'var(--font-ui)' }}
+           className="max-w-[1060px] mx-auto px-6 md:px-10 flex flex-col md:flex-row md:items-end justify-between gap-4 text-[12px] text-ink-tertiary leading-relaxed text-center md:text-left">
+        <div>
+          <div className="text-ink-primary">Jia Wei Teh</div>
+          <div className="text-ink-secondary">jiaweiteh.astro (at) gmail.com</div>
+          <div>Institut für Theoretische Astrophysik, Zentrum für Astronomie der Universität Heidelberg</div>
         </div>
-        <div className="flex items-center gap-4">
-          <a href="https://github.com/JiaWeiTeh/trinity"
-             target="_blank" rel="noopener noreferrer"
-             aria-label="GitHub repository"
-             className="text-ink-tertiary hover:text-ink-primary transition-colors duration-150">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z" />
-            </svg>
-          </a>
-          <button
-            type="button"
-            onClick={() => onViewChange?.('docs')}
-            aria-label="Documentation"
-            className="text-ink-tertiary hover:text-ink-primary transition-colors duration-150 cursor-pointer">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z" />
-              <path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z" />
-            </svg>
-          </button>
+        <div className="md:text-right">
+          <div>
+            <a href={REPO_URL} target="_blank" rel="noopener noreferrer"
+               className="hover:text-ink-primary transition-colors duration-150">
+              GitHub
+            </a>
+          </div>
+          <div>Site and code under active development, 2026.</div>
         </div>
       </div>
     </footer>

@@ -35,7 +35,8 @@ running anything yourself.
 ## License & citation
 
 TRINITY is distributed under the [GNU GPL v3](?view=docs&page=license).
-For the physical model and results, see the [Paper](?view=paper). If
+For the physical model and results, see
+[Paper I](https://ui.adsabs.harvard.edu/abs/arXiv:2605.27517/abstract). If
 you use it in published work, please see the
 [publications page](?view=docs&page=publications) for the citation and
 acknowledgement.

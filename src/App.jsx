@@ -1,20 +1,26 @@
 import { useState, useCallback, useEffect, lazy, Suspense } from 'react'
 import Navbar from './components/Navbar'
 import TitleBlock from './components/TitleBlock'
-import ContentSections from './components/ContentSections'
+import Overview from './components/Overview'
 import PaperTabs from './components/PaperTabs'
 import Footer from './components/Footer'
 
 const DocsView = lazy(() => import('./components/DocsView'))
 const StartView = lazy(() => import('./components/StartView'))
 
-const VALID_VIEWS = ['paper', 'start', 'docs']
+const VALID_VIEWS = ['overview', 'start', 'docs']
+
+/* Old links still say ?view=paper; the view was renamed when the page
+   stopped being a paper. */
+function resolveView(v) {
+  if (v === 'paper') return 'overview'
+  return VALID_VIEWS.includes(v) ? v : 'overview'
+}
 
 function readLocation() {
   const params = new URLSearchParams(window.location.search)
-  const v = params.get('view')
   return {
-    view: VALID_VIEWS.includes(v) ? v : 'paper',
+    view: resolveView(params.get('view')),
     page: params.get('page'),
   }
 }
@@ -57,7 +63,7 @@ export default function App() {
   const changeView = useCallback((nextView) => {
     setLocation({ view: nextView, page: null })
     const url = new URL(window.location.href)
-    if (nextView === 'paper') url.searchParams.delete('view')
+    if (nextView === 'overview') url.searchParams.delete('view')
     else url.searchParams.set('view', nextView)
     url.searchParams.delete('page')
     url.hash = ''
@@ -81,7 +87,7 @@ export default function App() {
     const p = params.get('page')
     const v = params.get('view')
     if (p) changePage(p)
-    else changeView(VALID_VIEWS.includes(v) ? v : 'paper')
+    else changeView(resolveView(v))
   }, [changePage, changeView])
 
   useEffect(() => {
@@ -99,10 +105,10 @@ export default function App() {
           id="paper-content"
           className={`paper-container${view === 'docs' ? ' paper-container--docs' : ''}`}
         >
-          {view === 'paper' && (
+          {view === 'overview' && (
             <>
-              <TitleBlock onViewChange={changeView} onNavigate={navigateTo} />
-              <ContentSections />
+              <TitleBlock onNavigate={navigateTo} />
+              <Overview onNavigate={navigateTo} />
             </>
           )}
           {view === 'start' && (
@@ -117,7 +123,7 @@ export default function App() {
           )}
         </main>
       </div>
-      <Footer onViewChange={changeView} />
+      <Footer />
     </>
   )
 }
