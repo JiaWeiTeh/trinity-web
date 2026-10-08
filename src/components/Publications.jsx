@@ -1,3 +1,4 @@
+import CopyButton from './CopyButton'
 import { PAPER_URL } from '../links'
 
 /* Papers that describe TRINITY. New papers in the series are rows here. */
@@ -28,6 +29,20 @@ const WARPFIELD = [
   { label: 'Rahner et al. (2017)', href: 'https://ui.adsabs.harvard.edu/abs/2017MNRAS.470.4453R/abstract' },
   { label: 'Rahner et al. (2019)', href: 'https://ui.adsabs.harvard.edu/abs/2019MNRAS.483.2547R/abstract' },
 ]
+
+/* Paper I as an arXiv e-print, keyed by its ADS bibcode. Replace with the
+   journal entry once the A&A version is out. */
+const BIBTEX = `@ARTICLE{2026arXiv260527517T,
+       author = {{Teh}, Jia Wei and {Klessen}, Ralf S. and {Glover}, Simon C.~O. and {Kreckel}, Kathryn},
+        title = "{TRINITY: A coupled model of winds, radiation, and photoionised gas in molecular clouds. I. Methods and validation}",
+      journal = {arXiv e-prints},
+         year = 2026,
+        month = may,
+          eid = {arXiv:2605.27517},
+archivePrefix = {arXiv},
+       eprint = {2605.27517},
+       adsurl = {https://ui.adsabs.harvard.edu/abs/2026arXiv260527517T},
+}`
 
 const LINK = 'text-teal underline underline-offset-[3px] decoration-1'
 
@@ -70,11 +85,18 @@ export default function Publications() {
       <GroupLabel>Citing TRINITY</GroupLabel>
       <p className="font-display text-[15px] leading-7 text-ink-secondary">
         If you use TRINITY in published work, please cite{' '}
-        <a href={PAPER_URL} target="_blank" rel="noopener noreferrer" className={LINK}>Paper I</a>;
-        the ADS record carries the BibTeX entry, and the repository&rsquo;s{' '}
-        <code className="text-[13px]">CITATION.cff</code> gives GitHub&rsquo;s{' '}
-        <em>Cite this repository</em> button the same entry. TRINITY builds on
-        WARPFIELD, so you may also wish to cite{' '}
+        <a href={PAPER_URL} target="_blank" rel="noopener noreferrer" className={LINK}>Paper I</a>:
+      </p>
+      <div className="code-block code-block--light">
+        <CopyButton getText={() => BIBTEX} />
+        <pre className="font-mono text-[12px] leading-[1.55] rounded-md m-0 px-4 py-3.5 pr-12 overflow-x-auto">
+          {BIBTEX}
+        </pre>
+      </div>
+      <p className="font-display text-[15px] leading-7 text-ink-secondary">
+        The repository&rsquo;s <code className="text-[13px]">CITATION.cff</code>{' '}
+        gives GitHub&rsquo;s <em>Cite this repository</em> button the same
+        paper. TRINITY builds on WARPFIELD, so you may also wish to cite{' '}
         <a href={WARPFIELD[0].href} target="_blank" rel="noopener noreferrer" className={LINK}>{WARPFIELD[0].label}</a>
         {' '}and{' '}
         <a href={WARPFIELD[1].href} target="_blank" rel="noopener noreferrer" className={LINK}>{WARPFIELD[1].label}</a>.
