@@ -1,4 +1,4 @@
-import { REPO_URL } from '../links'
+import { HOMEPAGE_URL, REPO_URL } from '../links'
 
 /* The site's one contact block. Keeps id="contact": trinity's README links
    to /#contact. The address is written out rather than a mailto:, so it is
@@ -9,7 +9,12 @@ export default function Footer() {
       <div 
            className="font-ui max-w-[1060px] mx-auto px-6 md:px-10 flex flex-col md:flex-row md:items-end justify-between gap-4 text-[12px] text-ink-tertiary leading-relaxed text-center md:text-left">
         <div>
-          <div className="text-ink-primary">Jia Wei Teh</div>
+          <div className="text-ink-primary">
+            <a href={HOMEPAGE_URL} target="_blank" rel="noopener noreferrer"
+               className="underline underline-offset-[3px] decoration-1">
+              Jia Wei Teh
+            </a>
+          </div>
           <div className="text-ink-secondary">jiaweiteh.astro (at) gmail.com</div>
           <div>Universität Heidelberg, Zentrum für Astronomie, Institut für Theoretische Astrophysik, Albert-Ueberle-Straße 2, 69120 Heidelberg, Germany</div>
         </div>
