@@ -17,7 +17,9 @@
 }
 
 html {
-  overscroll-behavior: none;
+  /* Vertical only: `none` on the x axis also disables the trackpad back/forward
+     swipe in Chrome and Firefox. */
+  overscroll-behavior-y: none;
   scroll-behavior: smooth;
 }
 
