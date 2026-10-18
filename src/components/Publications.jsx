@@ -5,7 +5,7 @@ import { PAPER_URL } from '../links'
 const PAPERS = [
   { tag: 'Paper I',
     title: 'TRINITY: A coupled model of winds, radiation, and photoionised gas in molecular clouds. I. Methods and validation',
-    status: 'Teh et al. (2026), arXiv:2605.27517',
+    status: 'Teh et al. (2026), A&A 714, A226',
     href: PAPER_URL },
 ]
 
@@ -30,18 +30,20 @@ const WARPFIELD = [
   { label: 'Rahner et al. (2019)', href: 'https://ui.adsabs.harvard.edu/abs/2019MNRAS.483.2547R/abstract' },
 ]
 
-/* Paper I as an arXiv e-print, keyed by its ADS bibcode. Replace with the
-   journal entry once the A&A version is out. */
-const BIBTEX = `@ARTICLE{2026arXiv260527517T,
+/* Paper I as published in A&A, keyed by its ADS bibcode. String.raw keeps the
+   backslash in A\&A. */
+const BIBTEX = String.raw`@ARTICLE{2026A&A...714A.226T,
        author = {{Teh}, Jia Wei and {Klessen}, Ralf S. and {Glover}, Simon C.~O. and {Kreckel}, Kathryn},
         title = "{TRINITY: A coupled model of winds, radiation, and photoionised gas in molecular clouds. I. Methods and validation}",
-      journal = {arXiv e-prints},
+      journal = {A\&A},
          year = 2026,
-        month = may,
-          eid = {arXiv:2605.27517},
+        month = oct,
+       volume = {714},
+          eid = {A226},
+        pages = {A226},
+          doi = {10.1051/0004-6361/202661074},
 archivePrefix = {arXiv},
        eprint = {2605.27517},
-       adsurl = {https://ui.adsabs.harvard.edu/abs/2026arXiv260527517T},
 }`
 
 const LINK = 'text-teal underline underline-offset-[3px] decoration-1'

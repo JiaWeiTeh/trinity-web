@@ -3,6 +3,7 @@
 [![Deploy](https://github.com/JiaWeiTeh/trinity-web/actions/workflows/deploy.yml/badge.svg)](https://github.com/JiaWeiTeh/trinity-web/actions/workflows/deploy.yml)
 [![Website](https://img.shields.io/badge/website-trinity--web-brightgreen.svg)](https://jiaweiteh.github.io/trinity-web/)
 [![Code](https://img.shields.io/badge/code-JiaWeiTeh%2Ftrinity-blue.svg)](https://github.com/JiaWeiTeh/trinity)
+[![A&A](https://img.shields.io/badge/A%26A-714%2C%20A226-blue.svg)](https://doi.org/10.1051/0004-6361/202661074)
 [![arXiv](https://img.shields.io/badge/arXiv-2605.27517-b31b1b.svg)](https://arxiv.org/abs/2605.27517)
 
 Source for the website of TRINITY, the feedback-driven bubble evolution code:
