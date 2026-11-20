@@ -14,7 +14,7 @@ const rawDocs = import.meta.glob('../docs/*.md', {
 const NAV = [
   { group: 'Start here', pages: ['getting-started', 'notebook'] },
   { group: 'Using TRINITY', pages: ['running', 'output'] },
-  { group: 'Reference', pages: ['parameters', 'license'] },
+  { group: 'Reference', pages: ['parameters'] },
 ]
 
 /* key -> { key, title, content }. The title is the page's own first heading. */

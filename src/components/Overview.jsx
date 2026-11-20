@@ -93,7 +93,7 @@ function GetTheCode({ onNavigate }) {
                  className="text-teal underline underline-offset-[3px] decoration-1">
           Running TRINITY →
         </AppLink>
-        {' '}covers parameter files, sweeps and outputs.
+        {' '}covers parameter files, sweeps and clusters.
       </p>
     </section>
   )
