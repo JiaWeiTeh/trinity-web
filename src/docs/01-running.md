@@ -29,6 +29,52 @@ nISM            10
 under the directory you launched it from. A file with no `model_name` uses its
 own file name. Set `path2output` to send the results somewhere else.
 
+## Three files to start from
+
+The repository ships one working file per density profile. They describe the
+same cloud mass and efficiency, and they are the runs the
+[tutorial notebook](?view=docs&page=notebook) opens.
+
+### `param/cloud_example_homogeneous.param`
+
+```text
+model_name    cloud_example_homogeneous
+mCloud    1e6
+sfe    0.01
+# powerlaw, homogeneous
+dens_profile    densPL
+densPL_alpha    0
+nCore    1e3
+nISM    10
+```
+
+### `param/cloud_example_PL.param`
+
+```text
+model_name    cloud_example_PL
+mCloud    1e6
+sfe    0.01
+# powerlaw, -2 (isothermal)
+dens_profile    densPL
+densPL_alpha    -2
+nCore    1e4
+rCore    5
+nISM    10
+```
+
+### `param/cloud_example_BE.param`
+
+```text
+model_name    cloud_example_BE
+mCloud    1e6
+sfe    0.01
+# Bonnor-Ebert sphere
+dens_profile    densBE
+densBE_Omega    14.1
+nCore    1e4
+nISM    10
+```
+
 ## Sweeps
 
 You start a sweep with the same command. `run.py` sees a list or a `tuple(...)`
