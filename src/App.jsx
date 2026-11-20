@@ -12,6 +12,8 @@ function resolveLocation(view, page) {
   if (view === 'start') return { view: 'docs', page: 'getting-started' }
   // The Docs citation page was folded into the overview's Publications section.
   if (view === 'docs' && page === 'publications') return { view: 'overview', page: null }
+  // The License page was folded into Getting started.
+  if (view === 'docs' && page === 'license') return { view, page: 'getting-started' }
   if (view === 'docs') return { view, page }
   return { view: 'overview', page: null }
 }

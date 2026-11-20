@@ -1,65 +1,43 @@
-# Parameter Specifications
+# Parameters
 
-Every parameter TRINITY recognises is listed below, with its default,
-unit, and a short description. Use the search box to find a keyword by
-name, group, default, unit, or description, and the group dropdown to
-narrow by category.
+Search the table by name, group, unit or description. Any keyword you leave out
+of your parameter file takes the default shown here.
 
 ```parameter-table
 ```
 
-## File format
+The table is generated from `trinity/_input/default.param`, which lists the
+same keywords with longer comments.
 
-The canonical parameter schema (the authoritative, fully-commented list
-of keys and defaults) lives at `trinity/_input/default.param`; the
-reference above mirrors it. Worked example files live under `param/`
-(see `param/simple_cluster.param` or `param/cloud_example_PL.param`) and
-override those defaults.
+## Writing values
 
-A parameter file contains one `keyword    value` entry per line. A `#`
-starts a comment, either as a whole line or after a value. Keyword names
-are case-sensitive and may appear in any order.
+| You write | TRINITY reads |
+| --- | --- |
+| `True`, `False` | a boolean |
+| `1e6`, `3.14e-2`, `100`, `0.01` | a number |
+| `5/3` | a fraction, converted to 1.6667 |
+| `densPL`, `my_cloud` | text |
+| `None` | switches a stopping condition off |
 
-Keywords with a default are optional; those without a default are
-required. A value written as a bracketed list (`mCloud [1e5, 1e6]`) or
-through a `tuple(...)` directive turns the file into a sweep; see
-[Running TRINITY](?view=docs&page=running) for the sweep syntax.
+Keywords are case-sensitive and can come in any order. A list such as
+`[1e5, 1e6]` or a `tuple(...)` line turns the file into a sweep, which
+[Running TRINITY](?view=docs&page=running) explains.
 
-### Supported value types
+## Units
 
-TRINITY parses values in the following order of precedence:
+Write masses in $M_\odot$, lengths in pc, times in Myr, number densities in
+cm$^{-3}$, velocities in km/s and temperatures in K. The unit of each keyword
+is in the table. TRINITY converts everything to $M_\odot$, pc and Myr when it
+reads the file, and the output is in those three units.
 
-| Type | Example | Notes |
-| --- | --- | --- |
-| Boolean | `True`, `False` | Case-sensitive |
-| Scientific | `1e6`, `3.14e-2` | Standard notation |
-| Fraction | `5/3` | Converted to float (1.6667) |
-| Number | `100`, `0.01` | Integer or decimal |
-| String | `densPL`, `my_model` | Fallback for text values |
-
-## Unit system
-
-Inputs in the parameter file are CGS, extended by $M_\odot$ (mass) and
-Myr (time). Common per-quantity units: pc for length, cm$^{-3}$ for
-number density, km/s for velocity, K for temperature. Internally TRINITY
-works in `[Msun, pc, Myr]`; conversion is automatic, driven by the
-`# UNIT:` annotations in `default.param`. Example annotations:
-
-```text
-# UNIT: [Msun]
-# UNIT: [cm**-3]
-# UNIT: [km * s**-1]
-# UNIT: [erg * s**-1 * cm**-1 * K**(-7/2)]
-```
-
-## Derived quantities
-
-- Cluster mass: $M_{\rm cluster} = M_{\rm cloud} \times {\rm sfe}$
-- Remaining cloud mass: $M_{\rm cloud,after} = M_{\rm cloud} - M_{\rm cluster}$
+The stars form from the cloud you specify: the cluster has mass
+$M_{\rm cloud} \times {\rm sfe}$, and the gas that remains has
+$M_{\rm cloud}\,(1 - {\rm sfe})$.
 
 ## Density profiles
 
-When `dens_profile = densPL`, the density follows:
+`dens_profile` picks the shape of the cloud. With `densPL` the density is flat
+inside a core and falls as a power law outside it:
 
 $$
 \rho(r) = \begin{cases}
@@ -69,77 +47,67 @@ $$
 \end{cases}
 $$
 
-When `dens_profile = densBE`, TRINITY implements a Bonnor-Ebert sphere
+Here $\rho_0$ comes from `nCore`, $r_0$ is `rCore`, $\alpha$ is `densPL_alpha`
+and $\rho_{\rm ISM}$ comes from `nISM`. Set `densPL_alpha 0` for a uniform
+cloud.
+
+With `densBE` the cloud is a Bonnor-Ebert sphere
 ([Ebert 1955](https://ui.adsabs.harvard.edu/abs/1955ZA.....37..217E/abstract);
 [Bonnor 1956](https://ui.adsabs.harvard.edu/abs/1956MNRAS.116..351B/abstract)).
+`densBE_Omega` is its density contrast between centre and edge. `densPL_alpha`
+has no effect on a `densBE` cloud, and `densBE_Omega` has none on a `densPL`
+cloud.
 
-> **Note:** `densPL_alpha` is ignored when using `densBE`, and
-> `densBE_Omega` is ignored when using `densPL`.
+## When a run stops
 
-## Termination semantics
+A run ends when the shell dissolves, when it collapses back onto the cluster,
+or when it reaches one of three limits you can set: `stop_t` (an age, 15 Myr by
+default), `stop_r` (a radius, 500 pc by default) and `stop_at_rCloud_nSnap`
+(a number of snapshots after the shell leaves the cloud, off by default). Set
+any of the three to `None` to switch it off.
 
-Setting `stop_r`, `stop_t`, or `stop_at_rCloud_nSnap` to `None` disables
-that termination condition, allowing the simulation to continue until
-other conditions are met (shell dissolution, collapse, or cloud
-boundary).
+## Three files to start from
 
-## Examples
+The repository ships one working file per density profile. They describe the
+same cloud mass and efficiency, and they are the runs the
+[tutorial notebook](?view=docs&page=notebook) opens.
 
-### Minimal parameter file
-
-**`minimal.param`**
-
-```text
-model_name    my_simulation
-mCloud        1e6
-sfe           0.01
-```
-
-### Power-law cloud
-
-**`powerlaw.param`**
+### `param/cloud_example_homogeneous.param`
 
 ```text
-# Model identification
-model_name      powerlaw_test
-path2output     outputs/powerlaw
-
-# Cloud properties
-mCloud          1e7
-sfe             0.05
-ZCloud          1
-
-# Power-law density profile
+model_name    cloud_example_homogeneous
+mCloud    1e6
+sfe    0.01
+# powerlaw, homogeneous
 dens_profile    densPL
-densPL_alpha    -1.5
-nCore           1e4
-rCore           0.5
-nISM            1
-
-# Termination
-stop_t          20
-stop_r          300
+densPL_alpha    0
+nCore    1e3
+nISM    10
 ```
 
-### Bonnor-Ebert sphere
-
-**`bonnor_ebert.param`**
+### `param/cloud_example_PL.param`
 
 ```text
-# Model identification
-model_name      BE_sphere
-path2output     outputs/BE
+model_name    cloud_example_PL
+mCloud    1e6
+sfe    0.01
+# powerlaw, -2 (isothermal)
+dens_profile    densPL
+densPL_alpha    -2
+nCore    1e4
+rCore    5
+nISM    10
+```
 
-# Cloud properties
-mCloud          1e5
-sfe             0.02
+### `param/cloud_example_BE.param`
 
-# Bonnor-Ebert profile
+```text
+model_name    cloud_example_BE
+mCloud    1e6
+sfe    0.01
+# Bonnor-Ebert sphere
 dens_profile    densBE
 densBE_Omega    14.1
-nCore           1e5
-rCore           0.1
+nCore    1e4
+nISM    10
 ```
-
-For sweep-style parameter files (list values and `tuple(...)`
-directives), see [Running TRINITY](?view=docs&page=running).

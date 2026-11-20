@@ -22,7 +22,8 @@ Every push to `main` builds the site and deploys it to GitHub Pages.
 
 ## Where the content lives
 
-- `src/docs/*.md`: the Docs pages, one file per page, ordered by their number prefix.
+- `src/docs/*.md`: the Docs pages, one file per page. Their order in the sidebar is the `NAV`
+  list at the top of `src/components/DocsView.jsx`.
 - `src/components/Publications.jsx`: the publications list and the Citing TRINITY text.
   To add a paper, add a row to `PAPERS` or `USING`.
 - `src/docs/parameters.json`: the parameter reference, refreshed from trinity's
