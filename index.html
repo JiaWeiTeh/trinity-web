@@ -4,6 +4,15 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/trinity-web/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light dark" />
+    <script>
+      // A theme chosen with the top-bar button, applied before first paint.
+      // With nothing saved, the visitor's system setting decides (see index.css).
+      try {
+        const saved = localStorage.getItem('theme')
+        if (saved === 'light' || saved === 'dark') document.documentElement.dataset.theme = saved
+      } catch { /* storage blocked: follow the system setting */ }
+    </script>
     <title>TRINITY · Feedback-driven bubble evolution</title>
     <meta name="description" content="TRINITY is a 1D stellar feedback code that follows winds, radiation pressure and photoionised gas as they disperse molecular clouds. Overview, documentation, parameter reference and a worked notebook." />
     <meta property="og:title" content="TRINITY — Feedback-driven bubble evolution" />
@@ -18,7 +27,7 @@
     <link rel="canonical" href="https://jiaweiteh.github.io/trinity-web/" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet">
   </head>
   <body>
     <div id="root"></div>

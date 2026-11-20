@@ -30,10 +30,7 @@ function commitUrl(url) {
 }
 
 const docsFallback = (
-  <div
-    
-    className="font-ui text-[13px] text-ink-tertiary py-20 text-center"
-  >
+  <div className="font-ui text-[13px] text-ink-tertiary py-20 text-center">
     Loading…
   </div>
 )
@@ -112,19 +109,16 @@ export default function App() {
   return (
     <>
       <Navbar view={view} onNavigate={navigateTo} />
-      <main
-        id="paper-content"
-        className={`paper-container${view === 'docs' ? ' paper-container--docs' : ''}`}
-      >
+      <main>
         {view === 'overview' && (
-          <>
+          <div className="max-w-[760px] mx-auto px-4 sm:px-6 pt-11 sm:pt-[72px]">
             <TitleBlock onNavigate={navigateTo} />
             <Overview onNavigate={navigateTo} />
-          </>
+          </div>
         )}
         {view === 'docs' && (
           <Suspense fallback={docsFallback}>
-            <DocsView page={page} onPageChange={changePage} onNavigate={navigateTo} />
+            <DocsView page={page} onNavigate={navigateTo} />
           </Suspense>
         )}
       </main>
