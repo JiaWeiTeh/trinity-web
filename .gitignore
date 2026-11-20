@@ -23,11 +23,7 @@ dist-ssr
 *.sln
 *.sw?
 
-# staged for the maintainer to delete by hand; never published
+# local working files; never published
+dev/
+PROMPT_*.md
 to-be-deleted/
-
-# working plan — internal, not part of the site
-PLAN.md
-
-# prose audit — internal working note
-AUDIT-prose.md

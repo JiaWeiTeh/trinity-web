@@ -1,19 +1,51 @@
 @import "tailwindcss";
 
+/* Colours and fonts. Every text colour here passes WCAG AA (4.5:1) on both
+   `paper` and `card`, in both themes. Check any change with a contrast tool. */
 @theme {
-  --color-desk: #E7E3DA;
-  --color-paper: #FFFEFA;
-  --color-card: #F7F4EE;
-  --color-navy: #0D1B2A;
+  --color-paper: #FCFBF7;
+  --color-card: #F4F1EA;
   --color-ink-primary: #1E2430;
-  --color-ink-secondary: #5E6776;
+  --color-ink-secondary: #4A5261;
   --color-ink-tertiary: #64625C;
   --color-teal: #096D84;
-  --color-accent: #0EA5C8;
   --color-border-card: #D8D2C6;
-  --color-border-rule: #E7E1D7;
+  --color-border-rule: #E4DED3;
   --font-display: 'Source Serif 4', Georgia, serif;
-  --font-ui: 'Inter', sans-serif;
+  --font-ui: 'Inter', system-ui, sans-serif;
+  --font-mono: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+}
+
+/* Dark theme. The same eight colours, twice: once for a visitor whose system is
+   dark and who has not chosen, once for a visitor who chose dark with the
+   button in the top bar. Keep the two blocks identical. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --color-paper: #15171B;
+    --color-card: #1E2127;
+    --color-ink-primary: #ECE9E2;
+    --color-ink-secondary: #B9BDC6;
+    --color-ink-tertiary: #9297A1;
+    --color-teal: #6CC7DC;
+    --color-border-card: #3A3F49;
+    --color-border-rule: #2C3038;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --color-paper: #15171B;
+  --color-card: #1E2127;
+  --color-ink-primary: #ECE9E2;
+  --color-ink-secondary: #B9BDC6;
+  --color-ink-tertiary: #9297A1;
+  --color-teal: #6CC7DC;
+  --color-border-card: #3A3F49;
+  --color-border-rule: #2C3038;
+  color-scheme: dark;
+}
+/* A visitor on a dark system who chose light: scrollbars and form controls follow. */
+:root[data-theme="light"] {
+  color-scheme: light;
 }
 
 html {
@@ -39,260 +71,272 @@ html {
 
 body {
   margin: 0;
-  background: var(--color-desk);
+  background: var(--color-paper);
   color: var(--color-ink-primary);
-  font-family: var(--font-display);
+  font-family: var(--font-ui);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Slider styling */
-.slider {
-  -webkit-appearance: none;
-  appearance: none;
-  height: 4px;
-  border-radius: 2px;
-  background: rgba(30, 36, 48, 0.1);
-  outline: none;
-  cursor: pointer;
-}
-.slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  background: var(--color-accent);
-  border: 2px solid #FFFFFF;
-  cursor: pointer;
-  transition: transform 0.15s ease;
-}
-.slider::-webkit-slider-thumb:hover {
-  transform: scale(1.2);
-}
-.slider::-moz-range-thumb {
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  background: var(--color-accent);
-  border: 2px solid #FFFFFF;
-  cursor: pointer;
-}
-.slider::-moz-range-track {
-  height: 4px;
-  border-radius: 2px;
-  background: rgba(30, 36, 48, 0.1);
+:focus-visible {
+  outline: 2px solid var(--color-teal);
+  outline-offset: 2px;
 }
 
-/* Affiliation marks in the author line */
 sup {
   font-size: 0.7em;
   vertical-align: super;
   line-height: 0;
 }
 
-/* Ensure smooth scroll targets account for fixed navbar */
+/* Anchor targets clear the sticky top bar. */
 [id] {
-  scroll-margin-top: 64px;
+  scroll-margin-top: 72px;
 }
 
-/* Wrapper that gives an interactive figure the same visual weight as a
-   paper figure: soft cream surface, light warm border, gentle shadow.
-   The image cell carries the subtle teal radial highlight; the caption
-   cell stays on the plain surface. */
-.figure-card {
-  background: #FBFAF6;
+/* ─── Top bar ─────────────────────────────────────────────────── */
+
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
   border: 1px solid var(--color-border-card);
-  border-radius: 18px;
-  box-shadow: 0 16px 45px rgba(55, 48, 39, 0.08);
-  overflow: hidden;
+  background: transparent;
+  color: var(--color-ink-secondary);
+  cursor: pointer;
 }
 
-.figure-card-image {
-  background:
-    radial-gradient(circle at 50% 45%, color-mix(in srgb, var(--color-accent) 8%, transparent), transparent 36%),
-    linear-gradient(180deg, #FFFEFA, #F7F4EE);
-}
-
-/* Paper container — article page resting on desk */
-.paper-container {
-  background: var(--color-paper);
-  max-width: 1060px;
-  margin-top: calc(48px + 32px);
-  margin-bottom: 40px;
-  margin-left: auto;
-  margin-right: auto;
-  padding: 48px 56px 56px;
-  box-shadow:
-    0 1px 2px rgba(55, 48, 39, 0.06),
-    0 18px 48px rgba(55, 48, 39, 0.12);
-  border: 0.5px solid var(--color-border-card);
-  border-radius: 2px;
-  position: relative;
-  overflow: hidden;
-}
-
-/* Docs view needs overflow visible so the sticky sidebar can stick to
-   the viewport; an overflow:hidden ancestor disables position: sticky. */
-.paper-container--docs {
-  overflow: visible;
-}
-
-@media (min-width: 1140px) {
-  .paper-container {
-    padding: 56px 72px 64px;
-  }
-}
-
-@media (max-width: 1139px) and (min-width: 768px) {
-  .paper-container {
-    margin-left: 24px;
-    margin-right: 24px;
-    padding: 40px 48px 48px;
-  }
-}
-
-@media (max-width: 767px) {
-  .paper-container {
-    margin-top: calc(48px + 20px);
-    margin-bottom: 24px;
-    margin-left: 8px;
-    margin-right: 8px;
-    padding: 32px 24px 40px;
-    box-shadow:
-      0 1px 2px rgba(55, 48, 39, 0.06),
-      0 8px 24px rgba(55, 48, 39, 0.10);
-  }
-}
-
-@media (max-width: 480px) {
-  .paper-container {
-    margin-top: calc(48px + 16px);
-    margin-bottom: 16px;
-    margin-left: 4px;
-    margin-right: 4px;
-    padding: 24px 16px 32px;
-  }
+.theme-toggle:hover {
+  color: var(--color-ink-primary);
 }
 
 /* ─── Documentation view ──────────────────────────────────────── */
 
-/* Single-column by default; at xl the article keeps its column and the
-   "On this page" rail appears to the right. */
-.docs-layout {
+/* Three columns: the page list, the article, and the "on this page" rail.
+   The rail goes first as the window narrows, then the page list turns into
+   the menu at the top of the article. */
+.docs-shell {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 24px;
   display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: 48px;
+  grid-template-columns: 232px minmax(0, 1fr) 200px;
+  gap: 56px;
   align-items: start;
 }
 
-@media (min-width: 1280px) {
-  .docs-layout {
-    grid-template-columns: minmax(0, 1fr) 190px;
-  }
-}
-
-.docs-index {
+.docs-nav,
+.docs-toc {
   position: sticky;
-  top: 80px;
-  align-self: start;
-  padding-left: 24px;
-  border-left: 1px solid var(--color-border-rule);
-  max-height: calc(100vh - 120px);
+  top: 52px;
+  max-height: calc(100vh - 52px);
   overflow-y: auto;
+  padding: 36px 0;
+  font-family: var(--font-ui);
+  font-size: 14px;
 }
 
-@media (max-width: 1279px) {
-  .docs-index {
+.docs-nav-group {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-ink-tertiary);
+  margin: 0 0 8px;
+}
+
+.docs-nav > div + div {
+  margin-top: 22px;
+}
+
+.docs-nav ul,
+.docs-toc ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.docs-nav a,
+.docs-toc a {
+  display: block;
+  padding: 5px 12px;
+  border-left: 2px solid var(--color-border-rule);
+  color: var(--color-ink-secondary);
+  text-decoration: none;
+  line-height: 1.4;
+}
+
+.docs-toc a {
+  font-size: 13px;
+  padding: 4px 12px;
+}
+
+.docs-nav a:hover,
+.docs-toc a:hover {
+  color: var(--color-ink-primary);
+}
+
+/* These columns scroll, which would clip a focus ring drawn outside the link. */
+.docs-nav a:focus-visible,
+.docs-toc a:focus-visible {
+  outline-offset: -2px;
+}
+
+.docs-nav a[aria-current],
+.docs-toc a[aria-current] {
+  color: var(--color-teal);
+  border-left-color: var(--color-teal);
+  font-weight: 500;
+}
+
+/* The page list again, folded into a menu. Phones only. */
+.docs-menu {
+  display: none;
+}
+
+.docs-main {
+  min-width: 0;
+  max-width: 720px;
+  padding: 40px 0 72px;
+}
+
+.docs-kicker {
+  font-family: var(--font-ui);
+  font-size: 13px;
+  color: var(--color-ink-tertiary);
+  margin: 0 0 6px;
+}
+
+.docs-pager {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 56px;
+  padding-top: 24px;
+  border-top: 1px solid var(--color-border-rule);
+}
+
+.docs-pager a {
+  min-width: 46%;
+  padding: 12px 16px;
+  border: 1px solid var(--color-border-card);
+  border-radius: 8px;
+  color: var(--color-ink-primary);
+  text-decoration: none;
+}
+
+.docs-pager a:hover {
+  border-color: var(--color-teal);
+}
+
+.docs-pager small {
+  display: block;
+  font-size: 12px;
+  color: var(--color-ink-tertiary);
+}
+
+.docs-pager strong {
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.docs-pager-next {
+  margin-left: auto;
+  text-align: right;
+}
+
+@media (max-width: 1100px) {
+  .docs-shell {
+    grid-template-columns: 232px minmax(0, 1fr);
+  }
+  .docs-toc {
     display: none;
   }
 }
 
-/* "On this page" — H2 section list inside the docs-index rail */
-.docs-section-list {
-  list-style: none;
-  margin: 4px 0 8px;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
+@media (max-width: 760px) {
+  .docs-shell {
+    display: block;
+    padding: 0 16px;
+  }
+  .docs-shell > .docs-nav {
+    display: none;
+  }
+  .docs-menu {
+    display: block;
+    margin: 0 -16px;
+    padding: 0 16px;
+    border-bottom: 1px solid var(--color-border-rule);
+    font-family: var(--font-ui);
+    font-size: 14px;
+  }
+  .docs-menu summary {
+    padding: 12px 0;
+    cursor: pointer;
+    color: var(--color-ink-secondary);
+  }
+  .docs-menu .docs-nav {
+    position: static;
+    max-height: none;
+    padding: 4px 0 16px;
+  }
+  .docs-main {
+    padding-top: 0;
+  }
+  .docs-kicker {
+    margin-top: 28px;
+  }
 }
 
-.docs-section-link {
-  font-family: var(--font-ui);
-  font-size: 12px;
-  color: var(--color-ink-tertiary);
-  background: transparent;
-  border: none;
-  padding: 3px 8px;
-  border-radius: 4px;
-  cursor: pointer;
-  text-align: left;
-  width: 100%;
-  line-height: 1.35;
-  transition: color 120ms ease, background 120ms ease;
-}
-
-.docs-section-link:hover {
-  color: var(--color-ink-primary);
-  background: var(--color-card);
-}
-
-.docs-section-link.is-active {
-  color: var(--color-teal);
-}
-
-.docs-body {
-  min-width: 0;
-}
+/* ─── Article typography ──────────────────────────────────────── */
 
 .docs-article {
-  font-family: var(--font-display);
-  color: var(--color-ink-secondary);
+  font-family: var(--font-ui);
+  color: var(--color-ink-primary);
   font-size: 16px;
-  line-height: 1.65;
-  padding-bottom: 32px;
+  line-height: 1.7;
 }
 
 .docs-article h1 {
   font-family: var(--font-display);
-  font-size: 26px;
+  font-size: 34px;
   font-weight: 600;
-  color: var(--color-ink-primary);
-  margin: 0 0 16px;
+  letter-spacing: -0.01em;
+  margin: 0 0 14px;
   line-height: 1.2;
 }
 
 .docs-article h2 {
   font-family: var(--font-display);
-  font-size: 20px;
+  font-size: 23px;
   font-weight: 600;
-  color: var(--color-ink-primary);
-  margin: 28px 0 10px;
+  margin: 44px 0 10px;
   line-height: 1.3;
-  scroll-margin-top: 72px;
 }
 
 .docs-article h3 {
   font-family: var(--font-display);
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 600;
-  color: var(--color-ink-primary);
-  margin: 22px 0 8px;
+  margin: 28px 0 8px;
   line-height: 1.35;
 }
 
 .docs-article h4 {
   font-family: var(--font-ui);
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
   color: var(--color-ink-secondary);
-  margin: 18px 0 6px;
+  margin: 20px 0 6px;
   line-height: 1.35;
 }
 
 .docs-article p {
-  margin: 0 0 14px;
+  margin: 0 0 16px;
 }
 
 .docs-article a {
@@ -302,33 +346,80 @@ sup {
   text-decoration-thickness: 1px;
 }
 
-.docs-article a:hover {
-  color: color-mix(in srgb, var(--color-teal) 80%, black);
-}
-
 .docs-article ul,
 .docs-article ol {
-  margin: 0 0 14px 22px;
+  margin: 0 0 16px 22px;
   padding: 0;
+}
+
+.docs-article ul {
+  list-style: disc;
+}
+
+.docs-article ol {
+  list-style: decimal;
 }
 
 .docs-article li {
   margin: 4px 0;
 }
 
-.docs-article :not(pre) > code {
-  font-family: 'SFMono-Regular', 'Menlo', 'Consolas', monospace;
-  font-size: 0.88em;
-  background: var(--color-card);
-  border: 0.5px solid var(--color-border-card);
-  border-radius: 3px;
-  padding: 1px 5px;
-  color: var(--color-ink-primary);
+.docs-article img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
 }
+
+.docs-article :not(pre) > code {
+  font-family: var(--font-mono);
+  font-size: 0.86em;
+  background: var(--color-card);
+  border-radius: 4px;
+  padding: 2px 5px;
+}
+
+@media (max-width: 760px) {
+  .docs-article h1 {
+    font-size: 28px;
+  }
+}
+
+/* ─── Code blocks (Docs and overview) ─────────────────────────── */
 
 .code-block {
   position: relative;
-  margin: 16px 0;
+  margin: 18px 0;
+}
+
+.code-block pre {
+  font-family: var(--font-mono);
+  font-size: 13.5px;
+  line-height: 1.6;
+  background: var(--color-card);
+  color: var(--color-ink-primary);
+  border: 1px solid var(--color-border-rule);
+  border-radius: 8px;
+  padding: 14px 52px 14px 16px;
+  margin: 0;
+  overflow-x: auto;
+}
+
+.code-block pre code {
+  font-family: inherit;
+  font-size: inherit;
+  background: transparent;
+  padding: 0;
+}
+
+/* A notebook's printed result sits under its cell with no chrome of its own. */
+.code-block:has(code.language-output) pre {
+  background: transparent;
+  border: none;
+  border-left: 2px solid var(--color-border-card);
+  border-radius: 0;
+  color: var(--color-ink-secondary);
+  font-size: 12.5px;
+  padding: 4px 0 4px 14px;
 }
 
 .code-copy {
@@ -341,86 +432,37 @@ sup {
   width: 28px;
   height: 28px;
   border-radius: 5px;
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  background: rgba(255, 255, 255, 0.06);
-  color: #C9CEDA;
+  border: 1px solid var(--color-border-card);
+  background: var(--color-paper);
+  color: var(--color-ink-tertiary);
   cursor: pointer;
-  opacity: 0.55;
-  transition: opacity 140ms ease, background 140ms ease, color 140ms ease;
+  opacity: 0.7;
+  transition: opacity 140ms ease, color 140ms ease;
 }
 
-.code-block:hover .code-copy {
+.code-block:hover .code-copy,
+.code-copy:focus-visible {
   opacity: 1;
 }
 
 .code-copy:hover {
-  background: rgba(255, 255, 255, 0.12);
-  color: #ffffff;
-}
-
-.code-copy:focus-visible {
-  opacity: 1;
-  outline: 2px solid var(--color-teal);
-  outline-offset: 2px;
-}
-
-.docs-article pre {
-  font-family: 'SFMono-Regular', 'Menlo', 'Consolas', monospace;
-  font-size: 13px;
-  background: var(--color-navy);
-  color: #E8EAF0;
-  border-radius: 6px;
-  padding: 14px 16px;
-  margin: 0;
-  overflow-x: auto;
-  line-height: 1.55;
-}
-
-.docs-article pre code {
-  background: transparent;
-  border: none;
-  padding: 0;
-  color: inherit;
-  font-size: inherit;
-}
-
-/* Python and notebook output are not terminal sessions. Give them the light
-   treatment a Jupyter cell has, in this site's paper tones rather than
-   Jupyter's greys, so the notebook page still belongs here. */
-.code-block--light pre {
-  background: var(--color-card);
-  color: var(--color-ink-primary);
-  border: 1px solid var(--color-border-card);
-}
-
-/* A notebook's printed result sits under its cell with no chrome of its own. */
-.code-block--light:has(code.language-output) pre {
-  background: transparent;
-  border: none;
-  border-left: 2px solid var(--color-border-card);
-  border-radius: 0;
-  color: var(--color-ink-secondary);
-  font-size: 12px;
-  padding: 4px 0 4px 14px;
-}
-
-/* The copy button was built for a dark block; invert it on the light ones. */
-.code-block--light .code-copy {
-  border-color: var(--color-border-card);
-  background: var(--color-paper);
-  color: var(--color-ink-tertiary);
-}
-.code-block--light .code-copy:hover {
-  background: var(--color-paper);
   color: var(--color-ink-primary);
 }
+
+/* ─── Notes, tables, rules, maths ─────────────────────────────── */
 
 .docs-article blockquote {
-  margin: 14px 0;
-  padding: 6px 14px;
-  border-left: 3px solid var(--color-border-card);
-  color: var(--color-ink-tertiary);
-  font-style: italic;
+  margin: 18px 0;
+  padding: 10px 16px;
+  border-left: 3px solid var(--color-teal);
+  border-radius: 0 6px 6px 0;
+  background: var(--color-card);
+  color: var(--color-ink-secondary);
+  font-size: 15px;
+}
+
+.docs-article blockquote p:last-child {
+  margin-bottom: 0;
 }
 
 /* A table wider than a phone screen scrolls inside the article instead of
@@ -430,28 +472,27 @@ sup {
   max-width: 100%;
   overflow-x: auto;
   border-collapse: collapse;
-  margin: 16px 0;
-  font-family: var(--font-ui);
-  font-size: 13px;
+  margin: 18px 0;
+  font-size: 14px;
 }
 
 .docs-article th,
 .docs-article td {
-  border: 1px solid var(--color-border-card);
-  padding: 6px 10px;
+  border-bottom: 1px solid var(--color-border-rule);
+  padding: 8px 12px 8px 0;
   text-align: left;
+  vertical-align: top;
 }
 
 .docs-article th {
-  background: var(--color-card);
   font-weight: 600;
-  color: var(--color-ink-primary);
+  color: var(--color-ink-secondary);
 }
 
 .docs-article hr {
   border: none;
   border-top: 1px solid var(--color-border-rule);
-  margin: 24px 0;
+  margin: 28px 0;
 }
 
 .docs-article .katex-display {
@@ -459,4 +500,3 @@ sup {
   overflow-x: auto;
   overflow-y: hidden;
 }
-

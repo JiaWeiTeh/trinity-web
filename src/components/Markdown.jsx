@@ -30,13 +30,8 @@ function CodeBlock(props) {
     if (codeClass.includes(marker)) return render()
   }
 
-  // Dark blocks read as a terminal, which is right for shell commands and wrong
-  // for Python. Tag the wrapper so the stylesheet can tell them apart.
-  const language = (codeClass.match(/language-([\w-]+)/) || [])[1] ?? ''
-  const tone = ['python', 'output'].includes(language) ? 'code-block--light' : ''
-
   return (
-    <div className={`code-block ${tone}`.trim()}>
+    <div className="code-block">
       <CopyButton getText={() => preRef.current?.textContent ?? ''} />
       <pre ref={preRef} {...rest}>{children}</pre>
     </div>

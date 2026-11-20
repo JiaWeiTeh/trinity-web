@@ -1,5 +1,6 @@
-import { useMemo, useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import Markdown from './Markdown'
+import AppLink from './AppLink'
 
 const rawDocs = import.meta.glob('../docs/*.md', {
   query: '?raw',
@@ -7,128 +8,79 @@ const rawDocs = import.meta.glob('../docs/*.md', {
   eager: true,
 })
 
-/* Per-page card metadata. Pages not listed here fall back to a generic
-   "Page" kicker and an empty description. */
-const PAGE_META = {
-  'getting-started': {
-    kicker: 'Quickstart',
-    description: 'From a fresh clone to a first run.',
-  },
-  running: {
-    kicker: 'Guide',
-    description: 'Commands, sweep modes, outputs.',
-  },
-  parameters: {
-    kicker: 'Reference',
-    description: 'Every recognised keyword, grouped by role.',
-  },
-  notebook: {
-    kicker: 'Tutorial',
-    description: 'A worked notebook, with runs that ship with the code.',
-  },
-  license: {
-    kicker: 'Legal',
-    description: 'License terms and citation.',
-  },
-}
+/* The sidebar, in reading order. Each key is a file in src/docs/ without its
+   number prefix (00-getting-started.md -> 'getting-started'). A key with no
+   file is skipped; a file with no key here is not shown. */
+const NAV = [
+  { group: 'Start here', pages: ['getting-started', 'notebook'] },
+  { group: 'Using TRINITY', pages: ['running', 'output'] },
+  { group: 'Reference', pages: ['parameters', 'license'] },
+]
 
-function deriveTitle(path, content) {
+/* key -> { key, title, content }. The title is the page's own first heading. */
+const DOCS = {}
+for (const [path, content] of Object.entries(rawDocs)) {
+  const key = path.split('/').pop().replace(/\.md$/, '').replace(/^\d+[-_]?/, '')
   const h1 = content.match(/^\s*#\s+(.+?)\s*$/m)
-  if (h1) return h1[1].trim()
-  const base = path.split('/').pop().replace(/\.md$/, '')
-  return base.replace(/^\d+[-_]?/, '').replace(/[-_]/g, ' ')
+  DOCS[key] = { key, title: h1 ? h1[1] : key, content }
 }
 
-function deriveKey(path) {
-  const base = path.split('/').pop().replace(/\.md$/, '')
-  return base.replace(/^\d+[-_]?/, '')
-}
+const GROUPS = NAV
+  .map(({ group, pages }) => ({ group, pages: pages.filter((k) => DOCS[k]).map((k) => DOCS[k]) }))
+  .filter((g) => g.pages.length > 0)
 
-function buildDocs() {
-  return Object.entries(rawDocs)
-    .sort(([a], [b]) => a.localeCompare(b))
-    .map(([path, content]) => {
-      const key = deriveKey(path)
-      const meta = PAGE_META[key] ?? {}
-      return {
-        key,
-        title: deriveTitle(path, content),
-        kicker: meta.kicker ?? 'Page',
-        description: meta.description ?? '',
-        content,
-      }
-    })
-}
+/* The same pages in one list, for the previous and next links. */
+const ORDER = GROUPS.flatMap((g) => g.pages.map((p) => ({ ...p, group: g.group })))
 
-function DocsHeader({ docs, active, onPageChange }) {
+const hrefFor = (key) => `?view=docs&page=${key}`
+
+function PageList({ activeKey, onNavigate, label }) {
   return (
-    <header className="mb-12 max-w-[760px]">
-      <p 
-         className="font-ui text-[11px] uppercase tracking-[0.28em] text-ink-tertiary">
-        Manual pages
-      </p>
-      <h1 
-          className="font-display mt-5 text-[34px] sm:text-[42px] font-semibold leading-tight tracking-[-0.015em] text-ink-primary">
-        Documentation
-      </h1>
-      <p 
-         className="font-display mt-5 max-w-[680px] text-[17px] sm:text-[20px] leading-[1.55] text-ink-secondary">
-        A compact reference for running TRINITY simulations and configuring parameter files.
-      </p>
-
-      <div className="mt-8 grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-        {docs.map((d) => {
-          const isActive = active.key === d.key
-          return (
-            <button
-              key={d.key}
-              type="button"
-              onClick={() => { if (!isActive) onPageChange(d.key) }}
-              aria-current={isActive ? 'page' : undefined}
-              className={`group min-h-[124px] rounded-[14px] border p-5 text-left transition duration-200 ${
-                isActive
-                  ? 'border-teal bg-paper shadow-[0_18px_45px_color-mix(in_srgb,var(--color-accent)_10%,transparent)]'
-                  : 'border-border-card bg-paper/60 shadow-sm hover:-translate-y-[2px] hover:bg-paper hover:shadow-[0_12px_30px_rgba(55,48,39,0.07)]'
-              }`}
-            >
-              <p
-                className={`font-ui text-[11px] uppercase tracking-[0.26em] ${isActive ? 'text-teal' : 'text-ink-tertiary'}`}
-              >
-                {d.kicker}
-              </p>
-              <h2 
-                  className="font-display mt-4 text-[20px] font-semibold leading-tight text-ink-primary">
-                {d.title}
-              </h2>
-              {d.description && (
-                <p 
-                   className="font-ui mt-2 text-[13px] text-ink-secondary">
-                  {d.description}
-                </p>
-              )}
-            </button>
-          )
-        })}
-      </div>
-    </header>
+    <nav className="docs-nav" aria-label={label}>
+      {GROUPS.map(({ group, pages }) => (
+        <div key={group}>
+          <p className="docs-nav-group">{group}</p>
+          <ul>
+            {pages.map((p) => (
+              <li key={p.key}>
+                <AppLink
+                  href={hrefFor(p.key)}
+                  onNavigate={onNavigate}
+                  aria-current={p.key === activeKey ? 'page' : undefined}
+                >
+                  {p.title}
+                </AppLink>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </nav>
   )
 }
 
-export default function DocsView({ page, onPageChange, onNavigate }) {
-  const docs = useMemo(() => buildDocs(), [])
-  const active = docs.find((d) => d.key === page) ?? docs[0]
+export default function DocsView({ page, onNavigate }) {
+  const index = Math.max(0, ORDER.findIndex((p) => p.key === page))
+  const active = ORDER[index]
+  const previous = ORDER[index - 1]
+  const next = ORDER[index + 1]
+
   const articleRef = useRef(null)
   const [sections, setSections] = useState([])
   const [activeSection, setActiveSection] = useState(null)
 
+  // The "on this page" rail is read off the rendered article's h2 headings.
   useEffect(() => {
-    const root = articleRef.current
-    if (!root) return
-    const headings = Array.from(root.querySelectorAll('h2'))
+    const headings = Array.from(articleRef.current.querySelectorAll('h2'))
     setSections(headings.map((h) => ({ id: h.id, text: h.textContent })))
     setActiveSection(headings[0]?.id ?? null)
-    if (!headings.length) return
 
+    // A link that arrives with #section: the article did not exist when the
+    // browser first looked for that id, so go there now.
+    const hash = decodeURIComponent(window.location.hash.slice(1))
+    if (hash) document.getElementById(hash)?.scrollIntoView()
+
+    if (!headings.length) return
     const observer = new IntersectionObserver(
       (entries) => {
         const visible = entries
@@ -140,59 +92,56 @@ export default function DocsView({ page, onPageChange, onNavigate }) {
     )
     headings.forEach((h) => observer.observe(h))
     return () => observer.disconnect()
-  }, [active?.key])
-
-  if (!docs.length) {
-    return (
-      <div className="max-w-[680px] mx-auto py-16 text-center">
-        <p 
-           className="font-ui text-[13px] text-ink-tertiary">
-          No documentation pages yet. Add markdown files to{' '}
-          <code className="text-ink-secondary">src/docs/</code> to populate this view.
-        </p>
-      </div>
-    )
-  }
-
-  const scrollToSection = (id) => {
-    const el = document.getElementById(id)
-    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
-  }
+  }, [active.key])
 
   return (
-    <section>
-      <DocsHeader docs={docs} active={active} onPageChange={onPageChange} />
+    <div className="docs-shell">
+      <PageList activeKey={active.key} onNavigate={onNavigate} label="Docs pages" />
 
-      <div className="docs-layout">
-        <div className="docs-body">
-          <article className="docs-article" ref={articleRef}>
-            <Markdown content={active.content} onNavigate={onNavigate} />
-          </article>
-        </div>
+      <div className="docs-main">
+        {/* Phones: the page list as a menu. The key closes it on every page change. */}
+        <details className="docs-menu" key={active.key}>
+          <summary>Docs menu: {active.title}</summary>
+          <PageList activeKey={active.key} onNavigate={onNavigate} label="Docs pages (menu)" />
+        </details>
 
-        <aside className="docs-index" aria-label="On this page">
-          {sections.length > 0 && (
-            <>
-              <p 
-                 className="font-ui text-[11px] uppercase tracking-[0.18em] text-ink-tertiary mb-3">
-                On this page
-              </p>
-              <ul className="docs-section-list">
-                {sections.map((s) => (
-                  <li key={s.id}>
-                    <button
-                      onClick={() => scrollToSection(s.id)}
-                      className={`docs-section-link ${activeSection === s.id ? 'is-active' : ''}`}
-                    >
-                      {s.text}
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            </>
+        <p className="docs-kicker">{active.group}</p>
+        <article className="docs-article" ref={articleRef}>
+          <Markdown content={active.content} onNavigate={onNavigate} />
+        </article>
+
+        <div className="docs-pager">
+          {previous && (
+            <AppLink href={hrefFor(previous.key)} onNavigate={onNavigate}>
+              <small>Previous</small>
+              <strong>← {previous.title}</strong>
+            </AppLink>
           )}
-        </aside>
+          {next && (
+            <AppLink href={hrefFor(next.key)} onNavigate={onNavigate} className="docs-pager-next">
+              <small>Next</small>
+              <strong>{next.title} →</strong>
+            </AppLink>
+          )}
+        </div>
       </div>
-    </section>
+
+      <aside className="docs-toc" aria-label="On this page">
+        {sections.length > 0 && (
+          <>
+            <p className="docs-nav-group">On this page</p>
+            <ul>
+              {sections.map((s) => (
+                <li key={s.id}>
+                  <a href={`#${s.id}`} aria-current={activeSection === s.id ? 'location' : undefined}>
+                    {s.text}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </>
+        )}
+      </aside>
+    </div>
   )
 }

@@ -1,8 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
-import BubbleDiagram from './BubbleDiagram'
-import TimeScrubber from './TimeScrubber'
 import Publications from './Publications'
 import AppLink from './AppLink'
+import CopyButton from './CopyButton'
 import { PAPER_URL } from '../links'
 
 const QUICKSTART = `git clone https://github.com/JiaWeiTeh/trinity
@@ -79,49 +78,14 @@ function Introduction() {
   )
 }
 
-function ShellFigure() {
-  // The diagram's labels fade in between 0.5 and 1.2 Myr; start where they are all visible.
-  const [time, setTime] = useState(1.2)
-
-  return (
-    <div className="mt-10 flex flex-col items-center gap-4">
-      <div className="figure-card w-full">
-        <div className="grid md:grid-cols-[1.3fr_1fr]">
-          <div className="figure-card-image flex items-center justify-center p-6 md:p-7 border-b border-border-card md:border-b-0 md:border-r">
-            <div className="w-full max-w-[380px]">
-              <BubbleDiagram time={time} />
-            </div>
-          </div>
-          <div className="flex flex-col justify-center p-6 md:p-7">
-            <p 
-               className="font-display text-[15px] leading-7 text-ink-secondary">
-              The shell TRINITY follows, from the inside out: free-streaming
-              winds to the termination shock R<sub>ts</sub>, the hot
-              shocked-wind bubble to R<sub>b</sub>, the ionised layer to the
-              ionisation front R<sub>if</sub>, and the swept-up neutral shell
-              to R<sub>sh</sub>, inside the natal cloud. Drag the slider to
-              move through the energy-driven, transition and momentum-driven
-              phases, or hover a ring to pick out its zone. Radii are schematic,
-              not to scale.
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <div className="w-full max-w-[520px]">
-        <TimeScrubber time={time} onTimeChange={setTime} />
-      </div>
-    </div>
-  )
-}
-
 function GetTheCode({ onNavigate }) {
   return (
     <section id="code" className="py-12">
       <SectionHeading>Get the code</SectionHeading>
-      <pre className="font-mono text-[13px] leading-[1.55] bg-navy text-paper rounded-md px-4 py-3.5 overflow-x-auto">
-        {QUICKSTART}
-      </pre>
+      <div className="code-block">
+        <CopyButton getText={() => QUICKSTART} />
+        <pre>{QUICKSTART}</pre>
+      </div>
       <p 
          className="font-ui mt-4 text-[13px] text-ink-tertiary leading-relaxed">
         Pure Python, no compilation step.{' '}
@@ -186,11 +150,10 @@ function Acknowledgements() {
 
 export default function Overview({ onNavigate }) {
   return (
-    <div className="max-w-[680px] mx-auto">
+    <>
       <Rule />
       <section id="introduction" className="py-12">
         <Introduction />
-        <ShellFigure />
       </section>
       <Rule />
       <GetTheCode onNavigate={onNavigate} />
@@ -201,6 +164,6 @@ export default function Overview({ onNavigate }) {
       </section>
       <Rule />
       <Acknowledgements />
-    </div>
+    </>
   )
 }

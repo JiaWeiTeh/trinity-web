@@ -87,11 +87,9 @@ export default function Publications() {
         If you use TRINITY in published work, please cite{' '}
         <a href={PAPER_URL} target="_blank" rel="noopener noreferrer" className={LINK}>Paper I</a>:
       </p>
-      <div className="code-block code-block--light">
+      <div className="code-block">
         <CopyButton getText={() => BIBTEX} />
-        <pre className="font-mono text-[12px] leading-[1.55] rounded-md m-0 px-4 py-3.5 pr-12 overflow-x-auto">
-          {BIBTEX}
-        </pre>
+        <pre>{BIBTEX}</pre>
       </div>
       <p className="font-display text-[15px] leading-7 text-ink-secondary">
         The repository&rsquo;s <code className="text-[13px]">CITATION.cff</code>{' '}
