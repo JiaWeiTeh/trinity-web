@@ -44,7 +44,7 @@ why it stopped.
 Three finished runs ship with the repository, so you can look at TRINITY output
 while your own run is still going. The
 [tutorial notebook](?view=docs&page=notebook) opens them and plots the shell
-radius, the forces on the shell and the density inside it.
+radius, the density inside it and how many ionising photons escape.
 
 To set up your own cloud, go to [Running TRINITY](?view=docs&page=running).
 
