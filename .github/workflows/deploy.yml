@@ -14,11 +14,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build-and-deploy:
+  build:
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
 
@@ -34,5 +31,16 @@ jobs:
         with:
           path: dist
 
+  # Deploy in a job of its own. Run in the same job, straight after the upload,
+  # deploy-pages can list the run's artifacts before GitHub shows the new one and
+  # fail with "No artifacts named github-pages" (actions/deploy-pages#451; it hit
+  # this site on 2026-11-21). A second job starts late enough to find it.
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
       - id: deployment
         uses: actions/deploy-pages@v4
