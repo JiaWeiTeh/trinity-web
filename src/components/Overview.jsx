@@ -42,6 +42,33 @@ function TextLink({ href, children }) {
   )
 }
 
+/* Figure 1 of Paper I, rendered from fig/paper1/paper_schematic.pdf in the
+   TRINITY repo at 2000 px wide. On wide screens the image is wider than the
+   text column so its labels stay readable; a click opens it at full size. */
+const SCHEMATIC = `${import.meta.env.BASE_URL}media/trinity-schematic.webp`
+
+function Schematic() {
+  return (
+    <figure className="my-10">
+      <a href={SCHEMATIC} target="_blank" rel="noopener noreferrer"
+         className="block cursor-zoom-in lg:-mx-20 xl:-mx-36">
+        <img src={SCHEMATIC} width="2000" height="1055"
+             alt="Schematic from Paper I: winds from a central star cluster inflate a hot bubble inside a molecular cloud, behind a swept-up shell with an ionised inner and a neutral outer layer. The bubble passes through an energy-driven and a momentum-driven phase and ends by dispersing the cloud or re-collapsing."
+             className="block h-auto w-full rounded-lg border border-border-rule bg-white p-2 sm:p-4" />
+      </a>
+      <figcaption className="font-ui mt-3 text-[13px] leading-relaxed text-ink-tertiary">
+        TRINITY follows one bubble from its energy-driven start to the dispersal
+        or re-collapse of its cloud (<TextLink href={PAPER_URL}>Figure 1 of Paper I</TextLink>).
+        In the energy-driven phase, winds from the central cluster fill a hot
+        bubble whose pressure pushes a swept-up shell, ionised inside and neutral
+        outside, into the cloud. Once cooling drains the hot gas, photoionised-gas
+        pressure, radiation pressure and the ram pressure of winds and supernova
+        ejecta drive the shell in the momentum-driven phase.
+      </figcaption>
+    </figure>
+  )
+}
+
 /* ── Sections ────────────────────────────────────────────────── */
 
 function Introduction() {
@@ -55,6 +82,7 @@ function Introduction() {
         thermal state and force budget from the first stellar winds to the
         shell&rsquo;s fate: dispersal of the cloud, or stalling and re-collapse.
       </p>
+      <Schematic />
       <p>
         Clouds in nearby galaxies are cleared within a few million years of
         forming their first massive stars, before any of them explode as
