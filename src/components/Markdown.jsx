@@ -15,6 +15,30 @@ const CUSTOM_BLOCKS = {
   'language-parameter-table': () => <ParameterTable />,
 }
 
+/* Keep inline maths and the punctuation right after it on one line. KaTeX
+   output is a run of inline blocks, and the browser may break after them,
+   which starts the next line with "," or ".". */
+const PUNCTUATION = /^[.,;:!?)]+/
+
+function rehypeMathPunctuation() {
+  const walk = (node) => {
+    const kids = node.children ?? []
+    kids.forEach((math, i) => {
+      const next = kids[i + 1]
+      const isMath = math.type === 'element' && math.properties?.className?.includes('katex')
+      const mark = isMath && next?.type === 'text' && next.value.match(PUNCTUATION)
+      if (!mark) return walk(math)
+      next.value = next.value.slice(mark[0].length)
+      kids[i] = {
+        type: 'element', tagName: 'span',
+        properties: { className: ['whitespace-nowrap'] },
+        children: [math, { type: 'text', value: mark[0] }],
+      }
+    })
+  }
+  return walk
+}
+
 function getCodeClass(children) {
   const first = Array.isArray(children) ? children[0] : children
   return first?.props?.className ?? ''
@@ -78,7 +102,7 @@ export default function Markdown({ content, onNavigate }) {
   return (
     <ReactMarkdown
       remarkPlugins={[remarkGfm, remarkMath]}
-      rehypePlugins={[rehypeSlug, rehypeKatex]}
+      rehypePlugins={[rehypeSlug, rehypeKatex, rehypeMathPunctuation]}
       components={components}
     >
       {content}

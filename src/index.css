@@ -405,6 +405,27 @@ sup {
   border-radius: 8px;
   padding: 14px 52px 14px 16px;
   margin: 0;
+  /* Long lines wrap inside the box, clear of the copy button (the right
+     padding), so nothing is hidden off the edge; the button copies the
+     unwrapped text. */
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+/* On a phone, one size smaller: a 36-character line such as the clone URL
+   then fits beside the copy button instead of breaking mid-word. */
+@media (max-width: 640px) {
+  .code-block pre {
+    font-size: 12.5px;
+  }
+}
+
+/* Python and printed output keep their lines and scroll instead: a wrapped
+   Python line would look like a new, unindented statement. */
+.code-block:has(code.language-python) pre,
+.code-block:has(code.language-output) pre {
+  white-space: pre;
+  overflow-wrap: normal;
   overflow-x: auto;
 }
 
@@ -486,6 +507,14 @@ sup {
   padding: 8px 12px 8px 0;
   text-align: left;
   vertical-align: top;
+}
+
+/* In a table, inline code breaks only at spaces and hyphens: "anywhere"
+   (above) would let the table squeeze a column and split "densPL" in two.
+   A table that still does not fit scrolls inside its own box. */
+.docs-article td code,
+.docs-article th code {
+  overflow-wrap: normal;
 }
 
 .docs-article th {

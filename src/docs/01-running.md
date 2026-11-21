@@ -31,48 +31,24 @@ own file name. Set `path2output` to send the results somewhere else.
 
 ## Three files to start from
 
-The repository ships one working file per density profile. They describe the
-same cloud mass and efficiency, and they are the runs the
-[tutorial notebook](?view=docs&page=notebook) opens.
+The repository ships one working file per density profile, and they are the runs the
+[tutorial notebook](?view=docs&page=notebook) opens. All three set `mCloud 1e6`, `sfe 0.01`
+and `nISM 10`, name their output folder after the file, and differ only in the cloud:
 
-### `param/cloud_example_homogeneous.param`
+| Keyword | Uniform | Power law | Bonnor–Ebert |
+|---|---|---|---|
+| `dens_profile` | `densPL` | `densPL` | `densBE` |
+| `densPL_alpha` | `0` | `-2` | |
+| `densBE_Omega` | | | `14.1` |
+| `nCore` | `1e3` | `1e4` | `1e4` |
+| `rCore` | | `5` | |
 
-```text
-model_name    cloud_example_homogeneous
-mCloud    1e6
-sfe    0.01
-# powerlaw, homogeneous
-dens_profile    densPL
-densPL_alpha    0
-nCore    1e3
-nISM    10
-```
+A blank cell means the file leaves that keyword at its default. The files are
+`param/cloud_example_homogeneous.param`, `param/cloud_example_PL.param` and
+`param/cloud_example_BE.param`; run one with
 
-### `param/cloud_example_PL.param`
-
-```text
-model_name    cloud_example_PL
-mCloud    1e6
-sfe    0.01
-# powerlaw, -2 (isothermal)
-dens_profile    densPL
-densPL_alpha    -2
-nCore    1e4
-rCore    5
-nISM    10
-```
-
-### `param/cloud_example_BE.param`
-
-```text
-model_name    cloud_example_BE
-mCloud    1e6
-sfe    0.01
-# Bonnor-Ebert sphere
-dens_profile    densBE
-densBE_Omega    14.1
-nCore    1e4
-nISM    10
+```bash
+python run.py param/cloud_example_PL.param
 ```
 
 ## Sweeps
