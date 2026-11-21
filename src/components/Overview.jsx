@@ -151,7 +151,6 @@ function Acknowledgements() {
 export default function Overview({ onNavigate }) {
   return (
     <>
-      <Rule />
       <section id="introduction" className="py-12">
         <Introduction />
       </section>

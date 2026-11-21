@@ -113,7 +113,7 @@ export default function App() {
       <Navbar view={view} onNavigate={navigateTo} />
       <main>
         {view === 'overview' && (
-          <div className="max-w-[760px] mx-auto px-4 sm:px-6 pt-11 sm:pt-[72px]">
+          <div className="max-w-[760px] mx-auto px-4 sm:px-6">
             <TitleBlock onNavigate={navigateTo} />
             <Overview onNavigate={navigateTo} />
           </div>
