@@ -5,7 +5,7 @@ import { HOMEPAGE_URL, REPO_URL } from '../links'
    not a link a crawler can harvest in one pass. */
 export default function Footer() {
   return (
-    <footer id="contact" className="mt-10 border-t border-border-rule">
+    <footer id="contact" className="mt-10 border-t border-border-rule bg-card">
       <div className="font-ui max-w-[1280px] mx-auto px-4 sm:px-6 py-6 flex flex-col md:flex-row md:items-end justify-between gap-4 text-[12.5px] text-ink-tertiary leading-relaxed">
         <div>
           <div className="text-ink-primary">

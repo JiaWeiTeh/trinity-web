@@ -1,10 +1,11 @@
 @import "tailwindcss";
 
 /* Colours and fonts. Every text colour here passes WCAG AA (4.5:1) on both
-   `paper` and `card`, in both themes. Check any change with a contrast tool. */
+   `paper`, `card` and `band`, in both themes. Check any change with a contrast tool. */
 @theme {
   --color-paper: #FCFBF7;
   --color-card: #F4F1EA;
+  --color-band: #EAF2F3;
   --color-ink-primary: #1E2430;
   --color-ink-secondary: #4A5261;
   --color-ink-tertiary: #64625C;
@@ -16,13 +17,14 @@
   --font-mono: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
 }
 
-/* Dark theme. The same eight colours, twice: once for a visitor whose system is
+/* Dark theme. The same nine colours, twice: once for a visitor whose system is
    dark and who has not chosen, once for a visitor who chose dark with the
    button in the top bar. Keep the two blocks identical. */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     --color-paper: #15171B;
     --color-card: #1E2127;
+  --color-band: #1A2A30;
     --color-ink-primary: #ECE9E2;
     --color-ink-secondary: #B9BDC6;
     --color-ink-tertiary: #9297A1;
@@ -35,6 +37,7 @@
 :root[data-theme="dark"] {
   --color-paper: #15171B;
   --color-card: #1E2127;
+  --color-band: #1A2A30;
   --color-ink-primary: #ECE9E2;
   --color-ink-secondary: #B9BDC6;
   --color-ink-tertiary: #9297A1;
@@ -371,6 +374,7 @@ sup {
 }
 
 .docs-article :not(pre) > code {
+  overflow-wrap: anywhere;   /* a long file name in a heading must not widen the page on a phone */
   font-family: var(--font-mono);
   font-size: 0.86em;
   background: var(--color-card);
@@ -499,4 +503,13 @@ sup {
   margin: 18px 0;
   overflow-x: auto;
   overflow-y: hidden;
+}
+
+/* The overview's title block: a full-width band of `band` behind the narrow
+   column. The shadow paints the band out to the window edges, and clip-path
+   stops it spilling above or below the section. */
+.hero-band {
+  background: var(--color-band);
+  box-shadow: 0 0 0 100vmax var(--color-band);
+  clip-path: inset(0 -100vmax);
 }

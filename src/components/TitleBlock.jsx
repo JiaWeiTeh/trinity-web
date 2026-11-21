@@ -6,7 +6,7 @@ const PLAIN = `${BUTTON} border-border-card text-ink-primary hover:border-teal`
 
 export default function TitleBlock({ onNavigate }) {
   return (
-    <section className="pb-12">
+    <section className="hero-band pt-11 sm:pt-[72px] pb-12">
       <h1 className="font-display text-[42px] sm:text-[56px] font-semibold text-ink-primary tracking-[0.01em] leading-[1.05] mb-4">
         TRINITY
       </h1>
