@@ -5,7 +5,7 @@ import { PAPER_URL } from '../links'
 const PAPERS = [
   { tag: 'Paper I',
     title: 'TRINITY: A coupled model of winds, radiation, and photoionised gas in molecular clouds. I. Methods and validation',
-    status: 'Teh et al. (2026), arXiv:2605.27517',
+    status: 'Teh et al. (2026), A&A 714, A226',
     href: PAPER_URL },
 ]
 
@@ -13,7 +13,7 @@ const PAPERS = [
 const USING = [
   { tag: '2026',
     title: "JWST Observations of Starbursts: A Young Bubble in NGC 253's Central Starburst",
-    status: 'Sheriff et al., arXiv:2609.16190',
+    status: 'Sheriff et al., AJ 172, 261',
     href: 'https://ui.adsabs.harvard.edu/abs/arXiv:2609.16190/abstract' },
   { tag: '2026',
     title: 'The Neutral Atomic Hydrogen in the solar neighborhood (NeAtHood) project: I. Ghost in the shell: Neutral atomic hydrogen in the extended Orion nebula',
@@ -30,18 +30,21 @@ const WARPFIELD = [
   { label: 'Rahner et al. (2019)', href: 'https://ui.adsabs.harvard.edu/abs/2019MNRAS.483.2547R/abstract' },
 ]
 
-/* Paper I as an arXiv e-print, keyed by its ADS bibcode. Replace with the
-   journal entry once the A&A version is out. */
-const BIBTEX = `@ARTICLE{2026arXiv260527517T,
+/* Paper I in the ADS BibTeX style: the A&A version, with the arXiv e-print. */
+const BIBTEX = `@ARTICLE{2026A&A...714A.226T,
        author = {{Teh}, Jia Wei and {Klessen}, Ralf S. and {Glover}, Simon C.~O. and {Kreckel}, Kathryn},
         title = "{TRINITY: A coupled model of winds, radiation, and photoionised gas in molecular clouds. I. Methods and validation}",
-      journal = {arXiv e-prints},
+      journal = {\\aap},
          year = 2026,
-        month = may,
-          eid = {arXiv:2605.27517},
+        month = oct,
+       volume = {714},
+          eid = {A226},
+        pages = {A226},
+          doi = {10.1051/0004-6361/202661074},
 archivePrefix = {arXiv},
        eprint = {2605.27517},
-       adsurl = {https://ui.adsabs.harvard.edu/abs/2026arXiv260527517T},
+ primaryClass = {astro-ph.GA},
+       adsurl = {https://ui.adsabs.harvard.edu/abs/2026A&A...714A.226T},
 }`
 
 const LINK = 'text-teal underline underline-offset-[3px] decoration-1'
